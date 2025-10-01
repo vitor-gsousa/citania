@@ -2,73 +2,75 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Citânia - Matemática Divertida</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
- <body>
-     <main>
-         <button id="theme-toggle" title="Alternar tema">🌙</button>
-         <div id="score-container">
-             <span>Nível: <span id="level-display">1</span></span>
-             <span>Certas: <span id="correct-count">0</span></span>
-             <span>Erradas: <span id="incorrect-count">0</span></span>
-         </div>
-         <h1>Citânia - Matemática Divertida</h1>
- 
-         <div id="menu-container">
-             <h2>Escolhe um tema para começar!</h2>
-             <div class="card-container">
-                 <div class="card" data-type="fractionToDecimal">
-                    <span class="card-text">Frações para Decimais</span>
-                    <span class="card-emoji">📊</span>
-                 </div>
-                 <div class="card" data-type="primeFactorization">
-                    <span class="card-text">Decomposição em Fatores Primos</span>
-                    <span class="card-emoji">🧩</span>
-                 </div>
-                 <div class="card" data-type="gcd">
-                    <span class="card-text">Máximo Divisor Comum (MDC)</span>
-                    <span class="card-emoji">🔗</span>
-                 </div>
-                 <div class="card" data-type="lcm">
-                    <span class="card-text">Mínimo Múltiplo Comum (MMC)</span>
-                    <span class="card-emoji">📈</span>
-                 </div>
-                 <div class="card" data-type="powerMultiplication">
-                    <span class="card-text">Multiplicação de Potências</span>
-                    <span class="card-emoji">💥</span>
-                 </div>
-                 <div class="card" data-type="powerDivision">
-                    <span class="card-text">Divisão de Potências</span>
-                    <span class="card-emoji">✂️</span>
-                 </div>
-             </div>
-         </div>
- 
-         <div id="exercise-area" class="hidden">
-             <button id="back-to-menu">← Voltar</button>
-             <div id="progress-bar-container">
-                 <div id="progress-bar"></div>
-             </div>
-             <div class="exercise-container">
-                 <p id="question">Qual é o valor?</p>
-                 <input type="text" id="answer-input" placeholder="A tua resposta">
-                 <button id="check-button">Verificar</button>
-                 <p id="feedback"></p>
-             </div>
-             <button id="next-button">Próximo Exercício</button>
-         </div>
+<body>
+    <main>
+        <button id="theme-toggle" title="Alternar tema" aria-label="Alternar tema">🌙</button>
+        <div id="score-container">
+            <span>Nível: <span id="level-display">1</span></span>
+            <span>Certas: <span id="correct-count">0</span></span>
+            <span>Erradas: <span id="incorrect-count">0</span></span>
+        </div>
+        <h1>Citânia - Matemática Divertida</h1>
 
-         <div id="summary-area" class="hidden">
-            <h2>Ronda Concluída!</h2>
-            <p>Conseguiste <strong id="summary-correct">0</strong> em <strong id="summary-total">0</strong> respostas certas.</p>
-            <p id="summary-record-message"></p>
-            <p id="summary-message">Vamos para o próximo nível?</p>
-            <button id="next-level-button">Próximo Nível</button>
-         </div>
-     </main>
-     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-     <script src="./js/app.js"></script>
- </body>
+        <div id="menu-container">
+            <h2>Escolhe um tema para começar!</h2>
+            <div class="card-container">
+                <div class="card" data-type="fractionToDecimal">
+                   <span class="card-text">Frações para Decimais</span>
+                   <span class="card-emoji" aria-hidden="true">📊</span>
+                </div>
+                <div class="card" data-type="primeFactorization">
+                   <span class="card-text">Decomposição em Fatores Primos</span>
+                   <span class="card-emoji" aria-hidden="true">🧩</span>
+                </div>
+                <div class="card" data-type="gcd">
+                   <span class="card-text">Máximo Divisor Comum (MDC)</span>
+                   <span class="card-emoji" aria-hidden="true">🔗</span>
+                </div>
+                <div class="card" data-type="lcm">
+                   <span class="card-text">Mínimo Múltiplo Comum (MMC)</span>
+                   <span class="card-emoji" aria-hidden="true">📈</span>
+                </div>
+                <div class="card" data-type="powerMultiplication">
+                   <span class="card-text">Multiplicação de Potências</span>
+                   <span class="card-emoji" aria-hidden="true">💥</span>
+                </div>
+                <div class="card" data-type="powerDivision">
+                   <span class="card-text">Divisão de Potências</span>
+                   <span class="card-emoji" aria-hidden="true">✂️</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="exercise-area" class="hidden">
+            <button id="back-to-menu">← Voltar</button>
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+            </div>
+            <div class="exercise-container">
+                <p id="question">Qual é o valor?</p>
+                <input type="text" id="answer-input" placeholder="A tua resposta" inputmode="decimal" autocomplete="off">
+                <button id="check-button">Verificar</button>
+                <p id="feedback"></p>
+            </div>
+            <button id="next-button">Próximo Exercício</button>
+        </div>
+
+        <div id="summary-area" class="hidden">
+           <h2>Ronda Concluída!</h2>
+           <p>Conseguiste <strong id="summary-correct">0</strong> em <strong id="summary-total">0</strong> respostas certas.</p>
+           <p id="summary-record-message"></p>
+           <p id="summary-message">Vamos para o próximo nível?</p>
+           <button id="next-level-button">Próximo Nível</button>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="./js/app.js"></script>
+</body>
 </html>

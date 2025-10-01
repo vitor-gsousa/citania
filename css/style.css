@@ -25,13 +25,18 @@
     --progress-bar-bg: #4b5563;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    box-sizing: border-box; /* Garante que o padding não aumenta o tamanho total */
+    margin: 0;
+    padding: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
@@ -50,10 +55,9 @@ main {
 }
 
 .card-container {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 1rem;
-    justify-content: center;
     margin-top: 2rem;
 }
 
@@ -69,24 +73,28 @@ main {
     cursor: pointer;
     font-weight: 500;
     transition: transform 0.2s, box-shadow 0.2s;
-    width: 200px;
     text-align: center;
     min-height: 150px;
 }
 
 .card-text {
-    font-size: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.3;
 }
 
 .card-emoji {
-    font-size: 3rem;
-    margin-top: 1rem;
+    font-size: 2.5rem;
+    margin-top: 0.5rem;
 }
 
 .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     background-color: var(--primary-hover-color);
+}
+
+.card:active {
+    transform: translateY(-2px);
 }
 
 #theme-toggle {
@@ -100,6 +108,13 @@ main {
     height: 40px;
     border-radius: 50%;
     color: var(--text-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#theme-toggle:hover {
+    background-color: var(--score-bg-color);
 }
 
 #back-to-menu {
@@ -107,30 +122,41 @@ main {
     background-color: var(--secondary-color);
     top: 1rem;
     left: 1rem;
+    padding: 0.5rem 1rem;
 }
 
 #score-container {
     position: absolute;
     top: 1rem;
     right: 1rem;
+    display: flex;
     flex-wrap: wrap;
+    gap: 0.5rem;
     background-color: var(--score-bg-color);
     padding: 0.5rem 1rem;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 500;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 #score-container span {
-    margin: 0 0.5rem;
+    white-space: nowrap;
 }
 
-#correct-count { color: var(--correct-color); font-weight: bold; }
-#incorrect-count { color: var(--incorrect-color); font-weight: bold; }
+#correct-count { 
+    color: var(--correct-color); 
+    font-weight: bold; 
+}
+
+#incorrect-count { 
+    color: var(--incorrect-color); 
+    font-weight: bold; 
+}
 
 #progress-bar-container {
-    width: 80%;
+    width: 100%;
+    max-width: 600px;
     background-color: var(--progress-bar-bg);
     border-radius: 10px;
     margin: 1.5rem auto 0;
@@ -139,18 +165,19 @@ main {
 
 #progress-bar {
     height: 15px;
-    width: 0%; /* Começa a 0 */
+    width: 0%;
     background-color: var(--correct-color);
     border-radius: 10px;
     transition: width 0.5s ease-in-out;
 }
 
 #summary-area {
-    padding: 2rem;
+    padding: 2rem 1rem;
 }
 
 #summary-area h2 {
     color: var(--primary-color);
+    margin-top: 0;
 }
 
 #summary-message {
@@ -160,53 +187,79 @@ main {
 #summary-record-message {
     color: var(--primary-hover-color);
     font-weight: bold;
-    margin-top: -1rem;
+    font-size: 1.2rem;
+    min-height: 1.5rem;
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
-
 
 .exercise-container {
     margin: 2rem 0;
 }
 
 #question {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+    padding: 0 1rem;
 }
 
 input {
-    padding: 0.5rem;
-    font-size: 1.2rem;
-    width: 200px;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    width: 100%;
+    max-width: 300px;
     text-align: center;
     border: 2px solid var(--border-color);
     border-radius: 8px;
+    background-color: var(--main-bg-color);
+    color: var(--text-color);
+    margin: 0.5rem auto;
+    display: block;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary-color);
 }
 
 button {
-    padding: 0.6rem 1.2rem;
+    padding: 0.75rem 1.5rem;
     font-size: 1rem;
     cursor: pointer;
     border: none;
     border-radius: 8px;
     background-color: var(--primary-color);
     color: white;
-    margin-left: 0.5rem;
-    transition: background-color 0.3s;
+    margin: 0.5rem;
+    transition: background-color 0.3s, transform 0.1s;
+    font-weight: 500;
+    min-height: 44px;
 }
 
 button:hover {
     background-color: var(--primary-hover-color);
 }
 
+button:active {
+    transform: scale(0.98);
+}
+
+#check-button,
+#next-button {
+    width: 100%;
+    max-width: 300px;
+}
+
 #feedback {
-    margin-top: 1rem;
-    font-size: 1.2rem;
+    margin-top: 1.5rem;
+    font-size: 1.1rem;
     font-weight: bold;
-    min-height: 1.5rem; /* Evita que o layout salte */
+    min-height: 2rem;
+    padding: 0 1rem;
+    line-height: 1.5;
 }
 
 #feedback.correct {
@@ -219,45 +272,167 @@ button:hover {
 
 /* --- Media Queries para Responsividade --- */
 @media (max-width: 768px) {
+    body {
+        align-items: flex-start;
+    }
+
     main {
         padding: 1rem;
-        margin-top: 5rem; /* Espaço para os botões no topo */
+        margin: 0.5rem;
+        width: calc(100% - 1rem);
+        min-height: calc(100vh - 1rem);
+        padding-top: 5rem;
     }
 
     h1 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+        margin: 1rem 0;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    #theme-toggle {
+        top: 0.5rem;
+        left: 0.5rem;
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+        z-index: 10;
     }
 
     #back-to-menu {
-        position: static;
-        display: block;
-        margin: 0.5rem auto;
-        width: 90%;
+        position: fixed;
+        top: 0.5rem;
+        left: 0.5rem;
+        margin: 0;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+        z-index: 10;
+        min-height: 36px;
     }
     
     #score-container {
-        position: static;
-        margin: 1rem auto;
+        position: fixed;
+        top: 0.5rem;
+        right: 0.5rem;
+        left: auto;
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+        max-width: calc(100% - 5rem);
+        z-index: 10;
+    }
+
+    #score-container span {
+        margin: 0 0.25rem;
+        font-size: 0.75rem;
+    }
+
+    .card-container {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .card {
+        min-height: 120px;
+        padding: 1rem;
+    }
+
+    .card-text {
+        font-size: 0.9rem;
+    }
+
+    .card-emoji {
+        font-size: 2rem;
     }
 
     #exercise-area {
         display: flex;
         flex-direction: column;
+        padding-top: 1rem;
     }
 
-    .card {
-        width: 100%; /* Ocupa a largura toda */
+    #progress-bar-container {
+        margin-top: 1rem;
     }
 
     .exercise-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
+        margin: 1.5rem 0;
+        width: 100%;
     }
 
-    input, #next-button {
-        width: 90%;
-        margin-left: 0;
+    #question {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        padding: 0;
+    }
+
+    input {
+        width: 100%;
+        max-width: 100%;
+        font-size: 1rem;
+        padding: 0.75rem;
+    }
+
+    button {
+        width: 100%;
+        max-width: 100%;
+        margin: 0.5rem 0;
+        padding: 0.75rem;
+    }
+
+    #check-button,
+    #next-button,
+    #next-level-button {
+        width: 100%;
+    }
+
+    #feedback {
+        font-size: 1rem;
+        padding: 0;
+    }
+
+    #summary-area {
+        padding: 1rem 0;
+    }
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: 0.75rem;
+        padding-top: 4.5rem;
+    }
+
+    h1 {
+        font-size: 1.2rem;
+    }
+
+    #question {
+        font-size: 1rem;
+    }
+
+    #score-container {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.15rem;
+        padding: 0.3rem 0.5rem;
+    }
+
+    .card {
+        min-height: 100px;
+    }
+
+    .card-emoji {
+        font-size: 1.75rem;
+    }
+}
+
+/* Ajustes para dispositivos com notch */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
     }
 }
