@@ -279,12 +279,15 @@ function startExercise(type) {
 
 function startNewRound() {
     state.roundProgress = 0;
-    // resetScore(); // A pontuação agora é cumulativa
     DOM.levelDisplayEl.textContent = state.level;
-    DOM.levelDisplayEl.parentElement.classList.remove('hidden'); // Mostra o nível
+    DOM.levelDisplayEl.parentElement.classList.remove('hidden');
     DOM.menuContainer.classList.add('hidden');
     DOM.summaryArea.classList.add('hidden');
     DOM.exerciseArea.classList.remove('hidden');
+    
+    // Reset do scroll
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     generateNewExercise();
 }
 
@@ -299,59 +302,93 @@ function generateNewExercise() {
     const newProblem = exerciseLogic.generate(state.level);
     currentExercise.answer = newProblem.answer;
     currentExercise.explanation = newProblem.explanation;
-    currentExercise.checkType = newProblem.checkType; // <-- CORREÇÃO AQUI
-    state.answered = false; // Permite que a nova pergunta seja respondida
+    currentExercise.checkType = newProblem.checkType;
+    state.answered = false;
 
-    // Limpa o estado anterior para o novo exercício
+    // Limpa o estado anterior
     DOM.feedbackEl.textContent = '';
     DOM.answerInput.value = '';
     DOM.feedbackEl.className = '';
+    
+    // Mostra o botão verificar e esconde o próximo
+    DOM.checkButton.style.display = 'block';
+    DOM.nextButton.style.display = 'none';
+    
+    // Foca no input
     DOM.answerInput.focus();
+    
     updateProgressBar();
 }
 
 function checkAnswer() {
-    if (state.answered) return; // Se já respondeu, não faz nada
+    if (state.answered) return;
 
     const userAnswer = DOM.answerInput.value;
+    
+    // Validação de resposta vazia
+    if (!userAnswer.trim()) {
+        DOM.feedbackEl.innerHTML = '⚠️ Por favor, escreve uma resposta.';
+        DOM.feedbackEl.className = 'incorrect';
+        return;
+    }
+
     const exerciseLogic = exercises[currentExercise.type];
     const isCorrect = exerciseLogic.check(userAnswer, currentExercise.answer, currentExercise.checkType);
-    const correctAnswerFormatted = Array.isArray(currentExercise.answer) ? currentExercise.answer.join(' x ') : currentExercise.answer;
+    const correctAnswerFormatted = Array.isArray(currentExercise.answer) 
+        ? currentExercise.answer.join(' x ') 
+        : currentExercise.answer;
 
     if (isCorrect) {
         sounds.correct.currentTime = 0;
         sounds.correct.play();
-        DOM.feedbackEl.innerHTML = 'Muito bem! Resposta correta!';
+        DOM.feedbackEl.innerHTML = '✅ Muito bem! Resposta correta!';
         DOM.feedbackEl.className = 'correct';
         state.score.correct++;
+        
+        // Esconde o botão verificar e mostra o próximo
+        DOM.checkButton.style.display = 'none';
+        DOM.nextButton.style.display = 'block';
     } else {
         sounds.incorrect.currentTime = 0;
         sounds.incorrect.play();
-        DOM.feedbackEl.innerHTML = `Quase! A resposta certa é <strong>${correctAnswerFormatted}</strong>.`;
+        DOM.feedbackEl.innerHTML = `❌ Quase! A resposta certa é <strong>${correctAnswerFormatted}</strong>.`;
         DOM.feedbackEl.className = 'incorrect';
         state.score.incorrect++;
+        
+        // Esconde o botão verificar e mostra o próximo
+        DOM.checkButton.style.display = 'none';
+        DOM.nextButton.style.display = 'block';
     }
 
     // Adiciona a explicação se estiver na fase de aprendizagem
     if (state.roundProgress <= state.explanationLimit) {
-        DOM.feedbackEl.innerHTML += `<br><small style="font-weight: normal;">${currentExercise.explanation}</small>`;
+        DOM.feedbackEl.innerHTML += `<br><small style="font-weight: normal; opacity: 0.9;">${currentExercise.explanation}</small>`;
     }
 
-    state.answered = true; // Marca a pergunta como respondida
+    state.answered = true;
     updateScoreDisplay();
+    
+    // Foca no botão próximo para facilitar navegação
+    DOM.nextButton.focus();
 }
 
 function showMenu() {
     DOM.menuContainer.classList.remove('hidden');
-    DOM.levelDisplayEl.parentElement.classList.add('hidden'); // Esconde o nível no menu
+    DOM.levelDisplayEl.parentElement.classList.add('hidden');
     DOM.exerciseArea.classList.add('hidden');
     DOM.summaryArea.classList.add('hidden');
+    
+    // Reset do scroll
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function showSummary() {
     DOM.exerciseArea.classList.add('hidden');
     DOM.summaryArea.classList.remove('hidden');
-    DOM.summaryRecordMessage.textContent = ''; // Limpa a mensagem de recorde
+    DOM.summaryRecordMessage.textContent = '';
+    
+    // Atualiza o número do próximo nível
+    updateNextLevelDisplay();
 
     // Verifica se o próximo nível será um novo recorde
     const highScores = loadHighScores();
@@ -363,7 +400,7 @@ function showSummary() {
 
     DOM.summaryCorrect.textContent = state.score.correct;
     DOM.summaryTotal.textContent = state.exercisesPerRound;
-    saveHighScore(currentExercise.type, state.level); // Salva o nível atual concluído
+    saveHighScore(currentExercise.type, state.level);
 }
 
 function updateScoreDisplay() {
@@ -397,13 +434,36 @@ DOM.nextLevelButton.addEventListener('click', () => {
     startNewRound();
 });
 
+// Função para atualizar o display do próximo nível
+function updateNextLevelDisplay() {
+    const nextLevelSpan = document.getElementById('next-level-number');
+    if (nextLevelSpan) {
+        nextLevelSpan.textContent = state.level + 1;
+    }
+}
 // Permitir submeter com a tecla "Enter"
-DOM.answerInput.addEventListener('keyup', function(event) {
-    if (event.key === 'Enter') {
-        // Se a resposta já foi dada, o Enter funciona como "Próximo"
-        state.answered ? generateNewExercise() : checkAnswer();
+DOM.answerInput.addEventListener('focus', function() {
+    if (window.innerWidth <= 768) {
+        setTimeout(() => {
+            this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
     }
 });
+
+function vibrateDevice(pattern) {
+    if ('vibrate' in navigator) {
+        navigator.vibrate(pattern);
+    }
+}
+
+function checkAnswerWithVibration() {
+    checkAnswer();
+    
+    if (state.answered) {
+        const isCorrect = DOM.feedbackEl.classList.contains('correct');
+        vibrateDevice(isCorrect ? [50] : [100, 50, 100]);
+    }
+}
 
 // --- Lógica do Tema (Modo Escuro) ---
 

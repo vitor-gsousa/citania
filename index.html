@@ -9,15 +9,18 @@
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
+    <!-- Header fixo com tema e score -->
+    <button id="theme-toggle" title="Alternar tema" aria-label="Alternar tema">🌙</button>
+    <div id="score-container">
+        <span>Nível: <span id="level-display">1</span></span>
+        <span>Certas: <span id="correct-count">0</span></span>
+        <span>Erradas: <span id="incorrect-count">0</span></span>
+    </div>
+    
     <main>
-        <button id="theme-toggle" title="Alternar tema" aria-label="Alternar tema">🌙</button>
-        <div id="score-container">
-            <span>Nível: <span id="level-display">1</span></span>
-            <span>Certas: <span id="correct-count">0</span></span>
-            <span>Erradas: <span id="incorrect-count">0</span></span>
-        </div>
         <h1>Citânia - Matemática Divertida</h1>
 
+        <!-- Menu Principal -->
         <div id="menu-container">
             <h2>Escolhe um tema para começar!</h2>
             <div class="card-container">
@@ -48,28 +51,39 @@
             </div>
         </div>
 
+        <!-- Área de Exercícios -->
         <div id="exercise-area" class="hidden">
-            <button id="back-to-menu">← Voltar</button>
+            <button id="back-to-menu">← Voltar ao Menu</button>
+            
             <div id="progress-bar-container">
                 <div id="progress-bar"></div>
             </div>
+            
             <div class="exercise-container">
                 <p id="question">Qual é o valor?</p>
-                <input type="text" id="answer-input" placeholder="A tua resposta" inputmode="decimal" autocomplete="off">
-                <button id="check-button">Verificar</button>
-                <p id="feedback"></p>
+                <input 
+                    type="text" 
+                    id="answer-input" 
+                    placeholder="A tua resposta" 
+                    inputmode="decimal" 
+                    autocomplete="off"
+                    aria-label="Campo de resposta">
+                <button id="check-button">Verificar Resposta</button>
+                <p id="feedback" role="status" aria-live="polite"></p>
+                <button id="next-button">Próximo Exercício →</button>
             </div>
-            <button id="next-button">Próximo Exercício</button>
         </div>
 
+        <!-- Resumo da Ronda -->
         <div id="summary-area" class="hidden">
-           <h2>Ronda Concluída!</h2>
+           <h2>🎉 Ronda Concluída!</h2>
            <p>Conseguiste <strong id="summary-correct">0</strong> em <strong id="summary-total">0</strong> respostas certas.</p>
-           <p id="summary-record-message"></p>
+           <p id="summary-record-message" role="status"></p>
            <p id="summary-message">Vamos para o próximo nível?</p>
-           <button id="next-level-button">Próximo Nível</button>
+           <button id="next-level-button">Avançar para Nível <span id="next-level-number"></span> →</button>
         </div>
     </main>
+    
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <script src="./js/app.js"></script>
 </body>
