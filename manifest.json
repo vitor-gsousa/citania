@@ -1,0 +1,27 @@
+ {
+     "name": "Citânia - Matemática Divertida",
+     "short_name": "Citânia",
+     "description": "Uma aplicação para praticar matemática de forma divertida.",
+     "start_url": ".",
+     "display": "standalone",
+     "background_color": "#f0f4f8",
+     "theme_color": "#6366f1",
+     "icons": [
+         {
+             "src": "icons/icon-192x192.png",
+             "sizes": "192x192",
+             "type": "image/png"
+         },
+         {
+             "src": "icons/icon-512x512.png",
+             "sizes": "512x512",
+             "type": "image/png"
+         },
+         {
+             "src": "icons/icon-512x512.png",
+             "sizes": "512x512",
+             "type": "image/png",
+             "purpose": "maskable"
+         }
+     ]
+ }
