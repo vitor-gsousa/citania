@@ -50,7 +50,7 @@ main {
     padding: 2rem;
     margin: 1rem auto;          /* centra horizontalmente */
     width: 90%;
-    max-width: 800px;
+    max-width: 960px; /* antes: 800px */
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
@@ -240,7 +240,7 @@ body {
 main {
     margin: 1rem auto;          /* centra horizontalmente */
     width: 90%;
-    max-width: 800px;
+    max-width: 960px; /* antes: 800px */
 }
 
 /* Header sticky com contentor alinhado ao main */
@@ -253,7 +253,7 @@ main {
     box-shadow: 0 4px 14px rgba(0,0,0,.06);
 }
 .header-inner {
-    max-width: 800px;           /* igual ao main */
+    max-width: 960px;           /* igual ao main */
     margin: 0 auto;
     padding: .5rem 1rem;
     display: flex;
@@ -606,4 +606,34 @@ main {
     align-items: center;
     justify-content: center;
     margin: 0.75rem auto 0; /* auto nas laterais centra */
+}
+
+/* Aumentar largura útil em desktop */
+main {
+    /* primeira definição */
+    max-width: 960px; /* antes: 800px */
+}
+/* mais abaixo tens outra definição de main; mantém consistente */
+main {
+    margin: 1rem auto;
+    width: 90%;
+    max-width: 960px; /* antes: 800px */
+}
+
+/* No mobile, deixar o botão voltar no fluxo normal (sem fixed) */
+@media (max-width: 768px) {
+    #back-to-menu {
+        position: static;
+        width: 100%;
+        margin: 0.5rem 0 0.25rem 0;
+        box-shadow: none;
+        top: auto;
+        left: auto;
+        right: auto;
+    }
+
+    /* reduzir o padding-top agora que o botão não é fixed */
+    #exercise-area {
+        padding-top: 0;
+    }
 }

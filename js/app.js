@@ -29,11 +29,26 @@ const DOM = {
     userNameEl: document.getElementById('user-name')
 };
 
-// Efeitos Sonoros
+// Efeitos Sonoros (stub + lazy init)
 const sounds = {
-    correct: new Audio('./audio/correct.mp3'),
-    incorrect: new Audio('./audio/incorrect.mp3')
+    correct: { play: () => Promise.resolve(), currentTime: 0 },
+    incorrect: { play: () => Promise.resolve(), currentTime: 0 }
 };
+
+async function initSounds() {
+    const urls = ['./audio/correct.mp3', './audio/incorrect.mp3'];
+    const exists = await Promise.all(
+        urls.map(u => fetch(u, { method: 'HEAD' }).then(r => r.ok).catch(() => false))
+    );
+    if (exists[0]) {
+        sounds.correct = new Audio(urls[0]);
+        sounds.correct.addEventListener('error', () => { sounds.correct.play = () => Promise.resolve(); });
+    }
+    if (exists[1]) {
+        sounds.incorrect = new Audio(urls[1]);
+        sounds.incorrect.addEventListener('error', () => { sounds.incorrect.play = () => Promise.resolve(); });
+    }
+}
 
 let currentExercise = {};
 const state = {
@@ -239,6 +254,7 @@ function getPrimeFactors(num) {
 // --- Funções de Animação ---
 
 function triggerConfetti() {
+    if (typeof confetti !== 'function') return; // fallback silencioso
     const duration = 2 * 1000; // 2 segundos
     const animationEnd = Date.now() + duration;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -278,6 +294,9 @@ function saveHighScore(exerciseType, level) {
     }
 }
 
+function safeGetItem(key) { try { return localStorage.getItem(key); } catch { return null; } }
+function safeSetItem(key, value) { try { localStorage.setItem(key, value); } catch {} }
+
 // --- Gamificação ---
 // Chaves persistência
 const GAMIFICATION_KEY = 'citaniaGamification';
@@ -303,7 +322,7 @@ const gamification = {
 
 // Persistência
 function loadGamification() {
-    const saved = localStorage.getItem(GAMIFICATION_KEY);
+    const saved = safeGetItem(GAMIFICATION_KEY);
     if (saved) {
         try {
             const data = JSON.parse(saved);
@@ -313,17 +332,17 @@ function loadGamification() {
             gamification.userName = data.userName ?? gamification.userName;
         } catch {}
     }
-    gamification.leaderboard = JSON.parse(localStorage.getItem(LEADERBOARD_KEY) || '[]');
+    gamification.leaderboard = JSON.parse(safeGetItem(LEADERBOARD_KEY) || '[]');
 }
 
 function saveGamification() {
-    localStorage.setItem(GAMIFICATION_KEY, JSON.stringify({
+    safeSetItem(GAMIFICATION_KEY, JSON.stringify({
         pontos: gamification.pontos,
         medalhas: gamification.medalhas,
         narrativa: gamification.narrativa,
         userName: gamification.userName
     }));
-    localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(gamification.leaderboard));
+    safeSetItem(LEADERBOARD_KEY, JSON.stringify(gamification.leaderboard));
 }
 
 // UI gamificação
@@ -608,8 +627,8 @@ function mostrarNarrativa() {
 }
 
 function updateScoreDisplay() {
-    DOM.correctCountEl.textContent = state.score.correct;
-    DOM.incorrectCountEl.textContent = state.score.incorrect;
+    if (DOM.correctCountEl) DOM.correctCountEl.textContent = state.score.correct;
+    if (DOM.incorrectCountEl) DOM.incorrectCountEl.textContent = state.score.incorrect;
 }
 
 function updateProgressBar() {
@@ -648,6 +667,11 @@ DOM.userButton?.addEventListener('click', () => {
     saveGamification();
 });
 
+// Substitui o listener do botão verificar:
+DOM.checkButton.removeEventListener?.('click', checkAnswer); // no-op se não existir
+const vibratePref = safeGetItem('citaniaVibrate') === 'on';
+DOM.checkButton.addEventListener('click', vibratePref ? checkAnswerWithVibration : checkAnswer);
+
 // Função para atualizar o display do próximo nível
 function updateNextLevelDisplay() {
     const nextLevelSpan = document.getElementById('next-level-number');
@@ -656,14 +680,6 @@ function updateNextLevelDisplay() {
     }
 }
 // Permitir submeter com a tecla "Enter"
-DOM.answerInput.addEventListener('focus', function() {
-    if (window.innerWidth <= 768) {
-        setTimeout(() => {
-            this.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 300);
-    }
-});
-
 function vibrateDevice(pattern) {
     if ('vibrate' in navigator) {
         navigator.vibrate(pattern);
@@ -700,19 +716,15 @@ DOM.themeToggleButton.addEventListener('click', () => {
 // Aplicar o tema guardado ao carregar a página
 document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('matematicaAppTheme') || 'light';
-    DOM.levelDisplayEl?.parentElement?.classList.add('hidden'); // null-safe
+    DOM.levelDisplayEl?.parentElement?.classList.add('hidden');
     applyTheme(savedTheme);
 
-    // Registar o Service Worker para funcionalidades PWA (offline)
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then(registration => {
-                    console.log('Service Worker registado com sucesso:', registration.scope);
-                })
-                .catch(error => {
-                    console.log('Falha ao registar o Service Worker:', error);
-                });
+            navigator.serviceWorker
+                .register('sw.js', { scope: './' })
+                .then(reg => console.log('Service Worker registado:', reg.scope))
+                .catch(err => console.log('Falha ao registar o Service Worker:', err));
         });
     }
 
@@ -720,6 +732,19 @@ document.addEventListener('DOMContentLoaded', () => {
     loadGamification();
     renderGamificationBar();
     mostrarNarrativa();
-});
 
-//# sourceMappingURL=app.js.map
+    // Iniciar sons (evita 404 se não existirem)
+    initSounds();
+
+    // Acessibilidade nos cards
+    document.querySelectorAll('.card').forEach(card => {
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                startExercise(card.dataset.type);
+            }
+        });
+    });
+});
