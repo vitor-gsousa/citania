@@ -14,16 +14,30 @@
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 </head>
 <body>
-    <!-- Header fixo com tema e score -->
-    <button id="theme-toggle" title="Alternar tema" aria-label="Alternar tema">🌙</button>
-    <div id="score-container">
-        <span>Nível: <span id="level-display">1</span></span>
-        <span>Certas: <span id="correct-count">0</span></span>
-        <span>Erradas: <span id="incorrect-count">0</span></span>
-    </div>
+    <header class="app-header">
+        <div class="header-inner">
+            <button id="theme-toggle" title="Alternar tema" aria-label="Alternar tema">🌙</button>
+
+            <div id="gamification-bar" class="gamification-bar">
+                <button id="user-button" class="user-btn" title="Definir nome">
+                    👤 <span id="user-name">Jogador</span>
+                </button>
+                <div class="points-badges">
+                    <span id="points-pill" class="points-pill" title="Pontos totais">⭐ <span id="points-count">0</span></span>
+                    <div id="badges-strip" class="badges-strip" aria-label="Medalhas"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mantemos o score-container escondido para não partir o JS existente -->
+    <div id="score-container" class="hidden" aria-hidden="true"></div>
     
     <main>
         <h1>Citânia - Matemática Divertida</h1>
+
+        <!-- Narrativa/Missão -->
+        <div id="narrativa" class="gamification-narrativa" style="margin-bottom: 1em; font-weight: 500;"></div>
 
         <!-- Menu Principal -->
         <div id="menu-container">
@@ -81,11 +95,21 @@
 
         <!-- Resumo da Ronda -->
         <div id="summary-area" class="hidden">
-           <h2>🎉 Ronda Concluída!</h2>
-           <p>Conseguiste <strong id="summary-correct">0</strong> em <strong id="summary-total">0</strong> respostas certas.</p>
-           <p id="summary-record-message" role="status"></p>
-           <p id="summary-message">Vamos para o próximo nível?</p>
-           <button id="next-level-button">Avançar para Nível <span id="next-level-number"></span> →</button>
+            <div class="summary-header">
+                <h2>🎉 Ronda Concluída!</h2>
+                <p>Conseguiste <strong id="summary-correct">0</strong> em <strong id="summary-total">0</strong> respostas certas.</p>
+                <p id="summary-record-message" role="status"></p>
+                <p id="summary-message">Vamos para o próximo nível?</p>
+                <button id="next-level-button" class="btn primary">Avançar para Nível <span id="next-level-number"></span> →</button>
+            </div>
+
+            <div class="summary-panels">
+                <!-- Leaderboard -->
+                <section id="leaderboard" class="panel leaderboard"></section>
+                
+                <!-- Medalhas/Badges -->
+                <section id="medalhas" class="panel medals"></section>
+            </div>
         </div>
     </main>
     

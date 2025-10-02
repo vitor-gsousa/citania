@@ -32,8 +32,9 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;       /* header e main ocupam a largura total */
+    justify-content: flex-start;
     min-height: 100vh;
     margin: 0;
     padding: 0;
@@ -47,11 +48,11 @@ main {
     text-align: center;
     background-color: var(--main-bg-color);
     padding: 2rem;
-    margin: 1rem;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin: 1rem auto;          /* centra horizontalmente */
     width: 90%;
     max-width: 800px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .card-container {
@@ -192,86 +193,139 @@ main {
     min-height: 1.5rem;
 }
 
-.hidden {
-    display: none !important;
-}
+.hidden { display: none !important; }
 
-.exercise-container {
-    margin: 2rem 0;
-}
-
-#question {
-    font-size: 1.3rem;
-    margin-bottom: 1.5rem;
-    line-height: 1.5;
-    padding: 0 1rem;
-}
-
-input {
-    padding: 0.75rem;
-    font-size: 1.1rem;
-    width: 100%;
-    max-width: 300px;
-    text-align: center;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    background-color: var(--main-bg-color);
-    color: var(--text-color);
-    margin: 0.5rem auto;
-    display: block;
-}
-
-input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
-
+/* Botões modernos (flat, acessíveis) */
 button {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
+    appearance: none;
+    border: 1px solid var(--border-color);
+    background: var(--main-bg-color);
+    color: var(--text-color);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
     cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    background-color: var(--primary-color);
-    color: white;
-    margin: 0.5rem;
-    transition: background-color 0.3s, transform 0.1s;
-    font-weight: 500;
-    min-height: 44px;
+    transition: transform .04s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,.06);
 }
-
 button:hover {
-    background-color: var(--primary-hover-color);
+    box-shadow: 0 4px 14px rgba(0,0,0,.08);
+    border-color: color-mix(in srgb, var(--border-color), var(--primary-color) 30%);
+}
+button:active { transform: translateY(1px); }
+button:disabled { opacity: .6; cursor: not-allowed; }
+
+.btn.primary, #check-button, #next-button, #next-level-button {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: transparent;
+}
+.btn.primary:hover, #check-button:hover, #next-button:hover, #next-level-button:hover {
+    background: var(--primary-hover-color);
+    box-shadow: 0 6px 18px rgba(99,102,241,.25);
+}
+#back-to-menu {
+    background: transparent;
+    border-color: var(--border-color);
 }
 
-button:active {
-    transform: scale(0.98);
+/* Layout base: header em cima, main abaixo (evita header ao lado do main) */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;       /* header e main ocupam a largura total */
+    justify-content: flex-start;
+    min-height: 100vh;
+}
+main {
+    margin: 1rem auto;          /* centra horizontalmente */
+    width: 90%;
+    max-width: 800px;
 }
 
-#check-button,
-#next-button {
-    width: 100%;
-    max-width: 300px;
-    display: block;
-    margin: 0.5rem auto;
+/* Header sticky com contentor alinhado ao main */
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--main-bg-color);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 4px 14px rgba(0,0,0,.06);
+}
+.header-inner {
+    max-width: 800px;           /* igual ao main */
+    margin: 0 auto;
+    padding: .5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    justify-content: space-between;
 }
 
-#feedback {
-    margin-top: 1.5rem;
-    font-size: 1.1rem;
-    font-weight: bold;
-    min-height: 2rem;
-    padding: 0 1rem;
-    line-height: 1.5;
+/* Botão tema dentro do header */
+.app-header #theme-toggle {
+    position: static;           /* deixa o fluxo normal */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 0;
 }
 
-#feedback.correct {
-    color: var(--correct-color);
+/* Gamification bar agora é apenas um grupo flex (sem sticky próprio) */
+.app-header .gamification-bar {
+    position: static;
+    top: auto;
+    z-index: auto;
+    background: transparent;    /* herda do header */
+    border: 0;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+
+    display: flex;
+    align-items: center;
+    gap: .75rem;
 }
 
-#feedback.incorrect {
-    color: var(--incorrect-color);
+/* Ajustes responsivos do header */
+@media (max-width: 768px) {
+    .header-inner {
+        max-width: 100%;
+        padding: .5rem .75rem;
+    }
 }
+
+/* Overrides para regras antigas que tornavam a barra sticky/flutuante */
+.gamification-bar {
+    position: static !important;
+    top: auto !important;
+    background: transparent !important;
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Remover posições fixas do mobile que empurravam elementos */
+@media (max-width: 768px) {
+    #theme-toggle {
+        position: static !important;
+        box-shadow: none !important;
+    }
+    #score-container {
+        position: static !important;
+        max-width: none !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Leaderboard continua dentro do main; nada ficará ao lado por causa do layout em coluna */
+#leaderboard .entry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .5rem .25rem;
+    border-bottom: 1px dashed var(--border-color);
+}
+#leaderboard .entry:last-child { border-bottom: none; }
 
 /* --- Media Queries para Responsividade --- */
 @media (max-width: 768px) {
@@ -543,4 +597,13 @@ button:active {
             top: max(4.5rem, calc(env(safe-area-inset-top) + 3.75rem));
         }
     }
+}
+
+/* Centrar os botões de ação na área de exercícios */
+.exercise-container #check-button,
+.exercise-container #next-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.75rem auto 0; /* auto nas laterais centra */
 }

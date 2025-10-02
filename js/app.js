@@ -20,7 +20,13 @@ const DOM = {
     summaryTotal: document.getElementById('summary-total'),
     themeToggleButton: document.getElementById('theme-toggle'),
     summaryRecordMessage: document.getElementById('summary-record-message'),
-    exerciseCards: document.querySelectorAll('.card')
+    exerciseCards: document.querySelectorAll('.card'),
+    // NOVOS elementos para gamificação
+    gamificationBar: document.getElementById('gamification-bar'),
+    pointsCountEl: document.getElementById('points-count'),
+    badgesStripEl: document.getElementById('badges-strip'),
+    userButton: document.getElementById('user-button'),
+    userNameEl: document.getElementById('user-name')
 };
 
 // Efeitos Sonoros
@@ -36,7 +42,10 @@ const state = {
     level: 1,
     roundProgress: 0,
     exercisesPerRound: 8,
-    explanationLimit: 5
+    explanationLimit: 5,
+    // NOVO: tempo e série
+    exerciseStartTs: 0,
+    streak: 0
 };
 
 // Função para gerar um número aleatório dentro de um intervalo
@@ -269,6 +278,161 @@ function saveHighScore(exerciseType, level) {
     }
 }
 
+// --- Gamificação ---
+// Chaves persistência
+const GAMIFICATION_KEY = 'citaniaGamification';
+const LEADERBOARD_KEY = 'citaniaLeaderboard';
+
+// Definição de badges
+const BADGES = {
+    explorer:  { id: 'explorer',  label: 'Explorador',        emoji: '🧭' },
+    speedster: { id: 'speedster', label: 'Velocista',         emoji: '⚡' },
+    streak5:   { id: 'streak5',   label: 'Série Perfeita x5', emoji: '🔥' },
+    firstTry:  { id: 'firstTry',  label: 'À Primeira',        emoji: '🎯' },
+    scholar:   { id: 'scholar',   label: 'Estudioso',         emoji: '📚' }
+};
+
+// Estado de gamificação
+const gamification = {
+    pontos: 0,
+    medalhas: [],
+    narrativa: "Bem-vindo à missão Citania! Descobre os segredos da cidade antiga completando desafios.",
+    leaderboard: [],
+    userName: localStorage.getItem('citaniaUserName') || 'Jogador'
+};
+
+// Persistência
+function loadGamification() {
+    const saved = localStorage.getItem(GAMIFICATION_KEY);
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            gamification.pontos = data.pontos ?? gamification.pontos;
+            gamification.medalhas = Array.isArray(data.medalhas) ? data.medalhas : gamification.medalhas;
+            gamification.narrativa = data.narrativa ?? gamification.narrativa;
+            gamification.userName = data.userName ?? gamification.userName;
+        } catch {}
+    }
+    gamification.leaderboard = JSON.parse(localStorage.getItem(LEADERBOARD_KEY) || '[]');
+}
+
+function saveGamification() {
+    localStorage.setItem(GAMIFICATION_KEY, JSON.stringify({
+        pontos: gamification.pontos,
+        medalhas: gamification.medalhas,
+        narrativa: gamification.narrativa,
+        userName: gamification.userName
+    }));
+    localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(gamification.leaderboard));
+}
+
+// UI gamificação
+function renderGamificationBar() {
+    if (DOM.pointsCountEl) DOM.pointsCountEl.textContent = gamification.pontos;
+    if (DOM.userNameEl) DOM.userNameEl.textContent = gamification.userName;
+    if (DOM.badgesStripEl) {
+        DOM.badgesStripEl.innerHTML = gamification.medalhas
+            .map(b => `<span class="badge" title="${b.label}">${b.emoji}</span>`)
+            .join('');
+    }
+    // Preenche lista de medalhas no resumo
+    const medalsList = document.getElementById('medalhas-list');
+    if (medalsList) {
+        medalsList.innerHTML = gamification.medalhas
+            .map(b => `<span class="badge big" title="${b.label}">${b.emoji} ${b.label}</span>`)
+            .join(' ');
+    }
+}
+
+// Função para adicionar pontos
+function adicionarPontos(valor) {
+    gamification.pontos += valor;
+    mostrarFeedbackGamificacao(`+${valor} pontos! Total: ${gamification.pontos}`);
+    renderGamificationBar();
+    saveGamification();
+}
+
+// Função para mostrar feedback motivador
+function mostrarFeedbackGamificacao(mensagem) {
+    if (DOM.feedbackEl) {
+        DOM.feedbackEl.innerHTML += `<br><span class="gamification-feedback">${mensagem}</span>`;
+    }
+}
+
+// Helpers badges
+function hasBadge(id) { return gamification.medalhas.some(b => b.id === id); }
+function awardBadge(badge) {
+    if (hasBadge(badge.id)) return;
+    gamification.medalhas.push(badge);
+    mostrarFeedbackGamificacao(`🏅 Medalha conquistada: ${badge.emoji} ${badge.label}!`);
+    renderGamificationBar();
+    saveGamification();
+}
+
+// Narrativa por nível (Citânia de Sanfins)
+function narrativaPorNivel(level) {
+    switch (level) {
+        case 1:
+            return "Bem-vindo à Citânia de Sanfins, um antigo povoado fortificado (castro) em Paços de Ferreira. Começa a explorar as primeiras casas e caminhos.";
+        case 2:
+            return "Observa as muralhas concêntricas que protegiam a comunidade e as casas circulares construídas em pedra. Avança com cuidado pelos becos do castro.";
+        case 3:
+            return "Chegam influências romanas: novas técnicas e objetos do dia a dia. Descobre como a romanização mudou a vida no povoado.";
+        case 4:
+            return "Visita o Museu Arqueológico da Citânia e liga as pistas: ferramentas, cerâmica e estruturas defensivas contam histórias de séculos.";
+        default:
+            return "Continua a tua missão arqueológica: cada desafio revela mais segredos da Citânia de Sanfins!";
+    }
+}
+
+// Função para mostrar narrativa/missão
+function mostrarNarrativa() {
+    gamification.narrativa = narrativaPorNivel(state.level);
+    const narrativaEl = document.getElementById('narrativa');
+    if (narrativaEl) narrativaEl.textContent = gamification.narrativa;
+    saveGamification();
+}
+
+// Verificar medalhas (com contexto)
+function verificarMedalhas(ctx = {}) {
+    const { isCorrect = false, responseMs = null } = ctx;
+    if (gamification.pontos >= 50) awardBadge(BADGES.explorer);
+    if (isCorrect && responseMs !== null && responseMs <= 5000) awardBadge(BADGES.speedster);
+    if (state.streak >= 5) awardBadge(BADGES.streak5);
+    if (isCorrect && currentExercise.attempts === 1) awardBadge(BADGES.firstTry);
+    if (state.level >= 3) awardBadge(BADGES.scholar);
+}
+
+// Leaderboard
+function atualizarLeaderboard() {
+    const nome = gamification.userName || 'Jogador';
+    const entry = { nome, pontos: gamification.pontos, nivel: state.level, data: new Date().toISOString() };
+
+    // Mantém a melhor pontuação por utilizador
+    const idx = gamification.leaderboard.findIndex(e => e.nome === nome);
+    if (idx >= 0) {
+        if (entry.pontos > gamification.leaderboard[idx].pontos) {
+            gamification.leaderboard[idx] = entry;
+        }
+    } else {
+        gamification.leaderboard.push(entry);
+    }
+
+    gamification.leaderboard.sort((a, b) => b.pontos - a.pontos);
+    gamification.leaderboard = gamification.leaderboard.slice(0, 10);
+    saveGamification();
+}
+
+// Substitui a versão anterior (usa o estado persistido)
+function mostrarLeaderboard() {
+    const leaderboardEl = document.getElementById('leaderboard');
+    if (!leaderboardEl) return;
+    leaderboardEl.innerHTML = '<h3>🏆 Ranking</h3>' +
+        (gamification.leaderboard.map((entry, i) =>
+            `<div>${i + 1}. ${entry.nome} — ${entry.pontos} pts (Nível ${entry.nivel})</div>`
+        ).join('') || '<div>Sem registos…</div>');
+}
+
 // --- Funções Principais da Aplicação ---
 
 function startExercise(type) {
@@ -279,15 +443,18 @@ function startExercise(type) {
 
 function startNewRound() {
     state.roundProgress = 0;
-    DOM.levelDisplayEl.textContent = state.level;
-    DOM.levelDisplayEl.parentElement.classList.remove('hidden');
+    // Mantemos o nível, mas focamos na UI nova
+    if (DOM.levelDisplayEl) {
+        DOM.levelDisplayEl.textContent = state.level;
+        DOM.levelDisplayEl.parentElement?.classList.add('hidden'); // esconder o container antigo
+    }
     DOM.menuContainer.classList.add('hidden');
     DOM.summaryArea.classList.add('hidden');
     DOM.exerciseArea.classList.remove('hidden');
-    
-    // Reset do scroll
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
+
+    mostrarNarrativa(); // narrativa por nível
+    renderGamificationBar(); // refresca barra
     generateNewExercise();
 }
 
@@ -317,15 +484,18 @@ function generateNewExercise() {
     // Foca no input
     DOM.answerInput.focus();
     
+    // Antes de apresentar a nova questão, prepara o tracking
+    currentExercise.attempts = 0; // NOVO: contar tentativas
+    state.exerciseStartTs = Date.now(); // NOVO: medir rapidez
+
     updateProgressBar();
 }
 
 function checkAnswer() {
     if (state.answered) return;
 
+    currentExercise.attempts = (currentExercise.attempts || 0) + 1; // NOVO
     const userAnswer = DOM.answerInput.value;
-    
-    // Validação de resposta vazia
     if (!userAnswer.trim()) {
         DOM.feedbackEl.innerHTML = '⚠️ Por favor, escreve uma resposta.';
         DOM.feedbackEl.className = 'incorrect';
@@ -334,50 +504,59 @@ function checkAnswer() {
 
     const exerciseLogic = exercises[currentExercise.type];
     const isCorrect = exerciseLogic.check(userAnswer, currentExercise.answer, currentExercise.checkType);
-    const correctAnswerFormatted = Array.isArray(currentExercise.answer) 
-        ? currentExercise.answer.join(' x ') 
+    const correctAnswerFormatted = Array.isArray(currentExercise.answer)
+        ? currentExercise.answer.join(' x ')
         : currentExercise.answer;
 
+    const responseMs = Date.now() - (state.exerciseStartTs || Date.now());
+
     if (isCorrect) {
-        sounds.correct.currentTime = 0;
-        sounds.correct.play();
+        sounds.correct.currentTime = 0; sounds.correct.play();
         DOM.feedbackEl.innerHTML = '✅ Muito bem! Resposta correta!';
         DOM.feedbackEl.className = 'correct';
         state.score.correct++;
-        
-        // Esconde o botão verificar e mostra o próximo
-        DOM.checkButton.style.display = 'none';
-        DOM.nextButton.style.display = 'block';
+        state.streak++;
+        adicionarPontos(10);
+        verificarMedalhas({ isCorrect: true, responseMs });
     } else {
-        sounds.incorrect.currentTime = 0;
-        sounds.incorrect.play();
+        sounds.incorrect.currentTime = 0; sounds.incorrect.play();
         DOM.feedbackEl.innerHTML = `❌ Quase! A resposta certa é <strong>${correctAnswerFormatted}</strong>.`;
         DOM.feedbackEl.className = 'incorrect';
         state.score.incorrect++;
-        
-        // Esconde o botão verificar e mostra o próximo
-        DOM.checkButton.style.display = 'none';
-        DOM.nextButton.style.display = 'block';
+        state.streak = 0;
+        adicionarPontos(2); // pequeno incentivo por tentativa
+        verificarMedalhas({ isCorrect: false, responseMs });
     }
 
-    // Adiciona a explicação se estiver na fase de aprendizagem
     if (state.roundProgress <= state.explanationLimit) {
         DOM.feedbackEl.innerHTML += `<br><small style="font-weight: normal; opacity: 0.9;">${currentExercise.explanation}</small>`;
     }
 
     state.answered = true;
     updateScoreDisplay();
-    
-    // Foca no botão próximo para facilitar navegação
+
+    DOM.checkButton.style.display = 'none';
+    DOM.nextButton.style.display = 'block';
     DOM.nextButton.focus();
 }
 
 function showMenu() {
-    DOM.menuContainer.classList.remove('hidden');
-    DOM.levelDisplayEl.parentElement.classList.add('hidden');
+    // Esconde exercício e resumo primeiro
     DOM.exerciseArea.classList.add('hidden');
     DOM.summaryArea.classList.add('hidden');
-    
+
+    // Mostra o menu
+    DOM.menuContainer.classList.remove('hidden');
+
+    // Evita erro quando #level-display não existe
+    DOM.levelDisplayEl?.parentElement?.classList.add('hidden');
+
+    // Limpa UI do exercício
+    if (DOM.feedbackEl) DOM.feedbackEl.textContent = '';
+    if (DOM.answerInput) DOM.answerInput.value = '';
+    if (DOM.checkButton) DOM.checkButton.style.display = 'block';
+    if (DOM.nextButton) DOM.nextButton.style.display = 'none';
+
     // Reset do scroll
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -386,11 +565,9 @@ function showSummary() {
     DOM.exerciseArea.classList.add('hidden');
     DOM.summaryArea.classList.remove('hidden');
     DOM.summaryRecordMessage.textContent = '';
-    
-    // Atualiza o número do próximo nível
+
     updateNextLevelDisplay();
 
-    // Verifica se o próximo nível será um novo recorde
     const highScores = loadHighScores();
     const currentHighScore = highScores[currentExercise.type] || 0;
     if (state.level + 1 > currentHighScore) {
@@ -400,7 +577,34 @@ function showSummary() {
 
     DOM.summaryCorrect.textContent = state.score.correct;
     DOM.summaryTotal.textContent = state.exercisesPerRound;
+
     saveHighScore(currentExercise.type, state.level);
+
+    // Atualiza leaderboard com a pontuação atual
+    atualizarLeaderboard();
+    mostrarLeaderboard();
+
+    // Atualiza narrativa e medalhas no resumo
+    mostrarNarrativa();
+    renderGamificationBar();
+}
+
+// Função para mostrar leaderboard (pode ser chamada no resumo)
+function mostrarLeaderboard() {
+    const leaderboardEl = document.getElementById('leaderboard');
+    if (!leaderboardEl) return;
+    leaderboardEl.innerHTML = '<h3>🏆 Ranking</h3>' +
+        (gamification.leaderboard.map((entry, i) =>
+            `<div>${i + 1}. ${entry.nome} — ${entry.pontos} pts (Nível ${entry.nivel})</div>`
+        ).join('') || '<div>Sem registos…</div>');
+}
+
+// Função para mostrar narrativa/missão
+function mostrarNarrativa() {
+    gamification.narrativa = narrativaPorNivel(state.level);
+    const narrativaEl = document.getElementById('narrativa');
+    if (narrativaEl) narrativaEl.textContent = gamification.narrativa;
+    saveGamification();
 }
 
 function updateScoreDisplay() {
@@ -432,6 +636,16 @@ DOM.nextButton.addEventListener('click', generateNewExercise);
 DOM.nextLevelButton.addEventListener('click', () => {
     state.level++;
     startNewRound();
+});
+
+// 1) Adicionar evento para definir o nome (persistido)
+DOM.userButton?.addEventListener('click', () => {
+    const name = (prompt('Escolhe o teu nome:', gamification.userName) || '').trim();
+    if (!name) return;
+    gamification.userName = name;
+    localStorage.setItem('citaniaUserName', name);
+    renderGamificationBar();
+    saveGamification();
 });
 
 // Função para atualizar o display do próximo nível
@@ -486,7 +700,7 @@ DOM.themeToggleButton.addEventListener('click', () => {
 // Aplicar o tema guardado ao carregar a página
 document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('matematicaAppTheme') || 'light';
-    DOM.levelDisplayEl.parentElement.classList.add('hidden'); // Garante que o nível começa escondido
+    DOM.levelDisplayEl?.parentElement?.classList.add('hidden'); // null-safe
     applyTheme(savedTheme);
 
     // Registar o Service Worker para funcionalidades PWA (offline)
@@ -501,4 +715,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
         });
     }
+
+    // Carregar gamificação persistida
+    loadGamification();
+    renderGamificationBar();
+    mostrarNarrativa();
 });
+
+//# sourceMappingURL=app.js.map
