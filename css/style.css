@@ -290,42 +290,112 @@ main {
 /* Ajustes responsivos do header */
 @media (max-width: 768px) {
     .header-inner {
-        max-width: 100%;
-        padding: .5rem .75rem;
+        max-width: 100% !important;
+        width: 100%;
+        margin: 0;
+        padding: .5rem .75rem; /* aumentar padding lateral */
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
     }
-}
 
-/* Overrides para regras antigas que tornavam a barra sticky/flutuante */
-.gamification-bar {
-    position: static !important;
-    top: auto !important;
-    background: transparent !important;
-    border-bottom: 0 !important;
-    box-shadow: none !important;
-}
+    /* header sem padding extra que limite a barra */
+    .app-header {
+        padding: 0;
+        width: 100%; /* garante largura total */
+    }
 
-/* Remover posições fixas do mobile que empurravam elementos */
-@media (max-width: 768px) {
+    /* gamification bar ocupa toda a largura disponível */
+    .gamification-bar {
+        width: 100%;
+        flex: 1; /* expande para ocupar espaço restante */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .5rem;
+        min-width: 0; /* permite shrinking dos elementos filhos */
+    }
+
+    /* botão tema com largura fixa */
     #theme-toggle {
-        position: static !important;
-        box-shadow: none !important;
+        flex-shrink: 0; /* não reduz */
+        width: 40px;
+        height: 40px;
     }
-    #score-container {
-        position: static !important;
-        max-width: none !important;
-        box-shadow: none !important;
+
+    /* botão utilizador com largura flexível mas com mínimo */
+    .user-btn {
+        flex-shrink: 1;
+        min-width: 60px; /* mínimo para manter legível */
+        max-width: 120px; /* máximo para não dominar */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* pontos e badges ocupam espaço restante */
+    .points-badges {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end; /* alinha à direita */
+        gap: .5rem;
+        min-width: 0;
+    }
+
+    /* pill de pontos com largura fixa */
+    .points-pill {
+        flex-shrink: 0;
+        white-space: nowrap;
+        font-size: 0.9rem; /* ligeiramente menor */
+        padding: .3rem .6rem;
+    }
+
+    /* badges com scroll horizontal se necessário */
+    .badges-strip {
+        display: flex;
+        gap: .25rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+        flex-shrink: 1;
+        min-width: 0;
+    }
+
+    /* badges individuais mais pequenas */
+    .badge {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+        flex-shrink: 0;
     }
 }
 
-/* Leaderboard continua dentro do main; nada ficará ao lado por causa do layout em coluna */
-#leaderboard .entry {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: .5rem .25rem;
-    border-bottom: 1px dashed var(--border-color);
+/* Para ecrãs muito pequenos */
+@media (max-width: 480px) {
+    .header-inner {
+        padding: .4rem .5rem; /* menos padding */
+        gap: .4rem;
+    }
+
+    .user-btn {
+        font-size: 0.85rem;
+        padding: .3rem .5rem;
+        max-width: 100px;
+    }
+
+    .points-pill {
+        font-size: 0.8rem;
+        padding: .25rem .5rem;
+    }
+
+    .badge {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+    }
 }
-#leaderboard .entry:last-child { border-bottom: none; }
 
 /* --- Media Queries para Responsividade --- */
 @media (max-width: 768px) {

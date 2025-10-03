@@ -31,14 +31,15 @@ const DOM = {
     customKeyboard: document.getElementById('custom-keyboard')
 };
 
-// Efeitos Sonoros (stub + lazy init)
+// Efeitos Sonoros (stub + lazy init) — adicionado levelup
 const sounds = {
     correct: { play: () => Promise.resolve(), currentTime: 0 },
-    incorrect: { play: () => Promise.resolve(), currentTime: 0 }
+    incorrect: { play: () => Promise.resolve(), currentTime: 0 },
+    levelup: { play: () => Promise.resolve(), currentTime: 0 } // novo stub
 };
 
 async function initSounds() {
-    const urls = ['./audio/correct.mp3', './audio/incorrect.mp3'];
+    const urls = ['./audio/correct.mp3', './audio/incorrect.mp3', './audio/levelup.mp3'];
     const exists = await Promise.all(
         urls.map(u => fetch(u, { method: 'HEAD' }).then(r => r.ok).catch(() => false))
     );
@@ -49,6 +50,10 @@ async function initSounds() {
     if (exists[1]) {
         sounds.incorrect = new Audio(urls[1]);
         sounds.incorrect.addEventListener('error', () => { sounds.incorrect.play = () => Promise.resolve(); });
+    }
+    if (exists[2]) {
+        sounds.levelup = new Audio(urls[2]);
+        sounds.levelup.addEventListener('error', () => { sounds.levelup.play = () => Promise.resolve(); });
     }
 }
 
@@ -257,6 +262,10 @@ function getPrimeFactors(num) {
 
 function triggerConfetti() {
     if (typeof confetti !== 'function') return; // fallback silencioso
+
+    // toca som de level up (se existir) assim que os confettis começam
+    try { sounds.levelup?.play?.(); } catch (e) { /* silencioso */ }
+
     const duration = 2 * 1000; // 2 segundos
     const animationEnd = Date.now() + duration;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
