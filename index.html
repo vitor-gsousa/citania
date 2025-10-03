@@ -84,12 +84,42 @@
                     type="text" 
                     id="answer-input" 
                     placeholder="A tua resposta" 
-                    inputmode="decimal" 
+                    inputmode="none" 
                     autocomplete="off"
-                    aria-label="Campo de resposta">
+                    aria-label="Campo de resposta"
+                    readonly>
                 <button id="check-button">Verificar Resposta</button>
                 <p id="feedback" role="status" aria-live="polite"></p>
                 <button id="next-button">Próximo Exercício →</button>
+                
+                <!-- Teclado Personalizado -->
+                <div id="custom-keyboard" class="custom-keyboard hidden">
+                    <div class="keyboard-row">
+                        <button class="key" data-value="1">1</button>
+                        <button class="key" data-value="2">2</button>
+                        <button class="key" data-value="3">3</button>
+                    </div>
+                    <div class="keyboard-row">
+                        <button class="key" data-value="4">4</button>
+                        <button class="key" data-value="5">5</button>
+                        <button class="key" data-value="6">6</button>
+                    </div>
+                    <div class="keyboard-row">
+                        <button class="key" data-value="7">7</button>
+                        <button class="key" data-value="8">8</button>
+                        <button class="key" data-value="9">9</button>
+                    </div>
+                    <div class="keyboard-row">
+                        <button class="key" data-value="0">0</button>
+                        <button class="key" data-value=".">.</button>
+                        <button class="key delete" data-value="delete">⌫</button>
+                    </div>
+                    <div class="keyboard-row">
+                        <button class="key" data-value="x">×</button>
+                        <button class="key" data-value="^">^</button>
+                        <button class="key" data-value="clear">C</button>
+                    </div>
+                </div>
             </div>
         </div>
 

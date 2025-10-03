@@ -26,7 +26,9 @@ const DOM = {
     pointsCountEl: document.getElementById('points-count'),
     badgesStripEl: document.getElementById('badges-strip'),
     userButton: document.getElementById('user-button'),
-    userNameEl: document.getElementById('user-name')
+    userNameEl: document.getElementById('user-name'),
+    // NOVO: teclado personalizado
+    customKeyboard: document.getElementById('custom-keyboard')
 };
 
 // Efeitos Sonoros (stub + lazy init)
@@ -507,6 +509,7 @@ function generateNewExercise() {
     currentExercise.attempts = 0; // NOVO: contar tentativas
     state.exerciseStartTs = Date.now(); // NOVO: medir rapidez
 
+    // REMOVIDO: antiguas adições de event listeners aqui (evita duplicação)
     updateProgressBar();
 }
 
@@ -557,6 +560,9 @@ function checkAnswer() {
     DOM.checkButton.style.display = 'none';
     DOM.nextButton.style.display = 'block';
     DOM.nextButton.focus();
+
+    // Esconde o teclado após verificar a resposta
+    DOM.customKeyboard.classList.add('hidden');
 }
 
 function showMenu() {
@@ -748,3 +754,123 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// -------------------------------------------------------------------
+// Substitui os handlers globais problemáticos por delegates no teclado
+// -------------------------------------------------------------------
+
+// Remover os antigos handlers document-level (mousedown/touchstart/click).
+DOM.customKeyboard?.removeEventListener('pointerdown', this);
+DOM.customKeyboard?.removeEventListener('pointerup', this);
+
+// Em vez disso, usamos pointer events no customKeyboard e uma flag.
+let keyboardPointerDown = false;
+
+// Mostra o teclado quando o input recebe foco (único listener)
+DOM.answerInput.addEventListener('focus', () => {
+    DOM.customKeyboard.classList.remove('hidden');
+});
+
+// Blur seguro: só esconde se o foco não estiver no teclado e não houver pointer activo
+DOM.answerInput.addEventListener('blur', () => {
+    setTimeout(() => {
+        if (keyboardPointerDown) return; // a interação com a tecla está em curso
+        if (!DOM.customKeyboard.contains(document.activeElement)) {
+            DOM.customKeyboard.classList.add('hidden');
+        }
+    }, 50);
+});
+
+// Pointer handlers na própria área do teclado — mais fiáveis em touch
+DOM.customKeyboard?.addEventListener('pointerdown', (ev) => {
+    const key = ev.target.closest('.key');
+    if (!key) return;
+    // Sinaliza que o utilizador está a interagir com o teclado (evita blur)
+    keyboardPointerDown = true;
+    // Não prevenir o evento se não necessário; mas prevenir seleções indesejadas
+    ev.preventDefault();
+});
+
+DOM.customKeyboard?.addEventListener('pointerup', (ev) => {
+    const key = ev.target.closest('.key');
+    if (!key) {
+        // liberta a flag por segurança
+        keyboardPointerDown = false;
+        return;
+    }
+
+    const value = key.dataset.value;
+    const input = DOM.answerInput;
+
+    if (value === 'delete') {
+        input.value = input.value.slice(0, -1);
+    } else if (value === 'clear') {
+        input.value = '';
+    } else if (value === 'enter') {
+        checkAnswer();
+    } else {
+        input.value += value;
+    }
+
+    // Mantém foco no input e limpa a flag
+    // Pequeno timeout para garantir compatibilidade em alguns browsers Android
+    setTimeout(() => {
+        try { input.focus(); } catch {}
+        keyboardPointerDown = false;
+    }, 10);
+});
+
+// -------------------------------------------------------------------
+// 4️⃣  Quando a resposta é verificada, esconder o teclado (já estava)
+// -------------------------------------------------------------------
+function checkAnswer() {
+    if (state.answered) return;
+
+    currentExercise.attempts = (currentExercise.attempts || 0) + 1; // NOVO
+    const userAnswer = DOM.answerInput.value;
+    if (!userAnswer.trim()) {
+        DOM.feedbackEl.innerHTML = '⚠️ Por favor, escreve uma resposta.';
+        DOM.feedbackEl.className = 'incorrect';
+        return;
+    }
+
+    const exerciseLogic = exercises[currentExercise.type];
+    const isCorrect = exerciseLogic.check(userAnswer, currentExercise.answer, currentExercise.checkType);
+    const correctAnswerFormatted = Array.isArray(currentExercise.answer)
+        ? currentExercise.answer.join(' x ')
+        : currentExercise.answer;
+
+    const responseMs = Date.now() - (state.exerciseStartTs || Date.now());
+
+    if (isCorrect) {
+        sounds.correct.currentTime = 0; sounds.correct.play();
+        DOM.feedbackEl.innerHTML = '✅ Muito bem! Resposta correta!';
+        DOM.feedbackEl.className = 'correct';
+        state.score.correct++;
+        state.streak++;
+        adicionarPontos(10);
+        verificarMedalhas({ isCorrect: true, responseMs });
+    } else {
+        sounds.incorrect.currentTime = 0; sounds.incorrect.play();
+        DOM.feedbackEl.innerHTML = `❌ Quase! A resposta certa é <strong>${correctAnswerFormatted}</strong>.`;
+        DOM.feedbackEl.className = 'incorrect';
+        state.score.incorrect++;
+        state.streak = 0;
+        adicionarPontos(2); // pequeno incentivo por tentativa
+        verificarMedalhas({ isCorrect: false, responseMs });
+    }
+
+    if (state.roundProgress <= state.explanationLimit) {
+        DOM.feedbackEl.innerHTML += `<br><small style="font-weight: normal; opacity: 0.9;">${currentExercise.explanation}</small>`;
+    }
+
+    state.answered = true;
+    updateScoreDisplay();
+
+    DOM.checkButton.style.display = 'none';
+    DOM.nextButton.style.display = 'block';
+    DOM.nextButton.focus();
+
+    // Esconde o teclado após verificar a resposta
+    DOM.customKeyboard.classList.add('hidden');
+}
