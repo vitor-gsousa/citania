@@ -31,33 +31,13 @@ const DOM = {
     customKeyboard: document.getElementById('custom-keyboard')
 };
 
-// Efeitos Sonoros (stub + lazy init) — adicionado levelup
-const sounds = {
-    correct: { play: () => Promise.resolve(), currentTime: 0 },
-    incorrect: { play: () => Promise.resolve(), currentTime: 0 },
-    levelup: { play: () => Promise.resolve(), currentTime: 0 } // novo stub
-};
-
-async function initSounds() {
-    const urls = ['./audio/correct.mp3', './audio/incorrect.mp3', './audio/levelup.mp3'];
-    const exists = await Promise.all(
-        urls.map(u => fetch(u, { method: 'HEAD' }).then(r => r.ok).catch(() => false))
-    );
-    if (exists[0]) {
-        sounds.correct = new Audio(urls[0]);
-        sounds.correct.addEventListener('error', () => { sounds.correct.play = () => Promise.resolve(); });
-    }
-    if (exists[1]) {
-        sounds.incorrect = new Audio(urls[1]);
-        sounds.incorrect.addEventListener('error', () => { sounds.incorrect.play = () => Promise.resolve(); });
-    }
-    if (exists[2]) {
-        sounds.levelup = new Audio(urls[2]);
-        sounds.levelup.addEventListener('error', () => { sounds.levelup.play = () => Promise.resolve(); });
-    }
+// Estado UI global — declarar cedo para evitar TDZ
+if (typeof window.__citania_uiState__ === 'undefined') {
+    window.__citania_uiState__ = { inExercise: false };
 }
+const uiState = window.__citania_uiState__;
 
-let currentExercise = {};
+// Estado global da aplicação
 const state = {
     score: { correct: 0, incorrect: 0 },
     answered: false,
@@ -65,44 +45,161 @@ const state = {
     roundProgress: 0,
     exercisesPerRound: 8,
     explanationLimit: 5,
-    // NOVO: tempo e série
     exerciseStartTs: 0,
     streak: 0
 };
 
-// Função para gerar um número aleatório dentro de um intervalo
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+// Mapa transitório de progresso por tipo
+const transientProgress = {};
+
+// Exercício corrente
+let currentExercise = {};
+
+// Função para gerar exercício
+function generateNewExercise() {
+    if (!currentExercise.type || !exercises[currentExercise.type]) {
+        console.error('Tipo de exercício inválido:', currentExercise.type);
+        return;
+    }
+    const exercise = exercises[currentExercise.type];
+    const problem = exercise.generate(state.level);
+    currentExercise.answer = problem.answer;
+    currentExercise.explanation = problem.explanation;
+    currentExercise.checkType = problem.checkType;
+
+    // Atualizar UI
+    const questionEl = document.getElementById('question');
+    const answerInput = document.getElementById('answer-input');
+    const feedbackEl = document.getElementById('feedback');
+    if (questionEl) questionEl.innerHTML = problem.question;
+    if (answerInput) {
+        answerInput.value = '';
+        answerInput.focus();
+    }
+    if (feedbackEl) feedbackEl.textContent = '';
+    state.answered = false;
+}
+
+// Função para verificar resposta
+function checkAnswer() {
+    const answerInput = document.getElementById('answer-input');
+    if (!answerInput || state.answered) return;
+    const userAnswer = answerInput.value.trim();
+    if (!userAnswer) return;
+
+    const exercise = exercises[currentExercise.type];
+    const isCorrect = exercise.check(userAnswer, currentExercise.answer, currentExercise.checkType);
+
+    state.answered = true;
+    state.score.correct += isCorrect ? 1 : 0;
+    state.score.incorrect += !isCorrect ? 1 : 0;
+
+    // Atualizar UI
+    const feedbackEl = document.getElementById('feedback');
+    if (feedbackEl) {
+        feedbackEl.textContent = isCorrect ? 'Correto!' : `Incorreto. ${currentExercise.explanation}`;
+        feedbackEl.className = isCorrect ? 'correct' : 'incorrect';
+    }
+
+    // Progresso
+    if (isCorrect) {
+        transientProgress[currentExercise.type] = (transientProgress[currentExercise.type] || 0) + 1;
+        state.roundProgress = transientProgress[currentExercise.type];
+        updateProgressBar();
+        if (state.roundProgress >= state.exercisesPerRound) {
+            state.level++;
+            saveProgressForType(currentExercise.type, state.level);
+            transientProgress[currentExercise.type] = 0;
+            state.roundProgress = 0;
+            updateProgressBar();
+            triggerConfetti();
+            showLevelUpUI();
+        } else {
+            // Próximo exercício
+            setTimeout(generateNewExercise, 1000);
+        }
+    }
+}
+
+// Função para atualizar barra de progresso
+function updateProgressBar() {
+    const progressBar = document.getElementById('progress-bar');
+    if (progressBar) {
+        const pct = Math.min(100, (state.roundProgress / state.exercisesPerRound) * 100);
+        progressBar.style.width = pct + '%';
+        progressBar.setAttribute('aria-valuenow', state.roundProgress);
+        progressBar.setAttribute('aria-valuemax', state.exercisesPerRound);
+    }
+}
+
+// Função para mostrar confetti
+function triggerConfetti() {
+    // Implementação stub
+    console.log('Confetti triggered');
+}
+
+// Função para mostrar UI de level up
+function showLevelUpUI() {
+    // Implementação stub
+    console.log('Level up UI shown');
+}
+
+// Função para atualizar o display de pontuação (mantida para compatibilidade)
+function updateScoreDisplay() {
+    if (DOM.correctCountEl) {
+        DOM.correctCountEl.textContent = state.score.correct;
+    }
+    if (DOM.incorrectCountEl) {
+        DOM.incorrectCountEl.textContent = state.score.incorrect;
+    }
+}
+
+// Função para mostrar a área de exercício
+function showExerciseArea() {
+    const menu = document.getElementById('menu-container');
+    const exercise = document.getElementById('exercise-area');
+    if (menu) menu.classList.add('hidden');
+    if (exercise) exercise.classList.remove('hidden');
+}
+
+// Função para sair do exercício
+function exitExercise() {
+    uiState.inExercise = false;
+    if (currentExercise.type) {
+        transientProgress[currentExercise.type] = 0;
+    }
+    state.roundProgress = 0;
+    updateProgressBar();
+    const exercise = document.getElementById('exercise-area');
+    const menu = document.getElementById('menu-container');
+    if (exercise) exercise.classList.add('hidden');
+    if (menu) menu.classList.remove('hidden');
 }
 
 // --- Lógica dos Exercícios ---
-
 const exercises = {
     fractionToDecimal: {
         generate: (level) => {
             let numerator, denominator;
-            const maxNum = 10 + level * 2; // Aumenta a complexidade com o nível
-            // Gera uma fração que não seja um número inteiro
+            const maxNum = 10 + level * 2;
             do {
                 numerator = getRandomInt(1, maxNum - 1);
                 denominator = getRandomInt(2, maxNum);
             } while (numerator % denominator === 0);
 
-            DOM.questionEl.textContent = `Quanto é ${numerator}/${denominator} em decimal? (arredonda às centésimas)`;
             return {
+                question: `Quanto é ${numerator}/${denominator} em decimal? (arredonda às centésimas)`,
                 answer: (numerator / denominator).toFixed(2),
                 explanation: `Para converter ${numerator}/${denominator} para decimal, divide-se o numerador (${numerator}) pelo denominador (${denominator}). O resultado é ${numerator / denominator}, que arredondado às centésimas fica ${(numerator / denominator).toFixed(2)}.`
             };
         },
         check: (userAnswer, correctAnswer) => {
-            // Permite vírgula ou ponto como separador decimal
             const formattedUserAnswer = parseFloat(userAnswer.replace(',', '.').trim()).toFixed(2);
             return formattedUserAnswer === correctAnswer;
         }
     },
     primeFactorization: {
         generate: (level) => {
-            // Gera um número composto entre 10 e 100
             let number;
             const minNum = 10 + (level - 1) * 10;
             const maxNum = 100 + (level - 1) * 20;
@@ -111,29 +208,26 @@ const exercises = {
             } while (isPrime(number));
 
             const factors = getPrimeFactors(number);
-            DOM.questionEl.textContent = `Decompõe o número ${number} em fatores primos. (ex: 2 x 2 x 3)`;
             return {
-                answer: factors, // A resposta é um array de fatores
+                question: `Decompõe o número ${number} em fatores primos. (ex: 2 x 2 x 3)`,
+                answer: factors,
                 explanation: `Para decompor ${number}, dividimos sucessivamente por números primos: ${factors.join(' x ')}.`
             };
         },
         check: (userAnswer, correctAnswerArray) => {
-            // Extrai os números da resposta do utilizador
             const userFactors = userAnswer.match(/\d+/g)?.map(Number).sort((a, b) => a - b) || [];
-            
-            // Compara os arrays de fatores (independentemente da ordem)
             return JSON.stringify(userFactors) === JSON.stringify(correctAnswerArray.sort((a, b) => a - b));
         }
     },
-    gcd: { // Máximo Divisor Comum
+    gcd: {
         generate: (level) => {
             const factor = getRandomInt(2, 5 + level);
             const num1 = factor * getRandomInt(2, 5 + level);
             const num2 = factor * getRandomInt(2, 5 + level);
-            DOM.questionEl.textContent = `Qual é o Máximo Divisor Comum (MDC) entre ${num1} e ${num2}?`;
             const answer = gcd(num1, num2);
             return {
-                answer: answer,
+                question: `Qual é o Máximo Divisor Comum (MDC) entre ${num1} e ${num2}?`,
+                answer,
                 explanation: `O MDC é o maior número que divide ${num1} e ${num2} sem deixar resto. Neste caso, a resposta é ${answer}.`
             };
         },
@@ -141,14 +235,14 @@ const exercises = {
             return parseInt(userAnswer.trim()) === correctAnswer;
         }
     },
-    lcm: { // Mínimo Múltiplo Comum
+    lcm: {
         generate: (level) => {
             const num1 = getRandomInt(2, 10 + level);
             const num2 = getRandomInt(2, 10 + level);
-            DOM.questionEl.textContent = `Qual é o Mínimo Múltiplo Comum (MMC) entre ${num1} e ${num2}?`;
             const answer = lcm(num1, num2);
             return {
-                answer: answer,
+                question: `Qual é o Mínimo Múltiplo Comum (MMC) entre ${num1} e ${num2}?`,
+                answer,
                 explanation: `O MMC é o menor número que é múltiplo de ${num1} e de ${num2}. A resposta é ${answer}. Uma forma de calcular é (num1 * num2) / MDC(num1, num2).`
             };
         },
@@ -158,31 +252,28 @@ const exercises = {
     },
     powerMultiplication: {
         generate: (level) => {
-            // 50% de hipótese de ter bases diferentes
             if (Math.random() < 0.5) {
-                // Bases iguais (regra aplica-se)
                 const base = getRandomInt(2, 5 + level);
                 const exp1 = getRandomInt(2, 5 + level);
                 const exp2 = getRandomInt(2, 5 + level);
                 const finalExp = exp1 + exp2;
 
-                DOM.questionEl.innerHTML = `Qual é o resultado de <strong>${base}<sup>${exp1}</sup> &times; ${base}<sup>${exp2}</sup></strong>? <br><small>(responda na forma de potência, ex: 2^5)</small>`;
                 return {
+                    question: `Qual é o resultado de <strong>${base}<sup>${exp1}</sup> &times; ${base}<sup>${exp2}</sup></strong>? <br><small>(responda na forma de potência, ex: 2^5)</small>`,
                     answer: `${base}^${finalExp}`,
                     explanation: `Para multiplicar potências com a mesma base, mantém-se a base (${base}) e somam-se os expoentes (${exp1} + ${exp2} = ${finalExp}).`,
                     checkType: 'string'
                 };
             } else {
-                // Bases diferentes (regra não se aplica)
                 let base1 = getRandomInt(2, 5);
                 let base2 = getRandomInt(2, 5);
-                if (base1 === base2) base2++; // Garante que são diferentes
+                if (base1 === base2) base2++;
                 const exp1 = getRandomInt(2, 3);
                 const exp2 = getRandomInt(2, 3);
                 const result = Math.pow(base1, exp1) * Math.pow(base2, exp2);
 
-                DOM.questionEl.innerHTML = `Qual é o resultado de <strong>${base1}<sup>${exp1}</sup> &times; ${base2}<sup>${exp2}</sup></strong>?`;
                 return {
+                    question: `Qual é o resultado de <strong>${base1}<sup>${exp1}</sup> &times; ${base2}<sup>${exp2}</sup></strong>?`,
                     answer: result,
                     explanation: `Como as bases são diferentes (${base1} e ${base2}), não podemos somar os expoentes. Calculamos o valor de cada potência e depois multiplicamos: ${base1**exp1} &times; ${base2**exp2} = ${result}.`,
                     checkType: 'number'
@@ -193,7 +284,6 @@ const exercises = {
             if (checkType === 'number') {
                 return parseInt(userAnswer.trim()) === correctAnswer;
             }
-            // Default to string check for power format
             return userAnswer.replace(/\s/g, '') === correctAnswer;
         }
     },
@@ -201,17 +291,15 @@ const exercises = {
         generate: (level) => {
             const base = getRandomInt(2, 5 + level);
             const exp1 = getRandomInt(3, 8 + level);
-            const exp2 = getRandomInt(2, exp1 - 1); // Garante que exp1 > exp2 para resultado positivo
+            const exp2 = getRandomInt(2, exp1 - 1);
             const finalExp = exp1 - exp2;
 
-            DOM.questionEl.innerHTML = `Qual é o resultado de <strong>${base}<sup>${exp1}</sup> &divide; ${base}<sup>${exp2}</sup></strong>? <br><small>(responda na forma de potência, ex: 2^5)</small>`;
             const answer = `${base}^${finalExp}`;
             return {
-                answer: answer,
+                question: `Qual é o resultado de <strong>${base}<sup>${exp1}</sup> &divide; ${base}<sup>${exp2}</sup></strong>? <br><small>(responda na forma de potência, ex: 2^5)</small>`,
+                answer,
                 explanation: `Para dividir potências com a mesma base, mantém-se a base (${base}) e subtraem-se os expoentes (${exp1} - ${exp2} = ${finalExp}).`
             };
-            // Nota: A divisão com bases diferentes pode resultar em decimais,
-            // o que pode ser complexo para este nível. Mantemos apenas com bases iguais por agora.
         },
         check: (userAnswer, correctAnswer) => {
             return userAnswer.replace(/\s/g, '') === correctAnswer;
@@ -219,23 +307,22 @@ const exercises = {
     }
 };
 
-// --- Funções de Apoio para os Exercícios ---
+// --- Funções de Apoio ---
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-// Função para calcular o Máximo Divisor Comum (usando o algoritmo de Euclides)
 function gcd(a, b) {
     while (b) {
         [a, b] = [b, a % b];
     }
     return a;
 }
-
-// Função para calcular o Mínimo Múltiplo Comum
 function lcm(a, b) {
-    // A fórmula é |a * b| / mdc(a, b)
-    // Se a ou b for 0, o MMC é 0.
     return (a === 0 || b === 0) ? 0 : Math.abs(a * b) / gcd(a, b);
 }
-
 function isPrime(num) {
     if (num <= 1) return false;
     for (let i = 2, s = Math.sqrt(num); i <= s; i++) {
@@ -243,7 +330,6 @@ function isPrime(num) {
     }
     return true;
 }
-
 function getPrimeFactors(num) {
     const factors = [];
     let divisor = 2;
@@ -258,7 +344,32 @@ function getPrimeFactors(num) {
     return factors;
 }
 
-// --- Funções de Animação ---
+// --- Animações / Sons / Gamificação (mantidos) ---
+
+// Objeto para armazenar os sons da aplicação
+const sounds = {
+    correct: null,
+    incorrect: null,
+    levelup: null
+};
+
+// Função para inicializar os objetos de áudio
+function initSounds() {
+    try {
+        // Caminhos baseados na estrutura do projeto (README.md)
+        sounds.correct = new Audio('./audio/correct.mp3');
+        sounds.incorrect = new Audio('./audio/incorrect.mp3');
+        sounds.levelup = new Audio('./audio/levelup.mp3');
+
+        // Pré-carregar os sons para evitar atrasos na primeira reprodução
+        Object.values(sounds).forEach(sound => sound?.load());
+        console.log('Audio sounds initialized successfully.');
+    } catch (e) {
+        console.error('Could not initialize sounds. Audio playback will be disabled.', e);
+        // Criar objetos dummy para evitar erros de `play()` se a inicialização falhar
+        sounds.correct = sounds.incorrect = sounds.levelup = { play: () => {}, load: () => {} };
+    }
+}
 
 function triggerConfetti() {
     if (typeof confetti !== 'function') return; // fallback silencioso
@@ -305,8 +416,40 @@ function saveHighScore(exerciseType, level) {
     }
 }
 
-function safeGetItem(key) { try { return localStorage.getItem(key); } catch { return null; } }
-function safeSetItem(key, value) { try { localStorage.setItem(key, value); } catch {} }
+// Persistência de progresso por tipo de exercício
+const PROGRESS_KEY = 'citania_progress_v1';
+
+// Leitura/escrita seguras em localStorage
+function safeGetItem(key) {
+    try { return localStorage.getItem(key); } catch { return null; }
+}
+function safeSetItem(key, value) {
+    try { localStorage.setItem(key, value); } catch {}
+}
+
+// Guarda o nível para um tipo de exercício
+function saveProgressForType(exerciseType, level) {
+    if (!exerciseType) return;
+    const raw = safeGetItem(PROGRESS_KEY) || '{}';
+    let map;
+    try { map = JSON.parse(raw); } catch { map = {}; }
+    map[exerciseType] = Number(level) || 1;
+    safeSetItem(PROGRESS_KEY, JSON.stringify(map));
+}
+
+// Carrega o nível guardado para um tipo (retorna 1 se não houver)
+function loadProgressForType(exerciseType) {
+    if (!exerciseType) return 1;
+    const raw = safeGetItem(PROGRESS_KEY);
+    if (!raw) return 1;
+    try {
+        const map = JSON.parse(raw);
+        const lvl = Number(map[exerciseType]);
+        return (Number.isFinite(lvl) && lvl > 0) ? lvl : 1;
+    } catch {
+        return 1;
+    }
+}
 
 // --- Gamificação ---
 // Chaves persistência
@@ -397,6 +540,82 @@ function awardBadge(badge) {
     mostrarFeedbackGamificacao(`🏅 Medalha conquistada: ${badge.emoji} ${badge.label}!`);
     renderGamificationBar();
     saveGamification();
+
+    // Inserir placeholder / animação junto da gamification bar
+    const wrapper = document.createElement('div');
+    wrapper.className = 'lottie-placeholder badge-earned';
+    const target = DOM.badgesStripEl || document.getElementById('medalhas');
+    if (!target) return;
+
+    // Se existir um ficheiro lottie em /animations/{badge.id}.json, tenta carregar
+    const lottiePath = `./animations/${badge.id}.json`;
+    fetch(lottiePath, { method: 'HEAD' }).then(resp => {
+        if (!resp.ok) {
+            // fallback: adiciona SVG pequeno inline e anima CSS
+            wrapper.innerHTML = `<svg class="badge-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2l2.2 4.5L19 8l-3.5 3.4L16 17l-4-2.1L8 17l.5-5.6L5 8l4.8-1.5L12 2z" fill="currentColor"/></svg>`;
+            target.insertBefore(wrapper, target.firstChild);
+            return;
+        }
+        // Carrega lottie e anima
+        ensureLottie().then(lottie => {
+            target.insertBefore(wrapper, target.firstChild);
+            lottie.loadAnimation({
+                container: wrapper,
+                renderer: 'svg',
+                loop: false,
+                autoplay: true,
+                path: lottiePath
+            });
+        }).catch(() => {
+            // fallback SVG
+            wrapper.innerHTML = `<svg class="badge-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2l2.2 4.5L19 8l-3.5 3.4L16 17l-4-2.1L8 17l.5-5.6L5 8l4.8-1.5L12 2z" fill="currentColor"/></svg>`;
+            target.insertBefore(wrapper, target.firstChild);
+        });
+    }).catch(() => {
+        wrapper.innerHTML = `<svg class="badge-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2l2.2 4.5L19 8l-3.5 3.4L16 17l-4-2.1L8 17l.5-5.6L5 8l4.8-1.5L12 2z" fill="currentColor"/></svg>`;
+        target.insertBefore(wrapper, target.firstChild);
+    });
+}
+
+function awardBadge(badge) {
+    if (hasBadge(badge.id)) return;
+    gamification.medalhas.push(badge);
+    mostrarFeedbackGamificacao(`Medalha conquistada: ${badge.label}!`);
+    renderGamificationBar();
+    saveGamification();
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'lottie-placeholder badge-earned';
+    const target = DOM.badgesStripEl || document.getElementById('medalhas');
+    if (!target) return;
+
+    const lottiePath = `./animations/${badge.id}.json`;
+
+    // Verifica existência do ficheiro Lottie e tenta animar, senão fallback
+    fetch(lottiePath, { method: 'HEAD' }).then(resp => {
+        if (!resp.ok) {
+            // fallback inline SVG
+            wrapper.innerHTML = `<svg class="badge-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2l2.2 4.5L19 8l-3.5 3.4L16 17l-4-2.1L8 17l.5-5.6L5 8l4.8-1.5L12 2z" fill="currentColor"/></svg>`;
+            target.insertBefore(wrapper, target.firstChild);
+            return;
+        }
+        ensureLottie().then(lottie => {
+            target.insertBefore(wrapper, target.firstChild);
+            lottie.loadAnimation({
+                container: wrapper,
+                renderer: 'svg',
+                loop: false,
+                autoplay: true,
+                path: lottiePath
+            });
+        }).catch(() => {
+            wrapper.innerHTML = `<svg class="badge-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2l2.2 4.5L19 8l-3.5 3.4L16 17l-4-2.1L8 17l.5-5.6L5 8l4.8-1.5L12 2z" fill="currentColor"/></svg>`;
+            target.insertBefore(wrapper, target.firstChild);
+        });
+    }).catch(() => {
+        wrapper.innerHTML = `<svg class="badge-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2l2.2 4.5L19 8l-3.5 3.4L16 17l-4-2.1L8 17l.5-5.6L5 8l4.8-1.5L12 2z" fill="currentColor"/></svg>`;
+        target.insertBefore(wrapper, target.firstChild);
+    });
 }
 
 // Narrativa por nível (Citânia de Sanfins)
@@ -465,12 +684,6 @@ function mostrarLeaderboard() {
 
 // --- Funções Principais da Aplicação ---
 
-function startExercise(type) {
-    state.level = 1;
-    currentExercise.type = type;
-    startNewRound();
-}
-
 function startNewRound() {
     state.roundProgress = 0;
     // Mantemos o nível, mas focamos na UI nova
@@ -488,281 +701,44 @@ function startNewRound() {
     generateNewExercise();
 }
 
-function generateNewExercise() {
-    if (state.roundProgress >= state.exercisesPerRound) {
-        showSummary();
-        return;
-    }
+function startExercise(type) {
+        if (!type) {
+            console.warn('startExercise: type not provided');
+            return;
+        }
+        
+        if (uiState.inExercise) {
+            console.debug('startExercise ignored: already in exercise', type);
+            return;
+        }
 
-    state.roundProgress++;
-    const exerciseLogic = exercises[currentExercise.type];
-    const newProblem = exerciseLogic.generate(state.level);
-    currentExercise.answer = newProblem.answer;
-    currentExercise.explanation = newProblem.explanation;
-    currentExercise.checkType = newProblem.checkType;
-    state.answered = false;
+        // Validar elementos DOM críticos
+        if (!DOM.exerciseArea || !DOM.menuContainer) {
+            console.error('exerciseArea not found - cannot start exercise');
+            return;
+        }
 
-    // Limpa o estado anterior
-    DOM.feedbackEl.textContent = '';
-    DOM.answerInput.value = '';
-    DOM.feedbackEl.className = '';
-    
-    // Mostra o botão verificar e esconde o próximo
-    DOM.checkButton.style.display = 'block';
-    DOM.nextButton.style.display = 'none';
-    
-    // Foca no input
-    DOM.answerInput.focus();
-    
-    // Antes de apresentar a nova questão, prepara o tracking
-    currentExercise.attempts = 0; // NOVO: contar tentativas
-    state.exerciseStartTs = Date.now(); // NOVO: medir rapidez
+        uiState.inExercise = true;
+        
+        // Restaurar nível guardado
+        state.level = loadProgressForType(type) || state.level || 1;
+        currentExercise.type = type;
 
-    // REMOVIDO: antiguas adições de event listeners aqui (evita duplicação)
-    updateProgressBar();
+        // Reset progresso transitório
+        transientProgress[type] = 0;
+        state.roundProgress = 0;
+        
+        // Mostrar área de exercício
+        showExerciseArea();
+        updateProgressBar();
+
+        try {
+            generateNewExercise();
+        } catch (err) {
+            console.error('generateNewExercise erro:', err);
+            uiState.inExercise = false;
+        }
 }
-
-function checkAnswer() {
-    if (state.answered) return;
-
-    currentExercise.attempts = (currentExercise.attempts || 0) + 1; // NOVO
-    const userAnswer = DOM.answerInput.value;
-    if (!userAnswer.trim()) {
-        DOM.feedbackEl.innerHTML = '⚠️ Por favor, escreve uma resposta.';
-        DOM.feedbackEl.className = 'incorrect';
-        return;
-    }
-
-    const exerciseLogic = exercises[currentExercise.type];
-    const isCorrect = exerciseLogic.check(userAnswer, currentExercise.answer, currentExercise.checkType);
-    const correctAnswerFormatted = Array.isArray(currentExercise.answer)
-        ? currentExercise.answer.join(' x ')
-        : currentExercise.answer;
-
-    const responseMs = Date.now() - (state.exerciseStartTs || Date.now());
-
-    if (isCorrect) {
-        sounds.correct.currentTime = 0; sounds.correct.play();
-        DOM.feedbackEl.innerHTML = '✅ Muito bem! Resposta correta!';
-        DOM.feedbackEl.className = 'correct';
-        state.score.correct++;
-        state.streak++;
-        adicionarPontos(10);
-        verificarMedalhas({ isCorrect: true, responseMs });
-    } else {
-        sounds.incorrect.currentTime = 0; sounds.incorrect.play();
-        DOM.feedbackEl.innerHTML = `❌ Quase! A resposta certa é <strong>${correctAnswerFormatted}</strong>.`;
-        DOM.feedbackEl.className = 'incorrect';
-        state.score.incorrect++;
-        state.streak = 0;
-        adicionarPontos(2); // pequeno incentivo por tentativa
-        verificarMedalhas({ isCorrect: false, responseMs });
-    }
-
-    if (state.roundProgress <= state.explanationLimit) {
-        DOM.feedbackEl.innerHTML += `<br><small style="font-weight: normal; opacity: 0.9;">${currentExercise.explanation}</small>`;
-    }
-
-    state.answered = true;
-    updateScoreDisplay();
-
-    DOM.checkButton.style.display = 'none';
-    DOM.nextButton.style.display = 'block';
-    DOM.nextButton.focus();
-
-    // Esconde o teclado após verificar a resposta
-    DOM.customKeyboard.classList.add('hidden');
-}
-
-function showMenu() {
-    // Esconde exercício e resumo primeiro
-    DOM.exerciseArea.classList.add('hidden');
-    DOM.summaryArea.classList.add('hidden');
-
-    // Mostra o menu
-    DOM.menuContainer.classList.remove('hidden');
-
-    // Evita erro quando #level-display não existe
-    DOM.levelDisplayEl?.parentElement?.classList.add('hidden');
-
-    // Limpa UI do exercício
-    if (DOM.feedbackEl) DOM.feedbackEl.textContent = '';
-    if (DOM.answerInput) DOM.answerInput.value = '';
-    if (DOM.checkButton) DOM.checkButton.style.display = 'block';
-    if (DOM.nextButton) DOM.nextButton.style.display = 'none';
-
-    // Reset do scroll
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function showSummary() {
-    DOM.exerciseArea.classList.add('hidden');
-    DOM.summaryArea.classList.remove('hidden');
-    DOM.summaryRecordMessage.textContent = '';
-
-    updateNextLevelDisplay();
-
-    const highScores = loadHighScores();
-    const currentHighScore = highScores[currentExercise.type] || 0;
-    if (state.level + 1 > currentHighScore) {
-        DOM.summaryRecordMessage.textContent = '🎉 Novo recorde de nível!';
-        triggerConfetti();
-    }
-
-    DOM.summaryCorrect.textContent = state.score.correct;
-    DOM.summaryTotal.textContent = state.exercisesPerRound;
-
-    saveHighScore(currentExercise.type, state.level);
-
-    // Atualiza leaderboard com a pontuação atual
-    atualizarLeaderboard();
-    mostrarLeaderboard();
-
-    // Atualiza narrativa e medalhas no resumo
-    mostrarNarrativa();
-    renderGamificationBar();
-}
-
-// Função para mostrar leaderboard (pode ser chamada no resumo)
-function mostrarLeaderboard() {
-    const leaderboardEl = document.getElementById('leaderboard');
-    if (!leaderboardEl) return;
-    leaderboardEl.innerHTML = '<h3>🏆 Ranking</h3>' +
-        (gamification.leaderboard.map((entry, i) =>
-            `<div>${i + 1}. ${entry.nome} — ${entry.pontos} pts (Nível ${entry.nivel})</div>`
-        ).join('') || '<div>Sem registos…</div>');
-}
-
-// Função para mostrar narrativa/missão
-function mostrarNarrativa() {
-    gamification.narrativa = narrativaPorNivel(state.level);
-    const narrativaEl = document.getElementById('narrativa');
-    if (narrativaEl) narrativaEl.textContent = gamification.narrativa;
-    saveGamification();
-}
-
-function updateScoreDisplay() {
-    if (DOM.correctCountEl) DOM.correctCountEl.textContent = state.score.correct;
-    if (DOM.incorrectCountEl) DOM.incorrectCountEl.textContent = state.score.incorrect;
-}
-
-function updateProgressBar() {
-    const progressPercentage = ((state.roundProgress - 1) / state.exercisesPerRound) * 100;
-    DOM.progressBar.style.width = `${progressPercentage}%`;
-}
-
-function resetScore() {
-    state.score.correct = 0;
-    state.score.incorrect = 0;
-    updateScoreDisplay();
-}
-
-// Event Listeners
-DOM.exerciseCards.forEach(card => {
-    card.addEventListener('click', () => {
-        startExercise(card.dataset.type);
-    });
-});
-
-DOM.backButton.addEventListener('click', showMenu);
-DOM.checkButton.addEventListener('click', checkAnswer);
-DOM.nextButton.addEventListener('click', generateNewExercise);
-DOM.nextLevelButton.addEventListener('click', () => {
-    state.level++;
-    startNewRound();
-});
-
-// 1) Adicionar evento para definir o nome (persistido)
-DOM.userButton?.addEventListener('click', () => {
-    const name = (prompt('Escolhe o teu nome:', gamification.userName) || '').trim();
-    if (!name) return;
-    gamification.userName = name;
-    localStorage.setItem('citaniaUserName', name);
-    renderGamificationBar();
-    saveGamification();
-});
-
-// Substitui o listener do botão verificar:
-DOM.checkButton.removeEventListener?.('click', checkAnswer); // no-op se não existir
-const vibratePref = safeGetItem('citaniaVibrate') === 'on';
-DOM.checkButton.addEventListener('click', vibratePref ? checkAnswerWithVibration : checkAnswer);
-
-// Função para atualizar o display do próximo nível
-function updateNextLevelDisplay() {
-    const nextLevelSpan = document.getElementById('next-level-number');
-    if (nextLevelSpan) {
-        nextLevelSpan.textContent = state.level + 1;
-    }
-}
-// Permitir submeter com a tecla "Enter"
-function vibrateDevice(pattern) {
-    if ('vibrate' in navigator) {
-        navigator.vibrate(pattern);
-    }
-}
-
-function checkAnswerWithVibration() {
-    checkAnswer();
-    
-    if (state.answered) {
-        const isCorrect = DOM.feedbackEl.classList.contains('correct');
-        vibrateDevice(isCorrect ? [50] : [100, 50, 100]);
-    }
-}
-
-// --- Lógica do Tema (Modo Escuro) ---
-
-function applyTheme(theme) {
-    if (theme === 'dark') {
-        document.body.classList.add('dark-mode');
-        DOM.themeToggleButton.textContent = '☀️';
-    } else {
-        document.body.classList.remove('dark-mode');
-        DOM.themeToggleButton.textContent = '🌙';
-    }
-}
-
-DOM.themeToggleButton.addEventListener('click', () => {
-    const currentTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
-    localStorage.setItem('matematicaAppTheme', currentTheme);
-    applyTheme(currentTheme);
-});
-
-// Aplicar o tema guardado ao carregar a página
-document.addEventListener('DOMContentLoaded', () => {
-    const savedTheme = localStorage.getItem('matematicaAppTheme') || 'light';
-    DOM.levelDisplayEl?.parentElement?.classList.add('hidden');
-    applyTheme(savedTheme);
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker
-                .register('sw.js', { scope: './' })
-                .then(reg => console.log('Service Worker registado:', reg.scope))
-                .catch(err => console.log('Falha ao registar o Service Worker:', err));
-        });
-    }
-
-    // Carregar gamificação persistida
-    loadGamification();
-    renderGamificationBar();
-    mostrarNarrativa();
-
-    // Iniciar sons (evita 404 se não existirem)
-    initSounds();
-
-    // Acessibilidade nos cards
-    document.querySelectorAll('.card').forEach(card => {
-        card.setAttribute('role', 'button');
-        card.setAttribute('tabindex', '0');
-        card.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                startExercise(card.dataset.type);
-            }
-        });
-    });
-});
 
 // -------------------------------------------------------------------
 // Substitui os handlers globais problemáticos por delegates no teclado
@@ -771,9 +747,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // Remover os antigos handlers document-level (mousedown/touchstart/click).
 DOM.customKeyboard?.removeEventListener('pointerdown', this);
 DOM.customKeyboard?.removeEventListener('pointerup', this);
-
-// Em vez disso, usamos pointer events no customKeyboard e uma flag.
-let keyboardPointerDown = false;
 
 // Mostra o teclado quando o input recebe foco (único listener)
 DOM.answerInput.addEventListener('focus', () => {
@@ -798,35 +771,6 @@ DOM.customKeyboard?.addEventListener('pointerdown', (ev) => {
     keyboardPointerDown = true;
     // Não prevenir o evento se não necessário; mas prevenir seleções indesejadas
     ev.preventDefault();
-});
-
-DOM.customKeyboard?.addEventListener('pointerup', (ev) => {
-    const key = ev.target.closest('.key');
-    if (!key) {
-        // liberta a flag por segurança
-        keyboardPointerDown = false;
-        return;
-    }
-
-    const value = key.dataset.value;
-    const input = DOM.answerInput;
-
-    if (value === 'delete') {
-        input.value = input.value.slice(0, -1);
-    } else if (value === 'clear') {
-        input.value = '';
-    } else if (value === 'enter') {
-        checkAnswer();
-    } else {
-        input.value += value;
-    }
-
-    // Mantém foco no input e limpa a flag
-    // Pequeno timeout para garantir compatibilidade em alguns browsers Android
-    setTimeout(() => {
-        try { input.focus(); } catch {}
-        keyboardPointerDown = false;
-    }, 10);
 });
 
 // -------------------------------------------------------------------
@@ -859,6 +803,33 @@ function checkAnswer() {
         state.streak++;
         adicionarPontos(10);
         verificarMedalhas({ isCorrect: true, responseMs });
+
+        // Incrementa progresso transitório e global do state
+        transientProgress[currentExercise.type] = (transientProgress[currentExercise.type] || 0) + 1;
+        state.roundProgress = transientProgress[currentExercise.type];
+        updateScoreDisplay(); // pontuação total, etc.
+        updateProgressBar();
+
+        // Se completou a ronda -> subir de nível e persistir nível para este exercício
+        if (state.roundProgress >= (state.exercisesPerRound || 5)) {
+            // Incrementa nível e grava
+            state.level = (state.level || 1) + 1;
+            if (typeof saveProgressForType === 'function') {
+                saveProgressForType(currentExercise.type, state.level);
+            }
+            // Limpar progresso transitório
+            transientProgress[currentExercise.type] = 0;
+            state.roundProgress = 0;
+            updateProgressBar();
+
+            // Trigger resumo / confetti / level up flow
+            triggerConfetti();
+            showLevelUpUI?.(); // chama rotina existente para mostrar summary/nivel
+        } else {
+            // continuar a próxima questão
+            // gerar próximo exercício ou permitir botão Next
+            generateNewExercise();
+        }
     } else {
         sounds.incorrect.currentTime = 0; sounds.incorrect.play();
         DOM.feedbackEl.innerHTML = `❌ Quase! A resposta certa é <strong>${correctAnswerFormatted}</strong>.`;
@@ -883,3 +854,123 @@ function checkAnswer() {
     // Esconde o teclado após verificar a resposta
     DOM.customKeyboard.classList.add('hidden');
 }
+
+// Função para migrar progresso antigo (se existir)
+function migrateOldProgress() {
+    const old = safeGetItem('citania_progress'); // exemplo de chave antiga
+    if (old && !safeGetItem(PROGRESS_KEY)) {
+        safeSetItem(PROGRESS_KEY, old);
+    }
+}
+document.addEventListener('DOMContentLoaded', migrateOldProgress);
+
+// -----------------------------------------------------------------------------
+// Substituir a declaração duplicada de uiState por reutilização do singleton
+// -----------------------------------------------------------------------------
+
+// EM VEZ DISSO reutilizar o uiState global já criado no topo:
+// assegura-se que a propriedade existe sem redeclarar a variável
+uiState.inExercise = uiState.inExercise || false;
+
+// --- Lógica do Tema (Modo Escuro) ---
+function applyTheme(theme) {
+    if (theme === 'dark') {
+        document.body.classList.add('dark-mode');
+        DOM.themeToggleButton.textContent = '☀️';
+    } else {
+        document.body.classList.remove('dark-mode');
+        DOM.themeToggleButton.textContent = '🌙';
+    }
+}
+
+// --- Inicialização da Aplicação ---
+
+function initApp() {
+    // 1. Aplicar tema guardado
+    const savedTheme = localStorage.getItem('matematicaAppTheme') || 'light';
+    applyTheme(savedTheme);
+
+    // 2. Carregar dados persistidos
+    migrateOldProgress();
+    loadGamification();
+    renderGamificationBar();
+    mostrarNarrativa();
+
+    // 3. Inicializar sons
+    initSounds();
+
+    // 4. Configurar todos os event listeners
+    // Botão de tema
+    DOM.themeToggleButton?.addEventListener('click', () => {
+        const currentTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+        localStorage.setItem('matematicaAppTheme', currentTheme);
+        applyTheme(currentTheme);
+    });
+
+    // Cards do menu
+    DOM.menuContainer?.addEventListener('click', (ev) => {
+        const card = ev.target.closest('.card');
+        if (card?.dataset.type) startExercise(card.dataset.type);
+    });
+    DOM.menuContainer?.addEventListener('keydown', (ev) => {
+        const card = ev.target.closest('.card');
+        if (card && (ev.key === 'Enter' || ev.key === ' ')) {
+            ev.preventDefault();
+            if (card.dataset.type) startExercise(card.dataset.type);
+        }
+    });
+
+    // Botões da área de exercício
+    DOM.backButton?.addEventListener('click', exitExercise);
+    DOM.checkButton?.addEventListener('click', checkAnswer);
+    DOM.nextButton?.addEventListener('click', generateNewExercise);
+    DOM.nextLevelButton?.addEventListener('click', () => {
+        state.level++;
+        startNewRound();
+    });
+
+    // Botão de utilizador
+    DOM.userButton?.addEventListener('click', () => {
+        const name = (prompt('Escolhe o teu nome:', gamification.userName) || '').trim();
+        if (name) {
+            gamification.userName = name;
+            localStorage.setItem('citaniaUserName', name);
+            renderGamificationBar();
+            saveGamification();
+        }
+    });
+
+    // Teclado personalizado
+    DOM.customKeyboard?.addEventListener('pointerup', (ev) => {
+        const key = ev.target.closest('.key');
+        if (!key) return;
+        const value = key.dataset.value;
+        if (value === 'delete') {
+            DOM.answerInput.value = DOM.answerInput.value.slice(0, -1);
+        } else if (value === 'clear') {
+            DOM.answerInput.value = '';
+        } else if (value === 'enter') {
+            checkAnswer();
+        } else {
+            DOM.answerInput.value += value;
+        }
+    });
+
+    // 5. Registar Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker
+                .register('/sw.js', { scope: '/' })
+                .then(reg => console.log('Service Worker registado:', reg.scope))
+                .catch(err => console.log('Falha ao registar o Service Worker:', err));
+        });
+    }
+
+    // 6. Expor funções para debugging
+    window.startExercise = startExercise;
+
+    console.log('App initialized successfully');
+}
+
+// Ponto de entrada único da aplicação
+document.addEventListener('DOMContentLoaded', initApp);

@@ -16,13 +16,20 @@
 <body>
     <header class="app-header">
         <div class="header-inner">
+            <!-- botão tema (já existe) -->
             <button id="theme-toggle" title="Alternar tema" aria-label="Alternar tema">🌙</button>
 
-            <div id="gamification-bar" class="gamification-bar">
-                <button id="user-button" class="user-btn" title="Definir nome">
-                    👤 <span id="user-name">Jogador</span>
+            <!-- Gamification bar: user + pontos + badges -->
+            <div id="gamification-bar" class="gamification-bar" role="region" aria-label="Barra de gamificação">
+                <button id="user-button" class="user-btn" title="Definir nome" aria-label="Definir nome">
+                    <!-- SVG ícone utilizador -->
+                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+                        <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z"/>
+                    </svg>
+                    <span id="user-name">Jogador</span>
                 </button>
-                <div class="points-badges">
+
+                <div class="points-badges" aria-hidden="false">
                     <span id="points-pill" class="points-pill" title="Pontos totais">⭐ <span id="points-count">0</span></span>
                     <div id="badges-strip" class="badges-strip" aria-label="Medalhas"></div>
                 </div>
@@ -37,35 +44,81 @@
         <h1>Citânia - Matemática Divertida</h1>
 
         <!-- Narrativa/Missão -->
-        <div id="narrativa" class="gamification-narrativa" style="margin-bottom: 1em; font-weight: 500;"></div>
+        <div id="narrativa" class="gamification-narrativa" aria-live="polite"></div>
 
-        <!-- Menu Principal -->
+        <!-- Menu principal com cards (exemplos com SVG inline) -->
         <div id="menu-container">
-            <h2>Escolhe um tema para começar!</h2>
             <div class="card-container">
-                <div class="card" data-type="fractionToDecimal">
-                   <span class="card-text">Frações para Decimais</span>
-                   <span class="card-emoji" aria-hidden="true">📊</span>
+                <div class="card" data-type="fractionToDecimal" role="button" tabindex="0" aria-label="Frações para Decimais">
+                    <!-- SVG inline: pizza com uma fatia em falta (arco de 270 graus) -->
+                    <svg class="card-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M12 2 A10 10 0 0 1 22 12 A10 10 0 0 1 2 12 L12 12 Z" fill="currentColor"/>
+                    </svg>
+                    <span class="card-text">Frações para Decimais</span>
                 </div>
-                <div class="card" data-type="primeFactorization">
-                   <span class="card-text">Decomposição em Fatores Primos</span>
-                   <span class="card-emoji" aria-hidden="true">🧩</span>
+
+                <div class="card" data-type="primeFactorization" role="button" tabindex="0" aria-label="Decomposição em Fatores Primos">
+                    <!-- tronco vertical com ramos diagonais e nós finais -->
+                    <svg class="card-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false" role="img">
+                        <!-- tronco -->
+                        <path d="M12 3 L12 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+                        <!-- ramos superiores -->
+                        <path d="M12 7 L8 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+                        <path d="M12 7 L16 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+                        <!-- ramos inferiores -->
+                        <path d="M12 11 L6 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+                        <path d="M12 11 L18 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+                        <!-- nós finais (representam factores primos) -->
+                        <circle cx="8" cy="5" r="1.2" fill="currentColor"/>
+                        <circle cx="16" cy="5" r="1.2" fill="currentColor"/>
+                        <circle cx="6" cy="13" r="1.2" fill="currentColor"/>
+                        <circle cx="18" cy="13" r="1.2" fill="currentColor"/>
+                        <!-- nó base (opcional) -->
+                        <circle cx="12" cy="16" r="1.2" fill="currentColor"/>
+                    </svg>
+                    <span class="card-text">Decomposição em Fatores Primos</span>
                 </div>
-                <div class="card" data-type="gcd">
-                   <span class="card-text">Máximo Divisor Comum (MDC)</span>
-                   <span class="card-emoji" aria-hidden="true">🔗</span>
+
+                <div class="card" data-type="gcd" role="button" tabindex="0" aria-label="Máximo Divisor Comum">
+                    <!-- SVG: duas elipses sobrepostas com a interseção preenchida -->
+                    <svg class="card-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false" role="img">
+                        <!-- círculos externos (stroke) -->
+                        <ellipse cx="9" cy="12" rx="6" ry="5.2" fill="none" stroke="currentColor" stroke-width="1.4"></ellipse>
+                        <ellipse cx="15" cy="12" rx="6" ry="5.2" fill="none" stroke="currentColor" stroke-width="1.4"></ellipse>
+                        <!-- interseção (preenchida sutilmente) -->
+                        <path d="M11 8.5c-1 0.8-2 2.2-2 3.7 0 1.9 1.7 3.5 3.8 3.5s3.8-1.6 3.8-3.5c0-1.5-1-2.9-2-3.7" fill="currentColor" opacity="0.18"></path>
+                        <!-- marcador central (representa o GCD) -->
+                        <circle cx="12" cy="12" r="1.4" fill="currentColor"></circle>
+                    </svg>
+                    <span class="card-text">Máximo Divisor Comum (MDC)</span>
                 </div>
-                <div class="card" data-type="lcm">
-                   <span class="card-text">Mínimo Múltiplo Comum (MMC)</span>
-                   <span class="card-emoji" aria-hidden="true">📈</span>
+
+                <div class="card" data-type="lcm" role="button" tabindex="0" aria-label="Mínimo Múltiplo Comum (MMC)">
+                    <!-- SVG Venn-style para LCM: interseção preenchida leve + marcador central -->
+                    <svg class="card-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false" role="img">
+                        <!-- círculos externos (stroke) -->
+                        <circle cx="9.5" cy="12" r="5.2" fill="none" stroke="currentColor" stroke-width="1.3"></circle>
+                        <circle cx="14.5" cy="12" r="5.2" fill="none" stroke="currentColor" stroke-width="1.3"></circle>
+                        <!-- interseção preenchida (sutil) para indicar o múltiplo comum -->
+                        <path d="M10.5 8.2c-1.0.6-1.6 1.7-1.6 3 0 2.1 1.8 3.8 3.9 3.8 2.1 0 3.9-1.7 3.9-3.8 0-1.3-.6-2.4-1.6-3" fill="currentColor" opacity="0.18"></path>
+                        <!-- pequeno marcador central para enfatizar o LCM -->
+                        <rect x="11" y="10.5" width="2" height="2" rx="0.4" fill="currentColor"></rect>
+                    </svg>
+                    <span class="card-text">Mínimo Múltiplo Comum (MMC)</span>
                 </div>
-                <div class="card" data-type="powerMultiplication">
-                   <span class="card-text">Multiplicação de Potências</span>
-                   <span class="card-emoji" aria-hidden="true">💥</span>
+
+                <div class="card" data-type="powerMultiplication" role="button" tabindex="0" aria-label="Multiplicação de Potências">
+                    <svg class="card-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M4 4h4v4H4zM10 10h4v8h-4zM16 4h4v6h-4z" fill="currentColor"/>
+                    </svg>
+                    <span class="card-text">Multiplicação de Potências</span>
                 </div>
-                <div class="card" data-type="powerDivision">
-                   <span class="card-text">Divisão de Potências</span>
-                   <span class="card-emoji" aria-hidden="true">✂️</span>
+
+                <div class="card" data-type="powerDivision" role="button" tabindex="0" aria-label="Divisão de Potências">
+                    <svg class="card-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M3 6h18v2H3zM6 10h12v10H6z" fill="currentColor"/>
+                    </svg>
+                    <span class="card-text">Divisão de Potências</span>
                 </div>
             </div>
         </div>
@@ -142,8 +195,9 @@
             </div>
         </div>
     </main>
-    
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-    <script src="./js/app.js"></script>
+
+    <!-- Carrega lottie localmente (preferível para PWA); fallback é feito no JS -->
+    <script src="./js/vendor/lottie.min.js" defer></script>
+    <script src="./js/app.js" defer></script>
 </body>
 </html>

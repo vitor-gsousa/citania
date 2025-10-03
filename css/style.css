@@ -763,3 +763,93 @@ main {
 #answer-input {
     caret-color: transparent;
 }
+
+/* Icon system: inline SVGs usam currentColor */
+.card-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: .6rem;
+    /* herda a cor do texto do cartão */
+    color: inherit;
+    transition: transform .12s ease, color .12s ease;
+}
+.card:hover .card-icon { transform: translateY(-3px); }
+
+/* CORREÇÃO: garantir contraste dentro dos cartões */
+.card .card-icon {
+    /* herda a cor do texto do cartão (o .card define color: white) */
+    color: inherit;
+    /* opcional: garantir que o SVG usa fill=currentColor */
+    /* se necessário, remove fills embutidos nos SVGs e usa fill="currentColor" */
+}
+
+/* Garantir que ícones inline respeitam a cor do cartão e contrastam corretamente */
+.card .card-icon { 
+    color: inherit;           /* herda a cor do texto do cartão */
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* As formas dentro do SVG que usam 'currentColor' seguirão .card color */
+.card .card-icon [fill="currentColor"],
+.card .card-icon path,
+.card .card-icon rect,
+.card .card-icon circle {
+    fill: currentColor;
+}
+
+/* Opcional: escolher cor do ícone dentro do cartão caso necessário */
+.card { color: #fff; } /* já deves ter isto; ajusta conforme tema */
+
+/* Badges strip e lottie placeholder */
+.badges-strip {
+    display: flex;
+    gap: .35rem;
+    align-items: center;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: .15rem 0;
+    min-width: 0;
+}
+.badge {
+    display: inline-grid;
+    place-items: center;
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    font-size: 14px;
+    padding: 2px;
+}
+.badge.big { padding: .25rem .5rem; border-radius: 8px; }
+
+/* Lottie placeholder (quando a animação é carregada) */
+.lottie-placeholder {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+}
+
+/* Animação CSS fallback para badge ganha */
+.badge-earned { animation: badgePulse 900ms ease; }
+@keyframes badgePulse {
+    0% { transform: scale(.9); opacity: .9; }
+    50% { transform: scale(1.12); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Garantir visibilidade dos ícones nos cartões */
+.card {
+    color: white; /* força cor branca nos textos */
+    /* ou: color: inherit; se quiseres herdar do body */
+}
+
+.card-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: .6rem;
+    /* herda a cor do texto do cartão */
+    color: inherit;
+    transition: transform .12s ease, color .12s ease;
+}
+.card:hover .card-icon { transform: translateY(-3px); }
