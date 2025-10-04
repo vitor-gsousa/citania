@@ -74,7 +74,10 @@ function generateNewExercise() {
     if (questionEl) questionEl.innerHTML = problem.question;
     if (answerInput) {
         answerInput.value = '';
-        answerInput.focus();
+            // Garantir que a caixa de resposta está visível quando um novo exercício é gerado
+            answerInput.classList.remove('hidden');
+            // Reativar foco para permitir uso do teclado personalizado
+            try { answerInput.focus(); } catch (e) { /* silent */ }
     }
     if (feedbackEl) feedbackEl.textContent = '';
     state.answered = false;
@@ -84,46 +87,8 @@ function generateNewExercise() {
     DOM.nextButton.style.display = 'none';
 }
 
-// Função para verificar resposta
-function checkAnswer() {
-    const answerInput = document.getElementById('answer-input');
-    if (!answerInput || state.answered) return;
-    const userAnswer = answerInput.value.trim();
-    if (!userAnswer) return;
-
-    const exercise = exercises[currentExercise.type];
-    const isCorrect = exercise.check(userAnswer, currentExercise.answer, currentExercise.checkType);
-
-    state.answered = true;
-    state.score.correct += isCorrect ? 1 : 0;
-    state.score.incorrect += !isCorrect ? 1 : 0;
-
-    // Atualizar UI
-    const feedbackEl = document.getElementById('feedback');
-    if (feedbackEl) {
-        feedbackEl.textContent = isCorrect ? 'Correto!' : `Incorreto. ${currentExercise.explanation}`;
-        feedbackEl.className = isCorrect ? 'correct' : 'incorrect';
-    }
-
-    // Progresso
-    if (isCorrect) {
-        transientProgress[currentExercise.type] = (transientProgress[currentExercise.type] || 0) + 1;
-        state.roundProgress = transientProgress[currentExercise.type];
-        updateProgressBar();
-        if (state.roundProgress >= state.exercisesPerRound) {
-            state.level++;
-            saveProgressForType(currentExercise.type, state.level);
-            transientProgress[currentExercise.type] = 0;
-            state.roundProgress = 0;
-            updateProgressBar();
-            triggerConfetti();
-            showLevelUpUI();
-        } else {
-            // Próximo exercício
-            setTimeout(generateNewExercise, 1000);
-        }
-    }
-}
+// (A verificação de resposta mais avançada está definida mais abaixo;
+//  removida a versão simplificada para evitar duplicação.)
 
 // Função para atualizar barra de progresso
 function updateProgressBar() {
@@ -176,8 +141,26 @@ function exitExercise() {
     updateProgressBar();
     const exercise = document.getElementById('exercise-area');
     const menu = document.getElementById('menu-container');
+    const summary = document.getElementById('summary-area');
+
+    // Esconder a área de exercício e o resumo (se abertos)
     if (exercise) exercise.classList.add('hidden');
+    if (summary) summary.classList.add('hidden');
+
+    // Mostrar o menu principal com os cards
     if (menu) menu.classList.remove('hidden');
+
+    // Restaurar estado dos controlos na UI de exercício para a próxima vez que entrar
+    if (DOM.checkButton) DOM.checkButton.style.display = 'block';
+    if (DOM.nextButton) DOM.nextButton.style.display = 'none';
+    if (DOM.answerInput) {
+        DOM.answerInput.classList.remove('hidden');
+        DOM.answerInput.value = '';
+    }
+    if (DOM.feedbackEl) DOM.feedbackEl.textContent = '';
+
+    // Garantir scroll para o topo do menu
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { /* silent */ }
 }
 
 // --- Lógica dos Exercícios ---
@@ -348,6 +331,33 @@ function getPrimeFactors(num) {
     return factors;
 }
 
+// Inline external SVG images so they can inherit currentColor
+async function inlineSvgs() {
+    const imgs = Array.from(document.querySelectorAll('img.card-icon[src$=".svg"]'));
+    await Promise.all(imgs.map(async (img) => {
+        try {
+            const src = img.getAttribute('src');
+            const resp = await fetch(src);
+            if (!resp.ok) return;
+            const text = await resp.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'image/svg+xml');
+            const svg = doc.querySelector('svg');
+            if (!svg) return;
+            // copy width/height from img to svg if present
+            if (img.hasAttribute('width')) svg.setAttribute('width', img.getAttribute('width'));
+            if (img.hasAttribute('height')) svg.setAttribute('height', img.getAttribute('height'));
+            // ensure svg uses currentColor as fallback
+            svg.setAttribute('aria-hidden', img.getAttribute('aria-hidden') || 'true');
+            svg.classList.add(...(img.className ? img.className.split(' ') : []));
+            img.replaceWith(svg);
+        } catch (e) {
+            // ignore, keep the <img>
+            console.warn('inlineSvgs error for', img, e);
+        }
+    }));
+}
+
 // --- Animações / Sons / Gamificação (mantidos) ---
 
 // Objeto para armazenar os sons da aplicação
@@ -507,11 +517,8 @@ function saveGamification() {
 function renderGamificationBar() {
     if (DOM.pointsCountEl) DOM.pointsCountEl.textContent = gamification.pontos;
     if (DOM.userNameEl) DOM.userNameEl.textContent = gamification.userName;
-    if (DOM.badgesStripEl) {
-        DOM.badgesStripEl.innerHTML = gamification.medalhas
-            .map(b => `<span class="badge" title="${b.label}">${b.emoji}</span>`)
-            .join('');
-    }
+    // Não renderizar diretamente as medalhas como emojis na navbar para manter o aspeto clean.
+    // As medalhas serão apresentadas no painel de conquistas (achievements panel).
     // Preenche lista de medalhas no resumo
     const medalsList = document.getElementById('medalhas-list');
     if (medalsList) {
@@ -584,34 +591,27 @@ function awardBadge(badge) {
 function awardBadge(badge) {
     if (hasBadge(badge.id)) return;
     gamification.medalhas.push(badge);
-    mostrarFeedbackGamificacao(`Medalha conquistada: ${badge.label}!`);
+    mostrarFeedbackGamificacao(`🏅 Medalha conquistada: ${badge.emoji} ${badge.label}!`);
     renderGamificationBar();
     saveGamification();
+    renderAchievementsPanel();
 
+    // Inserir pequeno placeholder visual no badges strip (mesmo estando escondido no navbar)
     const wrapper = document.createElement('div');
     wrapper.className = 'lottie-placeholder badge-earned';
     const target = DOM.badgesStripEl || document.getElementById('medalhas');
     if (!target) return;
 
     const lottiePath = `./animations/${badge.id}.json`;
-
-    // Verifica existência do ficheiro Lottie e tenta animar, senão fallback
     fetch(lottiePath, { method: 'HEAD' }).then(resp => {
         if (!resp.ok) {
-            // fallback inline SVG
             wrapper.innerHTML = `<svg class="badge-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2l2.2 4.5L19 8l-3.5 3.4L16 17l-4-2.1L8 17l.5-5.6L5 8l4.8-1.5L12 2z" fill="currentColor"/></svg>`;
             target.insertBefore(wrapper, target.firstChild);
             return;
         }
         ensureLottie().then(lottie => {
             target.insertBefore(wrapper, target.firstChild);
-            lottie.loadAnimation({
-                container: wrapper,
-                renderer: 'svg',
-                loop: false,
-                autoplay: true,
-                path: lottiePath
-            });
+            lottie.loadAnimation({ container: wrapper, renderer: 'svg', loop: false, autoplay: true, path: lottiePath });
         }).catch(() => {
             wrapper.innerHTML = `<svg class="badge-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2l2.2 4.5L19 8l-3.5 3.4L16 17l-4-2.1L8 17l.5-5.6L5 8l4.8-1.5L12 2z" fill="currentColor"/></svg>`;
             target.insertBefore(wrapper, target.firstChild);
@@ -654,6 +654,51 @@ function verificarMedalhas(ctx = {}) {
     if (state.streak >= 5) awardBadge(BADGES.streak5);
     if (isCorrect && currentExercise.attempts === 1) awardBadge(BADGES.firstTry);
     if (state.level >= 3) awardBadge(BADGES.scholar);
+}
+
+// --- Achievements panel ---
+function renderAchievementsPanel() {
+    const panel = document.getElementById('achievements-panel');
+    if (!panel) return;
+
+    const total = (state.score.correct || 0) + (state.score.incorrect || 0);
+    const badgesHtml = (gamification.medalhas || []).map(b =>
+        `<div class="ach-badge"><span class="badge">${b.emoji}</span><div class="ach-badge-label">${b.label}</div></div>`
+    ).join('') || '<div class="no-badges">Sem conquistas ainda.</div>';
+
+    panel.innerHTML = `
+        <div class="ach-header">
+            <button id="close-achievements" aria-label="Fechar">✖</button>
+            <h3>Conquistas</h3>
+        </div>
+        <div class="ach-body">
+            <div class="ach-stats">
+                <div><strong>Total respostas:</strong> ${total}</div>
+                <div><strong>Corretas:</strong> ${state.score.correct || 0}</div>
+                <div><strong>Incorrretas:</strong> ${state.score.incorrect || 0}</div>
+                <div><strong>Pontos:</strong> ${gamification.pontos || 0}</div>
+            </div>
+            <h4>Medalhas</h4>
+            <div class="ach-badges">${badgesHtml}</div>
+        </div>
+    `;
+
+    // fechar
+    const closeBtn = document.getElementById('close-achievements');
+    closeBtn?.addEventListener('click', hideAchievementsPanel);
+}
+
+function showAchievementsPanel() {
+    const panel = document.getElementById('achievements-panel');
+    if (!panel) return;
+    renderAchievementsPanel();
+    panel.classList.add('open');
+}
+
+function hideAchievementsPanel() {
+    const panel = document.getElementById('achievements-panel');
+    if (!panel) return;
+    panel.classList.remove('open');
 }
 
 // Leaderboard
@@ -807,33 +852,7 @@ function checkAnswer() {
         state.streak++;
         adicionarPontos(10);
         verificarMedalhas({ isCorrect: true, responseMs });
-
-        // Incrementa progresso transitório e global do state
-        transientProgress[currentExercise.type] = (transientProgress[currentExercise.type] || 0) + 1;
-        state.roundProgress = transientProgress[currentExercise.type];
-        updateScoreDisplay(); // pontuação total, etc.
-        updateProgressBar();
-
-        // Se completou a ronda -> subir de nível e persistir nível para este exercício
-        if (state.roundProgress >= (state.exercisesPerRound || 5)) {
-            // Incrementa nível e grava
-            state.level = (state.level || 1) + 1;
-            if (typeof saveProgressForType === 'function') {
-                saveProgressForType(currentExercise.type, state.level);
-            }
-            // Limpar progresso transitório
-            transientProgress[currentExercise.type] = 0;
-            state.roundProgress = 0;
-            updateProgressBar();
-
-            // Trigger resumo / confetti / level up flow
-            triggerConfetti();
-            showLevelUpUI?.(); // chama rotina existente para mostrar summary/nivel
-        } else {
-            // continuar a próxima questão
-            // gerar próximo exercício ou permitir botão Next
-            generateNewExercise();
-        }
+        // feedback já mostrado — o incremento de progresso é feito abaixo (independente do resultado)
     } else {
         sounds.incorrect.currentTime = 0; sounds.incorrect.play();
         DOM.feedbackEl.innerHTML = `❌ Quase! A resposta certa é <strong>${correctAnswerFormatted}</strong>.`;
@@ -842,6 +861,29 @@ function checkAnswer() {
         state.streak = 0;
         adicionarPontos(2); // pequeno incentivo por tentativa
         verificarMedalhas({ isCorrect: false, responseMs });
+    }
+
+    // Incrementar progresso independentemente de correto/errado — garante número fixo de questões por nível
+    transientProgress[currentExercise.type] = (transientProgress[currentExercise.type] || 0) + 1;
+    state.roundProgress = transientProgress[currentExercise.type];
+    updateScoreDisplay();
+    updateProgressBar();
+
+    // Se completou a ronda -> subir de nível e persistir nível para este exercício
+    if (state.roundProgress >= (state.exercisesPerRound || 5)) {
+        // Incrementa nível e grava
+        state.level = (state.level || 1) + 1;
+        if (typeof saveProgressForType === 'function') {
+            saveProgressForType(currentExercise.type, state.level);
+        }
+        // Limpar progresso transitório
+        transientProgress[currentExercise.type] = 0;
+        state.roundProgress = 0;
+        updateProgressBar();
+
+        // Trigger resumo / confetti / level up flow
+        triggerConfetti();
+        showLevelUpUI?.();
     }
 
     if (state.roundProgress <= state.explanationLimit) {
@@ -858,6 +900,25 @@ function checkAnswer() {
     // Esconde o teclado após verificar a resposta
     DOM.customKeyboard.classList.add('hidden');
 }
+
+    // Função invocada quando o utilizador clica em Next: prepara e gera o próximo exercício
+    function nextExercise() {
+        // Reativar a caixa de resposta e limpar feedback
+        DOM.answerInput.classList.remove('hidden');
+        DOM.answerInput.value = '';
+        try { DOM.answerInput.focus(); } catch (e) { /* silent */ }
+        DOM.feedbackEl.textContent = '';
+
+        // Restaurar botões
+        DOM.checkButton.style.display = 'block';
+        DOM.nextButton.style.display = 'none';
+
+        // Marcar que estamos prontos para nova resposta
+        state.answered = false;
+
+        // Gerar novo problema
+        generateNewExercise();
+    }
 
 // Função para migrar progresso antigo (se existir)
 function migrateOldProgress() {
@@ -896,6 +957,8 @@ function initApp() {
 
     // 2. Carregar dados persistidos
     migrateOldProgress();
+    // Inline external SVGs so they inherit currentColor
+    inlineSvgs().catch(() => {});
     loadGamification();
     renderGamificationBar();
     mostrarNarrativa();
@@ -927,7 +990,7 @@ function initApp() {
     // Botões da área de exercício
     DOM.backButton?.addEventListener('click', exitExercise);
     DOM.checkButton?.addEventListener('click', checkAnswer);
-    DOM.nextButton?.addEventListener('click', generateNewExercise);
+    DOM.nextButton?.addEventListener('click', nextExercise);
     DOM.nextLevelButton?.addEventListener('click', () => {
         state.level++;
         startNewRound();
@@ -942,6 +1005,12 @@ function initApp() {
             renderGamificationBar();
             saveGamification();
         }
+    });
+
+    // Botão de Achievements (taça) - abre painel deslizante
+    const achBtn = document.getElementById('achievements-button');
+    achBtn?.addEventListener('click', () => {
+        showAchievementsPanel();
     });
 
     // Teclado personalizado

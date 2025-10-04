@@ -618,6 +618,14 @@ main {
         font-size: 0.95rem;
         min-height: 44px;
     }
+
+    /* Garantir que os botões do painel de conquistas e o botão de achievements na navbar ficam compactos no mobile */
+    .ach-btn, #close-achievements {
+        width: auto !important;
+        padding: 0.35rem 0.6rem !important;
+        min-width: 36px !important;
+        font-size: 1rem !important;
+    }
 }
 
 /* Landscape mobile - ajustes especiais */
@@ -775,6 +783,14 @@ main {
 }
 .card:hover .card-icon { transform: translateY(-3px); }
 
+/* Imagens SVG externas usadas como ícones devem herdar a cor do texto e ter 75px */
+img.card-icon {
+    width: 75px;
+    height: 75px;
+    vertical-align: middle;
+    color: inherit; /* tenta garantir que currentColor no SVG resolve corretamente */
+}
+
 /* CORREÇÃO: garantir contraste dentro dos cartões */
 .card .card-icon {
     /* herda a cor do texto do cartão (o .card define color: white) */
@@ -822,6 +838,53 @@ main {
     padding: 2px;
 }
 .badge.big { padding: .25rem .5rem; border-radius: 8px; }
+
+/* Utility hidden for elements moved from navbar */
+.visually-hidden { display: none !important; }
+
+/* Achievements panel (sliding from right on desktop, bottom on mobile) */
+.achievements-panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    width: 320px;
+    max-width: 90vw;
+    background: var(--main-bg-color);
+    box-shadow: -8px 0 24px rgba(0,0,0,0.12);
+    transform: translateX(100%);
+    transition: transform 320ms cubic-bezier(.2,.9,.2,1);
+    z-index: 1200;
+    padding: 1rem;
+    overflow-y: auto;
+    box-sizing: border-box; /* garante que padding não provoca overflow horizontal */
+}
+.achievements-panel.open { transform: translateX(0%); }
+.achievements-panel .ach-header { display:flex; align-items:center; justify-content:space-between; gap: .5rem; }
+.achievements-panel h3 { margin: 0 0 .5rem 0; }
+.achievements-panel .ach-body { margin-top: .75rem; }
+.ach-badges { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.5rem; }
+.ach-badge { display:flex; align-items:center; gap:.5rem; background:var(--score-bg-color); padding:.4rem .5rem; border-radius:8px; }
+.ach-badge .badge { width:36px; height:36px; font-size:18px; }
+
+/* Compact buttons for achievements (prevenir width:100% em mobile) */
+.ach-btn,
+#close-achievements {
+    width: auto !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem 0.6rem !important;
+    min-width: 40px;
+    height: auto;
+    font-size: 1.05rem;
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    .achievements-panel { bottom: 0; right: 0; left: 0; top: auto; height: 50vh; width: 100vw; max-width: none; transform: translateY(100%); padding-left: max(0.75rem, env(safe-area-inset-left)); padding-right: max(0.75rem, env(safe-area-inset-right)); }
+    .achievements-panel.open { transform: translateY(0%); }
+}
 
 /* Lottie placeholder (quando a animação é carregada) */
 .lottie-placeholder {

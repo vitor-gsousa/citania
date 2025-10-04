@@ -9,9 +9,9 @@
     <meta name="apple-mobile-web-app-title" content="Citânia">
     <meta name="theme-color" content="#6366f1">
     <title>Citânia - Matemática Divertida</title>
+    <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 </head>
 <body>
     <header class="app-header">
@@ -31,11 +31,16 @@
 
                 <div class="points-badges" aria-hidden="false">
                     <span id="points-pill" class="points-pill" title="Pontos totais">⭐ <span id="points-count">0</span></span>
-                    <div id="badges-strip" class="badges-strip" aria-label="Medalhas"></div>
+                        <!-- Badge strip moved to achievements panel for a cleaner navbar -->
+                        <button id="achievements-button" title="Ver Conquistas" aria-label="Ver Conquistas" class="ach-btn">🏆</button>
+                        <div id="badges-strip" class="badges-strip visually-hidden" aria-label="Medalhas (moved)"></div>
                 </div>
             </div>
         </div>
     </header>
+
+        <!-- Achievements sliding panel -->
+        <aside id="achievements-panel" class="achievements-panel" aria-hidden="true"></aside>
 
     <!-- Mantemos o score-container escondido para não partir o JS existente -->
     <div id="score-container" class="hidden" aria-hidden="true"></div>
@@ -50,60 +55,22 @@
         <div id="menu-container">
             <div class="card-container">
                 <div class="card" data-type="fractionToDecimal" role="button" tabindex="0" aria-label="Frações para Decimais">
-                    <!-- SVG inline: pizza com uma fatia em falta (arco de 270 graus) -->
-                    <svg class="card-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path d="M12 2 A10 10 0 0 1 22 12 A10 10 0 0 1 2 12 L12 12 Z" fill="currentColor"/>
-                    </svg>
+                    <img class="card-icon" src="./images/icons/ftd.svg" width="75" height="75" alt="" aria-hidden="true">
                     <span class="card-text">Frações para Decimais</span>
                 </div>
 
                 <div class="card" data-type="primeFactorization" role="button" tabindex="0" aria-label="Decomposição em Fatores Primos">
-                    <!-- tronco vertical com ramos diagonais e nós finais -->
-                    <svg class="card-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false" role="img">
-                        <!-- tronco -->
-                        <path d="M12 3 L12 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-                        <!-- ramos superiores -->
-                        <path d="M12 7 L8 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-                        <path d="M12 7 L16 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-                        <!-- ramos inferiores -->
-                        <path d="M12 11 L6 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-                        <path d="M12 11 L18 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-                        <!-- nós finais (representam factores primos) -->
-                        <circle cx="8" cy="5" r="1.2" fill="currentColor"/>
-                        <circle cx="16" cy="5" r="1.2" fill="currentColor"/>
-                        <circle cx="6" cy="13" r="1.2" fill="currentColor"/>
-                        <circle cx="18" cy="13" r="1.2" fill="currentColor"/>
-                        <!-- nó base (opcional) -->
-                        <circle cx="12" cy="16" r="1.2" fill="currentColor"/>
-                    </svg>
+                    <img class="card-icon" src="./images/icons/pfd.svg" width="75" height="75" alt="" aria-hidden="true">
                     <span class="card-text">Decomposição em Fatores Primos</span>
                 </div>
 
                 <div class="card" data-type="gcd" role="button" tabindex="0" aria-label="Máximo Divisor Comum">
-                    <!-- SVG: duas elipses sobrepostas com a interseção preenchida -->
-                    <svg class="card-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false" role="img">
-                        <!-- círculos externos (stroke) -->
-                        <ellipse cx="9" cy="12" rx="6" ry="5.2" fill="none" stroke="currentColor" stroke-width="1.4"></ellipse>
-                        <ellipse cx="15" cy="12" rx="6" ry="5.2" fill="none" stroke="currentColor" stroke-width="1.4"></ellipse>
-                        <!-- interseção (preenchida sutilmente) -->
-                        <path d="M11 8.5c-1 0.8-2 2.2-2 3.7 0 1.9 1.7 3.5 3.8 3.5s3.8-1.6 3.8-3.5c0-1.5-1-2.9-2-3.7" fill="currentColor" opacity="0.18"></path>
-                        <!-- marcador central (representa o GCD) -->
-                        <circle cx="12" cy="12" r="1.4" fill="currentColor"></circle>
-                    </svg>
+                    <img class="card-icon" src="./images/icons/gcd.svg" width="75" height="75" alt="" aria-hidden="true">
                     <span class="card-text">Máximo Divisor Comum (MDC)</span>
                 </div>
 
                 <div class="card" data-type="lcm" role="button" tabindex="0" aria-label="Mínimo Múltiplo Comum (MMC)">
-                    <!-- SVG Venn-style para LCM: interseção preenchida leve + marcador central -->
-                    <svg class="card-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false" role="img">
-                        <!-- círculos externos (stroke) -->
-                        <circle cx="9.5" cy="12" r="5.2" fill="none" stroke="currentColor" stroke-width="1.3"></circle>
-                        <circle cx="14.5" cy="12" r="5.2" fill="none" stroke="currentColor" stroke-width="1.3"></circle>
-                        <!-- interseção preenchida (sutil) para indicar o múltiplo comum -->
-                        <path d="M10.5 8.2c-1.0.6-1.6 1.7-1.6 3 0 2.1 1.8 3.8 3.9 3.8 2.1 0 3.9-1.7 3.9-3.8 0-1.3-.6-2.4-1.6-3" fill="currentColor" opacity="0.18"></path>
-                        <!-- pequeno marcador central para enfatizar o LCM -->
-                        <rect x="11" y="10.5" width="2" height="2" rx="0.4" fill="currentColor"></rect>
-                    </svg>
+                    <img class="card-icon" src="./images/icons/lcm.svg" width="75" height="75" alt="" aria-hidden="true">
                     <span class="card-text">Mínimo Múltiplo Comum (MMC)</span>
                 </div>
 
