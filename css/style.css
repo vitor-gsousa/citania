@@ -916,3 +916,26 @@ img.card-icon {
     transition: transform .12s ease, color .12s ease;
 }
 .card:hover .card-icon { transform: translateY(-3px); }
+
+/* Garantir que iconografia herda a cor do elemento pai */
+.card-icon {
+    color: inherit; /* garante que currentColor tem valor */
+    width: 1.6rem;
+    height: 1.6rem;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Forçar todos os shapes dentro do svg a usar currentColor por defeito.
+   Usa !important para sobrepor fills/strokes inline que não sejam desejados. */
+.card-icon * {
+    fill: currentColor !important;
+    stroke: currentColor !important;
+    stroke-width: 1 !important;
+}
+
+/* Acentuar pointer e acessibilidade dos cards */
+.card {
+    cursor: pointer;
+    color: inherit; /* permite que icones usem a mesma cor do texto do cartão */
+}

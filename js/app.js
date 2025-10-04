@@ -1,5 +1,9 @@
 // js/app.js
 
+// Import utilitários ESM
+import { gcd as gcd_imported, lcm as lcm_imported, isPrime as isPrime_imported, getPrimeFactors as getPrimeFactors_imported } from './modules/utils/math.js';
+import { getRandomInt as getRandomInt_imported, choice as choice_imported } from './modules/utils/rand.js';
+
 // Elementos do DOM
 const DOM = {
     menuContainer: document.getElementById('menu-container'),
@@ -36,6 +40,9 @@ if (typeof window.__citania_uiState__ === 'undefined') {
     window.__citania_uiState__ = { inExercise: false };
 }
 const uiState = window.__citania_uiState__;
+
+// Indicador para evitar que o blur do input esconda o teclado enquanto pointer está activo
+let keyboardPointerDown = false;
 
 // Estado global da aplicação
 const state = {
@@ -107,11 +114,7 @@ function triggerConfetti() {
     console.log('Confetti triggered');
 }
 
-// Função para mostrar UI de level up
-function showLevelUpUI() {
-    // Implementação stub
-    console.log('Level up UI shown');
-}
+// Função para mostrar UI de level up (implementação completa mais abaixo)
 
 // Função para atualizar o display de pontuação (mantida para compatibilidade)
 function updateScoreDisplay() {
@@ -295,39 +298,62 @@ const exercises = {
 };
 
 // --- Funções de Apoio ---
+// Preferir os módulos carregados em js/modules/utils, mas manter fallback local
 function getRandomInt(min, max) {
+    try {
+        if (typeof getRandomInt_imported === 'function') return getRandomInt_imported(min, max);
+    } catch (e) { /* ignore */ }
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function gcd(a, b) {
+    try { if (typeof gcd_imported === 'function') return gcd_imported(a, b); } catch (e) { /* ignore */ }
+    a = Math.abs(Number(a)); b = Math.abs(Number(b));
     while (b) {
-        [a, b] = [b, a % b];
+        const t = a % b;
+        a = b;
+        b = t;
     }
     return a;
 }
+
 function lcm(a, b) {
-    return (a === 0 || b === 0) ? 0 : Math.abs(a * b) / gcd(a, b);
+    try { if (typeof lcm_imported === 'function') return lcm_imported(a, b); } catch (e) { /* ignore */ }
+    a = Number(a); b = Number(b);
+    if (!a || !b) return 0;
+    return Math.abs(a * b) / gcd(a, b);
 }
+
 function isPrime(num) {
-    if (num <= 1) return false;
-    for (let i = 2, s = Math.sqrt(num); i <= s; i++) {
+    try { if (typeof isPrime_imported === 'function') return isPrime_imported(num); } catch (e) { /* ignore */ }
+    num = Number(num);
+    if (!Number.isInteger(num) || num <= 1) return false;
+    if (num <= 3) return true;
+    if (num % 2 === 0) return false;
+    const limit = Math.floor(Math.sqrt(num));
+    for (let i = 3; i <= limit; i += 2) {
         if (num % i === 0) return false;
     }
     return true;
 }
+
 function getPrimeFactors(num) {
+    try { if (typeof getPrimeFactors_imported === 'function') return getPrimeFactors_imported(num); } catch (e) { /* ignore */ }
+    num = Math.floor(Number(num));
     const factors = [];
-    let divisor = 2;
-    while (num >= 2) {
-        if (num % divisor === 0) {
-            factors.push(divisor);
-            num = num / divisor;
+    if (num <= 1) return factors;
+    let d = 2;
+    while (num >= d * d) {
+        if (num % d === 0) {
+            factors.push(d);
+            num = num / d;
         } else {
-            divisor++;
+            d = d === 2 ? 3 : d + 2;
         }
     }
+    if (num > 1) factors.push(num);
     return factors;
 }
 
@@ -358,59 +384,118 @@ async function inlineSvgs() {
     }));
 }
 
-// --- Animações / Sons / Gamificação (mantidos) ---
+// Normaliza ícones SVG que por acaso têm fills/strokes não herdados.
+// Executar no DOMContentLoaded para corrigir SVGs inline gerados no HTML.
+function normalizeSvgIcons() {
+    document.querySelectorAll('svg.card-icon').forEach(svg => {
+        // assegura que o svg tem a propriedade color herdada (usado por currentColor)
+        svg.style.color = getComputedStyle(svg.closest('.card') || svg).color || 'currentColor';
 
-// Objeto para armazenar os sons da aplicação
-const sounds = {
-    correct: null,
-    incorrect: null,
-    levelup: null
-};
-
-// Função para inicializar os objetos de áudio
-function initSounds() {
-    try {
-        // Caminhos baseados na estrutura do projeto (README.md)
-        sounds.correct = new Audio('./audio/correct.mp3');
-        sounds.incorrect = new Audio('./audio/incorrect.mp3');
-        sounds.levelup = new Audio('./audio/levelup.mp3');
-
-        // Pré-carregar os sons para evitar atrasos na primeira reprodução
-        Object.values(sounds).forEach(sound => sound?.load());
-        console.log('Audio sounds initialized successfully.');
-    } catch (e) {
-        console.error('Could not initialize sounds. Audio playback will be disabled.', e);
-        // Criar objetos dummy para evitar erros de `play()` se a inicialização falhar
-        sounds.correct = sounds.incorrect = sounds.levelup = { play: () => {}, load: () => {} };
-    }
+        // percorre nós gráficos e aplica currentColor quando aplicável
+        svg.querySelectorAll('*').forEach(el => {
+            const tag = el.tagName.toLowerCase();
+            // mantém explicitamente 'none' quando presente (ex.: stroke="none" intentional)
+            if (!el.hasAttribute('fill') || el.getAttribute('fill') === 'null') {
+                if (tag !== 'svg' && tag !== 'defs') el.setAttribute('fill', 'currentColor');
+            }
+            if (!el.hasAttribute('stroke') || el.getAttribute('stroke') === 'null') {
+                if (tag !== 'svg' && tag !== 'defs') el.setAttribute('stroke', 'currentColor');
+            }
+        });
+    });
 }
 
-function triggerConfetti() {
-    if (typeof confetti !== 'function') return; // fallback silencioso
+// Dispatcher centralizado para actions/data-type dos cartões.
+// - exercise types -> startExercise(type)
+// - achievements -> showAchievementsPanel()
+// - theme -> toggleTheme()
+function bindCardActions() {
+    const container = document.getElementById('menu-container') || document.body;
+    container.addEventListener('click', (ev) => {
+        const card = ev.target.closest('.card');
+        if (!card) return;
+        const type = card.dataset.type || card.dataset.action;
+        if (!type) return;
 
-    // toca som de level up (se existir) assim que os confettis começam
-    try { sounds.levelup?.play?.(); } catch (e) { /* silencioso */ }
-
-    const duration = 2 * 1000; // 2 segundos
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-    function randomInRange(min, max) {
-        return Math.random() * (max - min) + min;
-    }
-
-    const interval = setInterval(function() {
-        const timeLeft = animationEnd - Date.now();
-
-        if (timeLeft <= 0) {
-            return clearInterval(interval);
+        // Mapeamento simples
+        if (type === 'achievements' || type === 'achievement') {
+            if (typeof showAchievementsPanel === 'function') {
+                showAchievementsPanel();
+                return;
+            }
         }
 
-        const particleCount = 50 * (timeLeft / duration);
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-    }, 250);
+        if (type === 'theme' || type === 'toggle-theme') {
+            if (typeof toggleTheme === 'function') {
+                toggleTheme();
+                return;
+            }
+        }
+
+        // Assume exercício
+        if (typeof startExercise === 'function') {
+            startExercise(type);
+            return;
+        }
+
+        console.warn('No handler for card type/action:', type);
+    });
+
+    // Keyboard accessibility
+    container.addEventListener('keydown', (ev) => {
+        const card = ev.target.closest('.card');
+        if (!card) return;
+        if (ev.key === 'Enter' || ev.key === ' ') {
+            ev.preventDefault();
+            const type = card.dataset.type || card.dataset.action;
+            if (!type) return;
+            if (type === 'achievements' && typeof showAchievementsPanel === 'function') {
+                showAchievementsPanel();
+                return;
+            }
+            if ((type === 'theme' || type === 'toggle-theme') && typeof toggleTheme === 'function') {
+                toggleTheme();
+                return;
+            }
+            if (typeof startExercise === 'function') startExercise(type);
+        }
+    });
 }
+
+// Mostrar UI de Level Up: reproduz som e atualiza resumo
+function showLevelUpUI() {
+    // Reproduzir som levelup (se carregado)
+    try {
+        if (typeof sounds !== 'undefined' && sounds.levelup && typeof sounds.levelup.play === 'function') {
+            sounds.levelup.play().catch(() => {}); // ignora Promise rejection por autoplay
+        }
+    } catch (e) {
+        console.warn('Erro a reproduzir levelup sound:', e);
+    }
+
+    // Atualizar resumo das respostas (assume existence de elementos #summary-correct, #summary-total)
+    const summaryCorrectEl = document.getElementById('summary-correct') || document.querySelector('#summary-area #summary-correct');
+    const summaryTotalEl = document.getElementById('summary-total') || document.querySelector('#summary-area #summary-total');
+
+    const correct = (state && state.score && Number.isFinite(state.score.correct)) ? state.score.correct : 0;
+    const incorrect = (state && state.score && Number.isFinite(state.score.incorrect)) ? state.score.incorrect : 0;
+
+    if (summaryCorrectEl) summaryCorrectEl.textContent = String(correct);
+    if (summaryTotalEl) summaryTotalEl.textContent = String(correct + incorrect);
+
+    // mostra o painel de summary se existir
+    const summaryPanel = document.getElementById('summary-area');
+    if (summaryPanel) summaryPanel.classList.add('open');
+}
+
+// Executar inicializações quando DOM estiver pronto
+document.addEventListener('DOMContentLoaded', () => {
+    try { normalizeSvgIcons(); } catch (e) { console.warn('normalizeSvgIcons failed', e); }
+    try { bindCardActions(); } catch (e) { console.warn('bindCardActions failed', e); }
+
+    // expor helper para debugging (opcional)
+    window.showLevelUpUI = showLevelUpUI;
+});
 
 // --- Funções de Persistência (LocalStorage) ---
 
@@ -545,49 +630,6 @@ function mostrarFeedbackGamificacao(mensagem) {
 
 // Helpers badges
 function hasBadge(id) { return gamification.medalhas.some(b => b.id === id); }
-function awardBadge(badge) {
-    if (hasBadge(badge.id)) return;
-    gamification.medalhas.push(badge);
-    mostrarFeedbackGamificacao(`🏅 Medalha conquistada: ${badge.emoji} ${badge.label}!`);
-    renderGamificationBar();
-    saveGamification();
-
-    // Inserir placeholder / animação junto da gamification bar
-    const wrapper = document.createElement('div');
-    wrapper.className = 'lottie-placeholder badge-earned';
-    const target = DOM.badgesStripEl || document.getElementById('medalhas');
-    if (!target) return;
-
-    // Se existir um ficheiro lottie em /animations/{badge.id}.json, tenta carregar
-    const lottiePath = `./animations/${badge.id}.json`;
-    fetch(lottiePath, { method: 'HEAD' }).then(resp => {
-        if (!resp.ok) {
-            // fallback: adiciona SVG pequeno inline e anima CSS
-            wrapper.innerHTML = `<svg class="badge-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2l2.2 4.5L19 8l-3.5 3.4L16 17l-4-2.1L8 17l.5-5.6L5 8l4.8-1.5L12 2z" fill="currentColor"/></svg>`;
-            target.insertBefore(wrapper, target.firstChild);
-            return;
-        }
-        // Carrega lottie e anima
-        ensureLottie().then(lottie => {
-            target.insertBefore(wrapper, target.firstChild);
-            lottie.loadAnimation({
-                container: wrapper,
-                renderer: 'svg',
-                loop: false,
-                autoplay: true,
-                path: lottiePath
-            });
-        }).catch(() => {
-            // fallback SVG
-            wrapper.innerHTML = `<svg class="badge-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2l2.2 4.5L19 8l-3.5 3.4L16 17l-4-2.1L8 17l.5-5.6L5 8l4.8-1.5L12 2z" fill="currentColor"/></svg>`;
-            target.insertBefore(wrapper, target.firstChild);
-        });
-    }).catch(() => {
-        wrapper.innerHTML = `<svg class="badge-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2l2.2 4.5L19 8l-3.5 3.4L16 17l-4-2.1L8 17l.5-5.6L5 8l4.8-1.5L12 2z" fill="currentColor"/></svg>`;
-        target.insertBefore(wrapper, target.firstChild);
-    });
-}
-
 function awardBadge(badge) {
     if (hasBadge(badge.id)) return;
     gamification.medalhas.push(badge);
@@ -873,17 +915,17 @@ function checkAnswer() {
     if (state.roundProgress >= (state.exercisesPerRound || 5)) {
         // Incrementa nível e grava
         state.level = (state.level || 1) + 1;
-        if (typeof saveProgressForType === 'function') {
+        if (typeof saveProgressForType === 'function' && currentExercise?.type) {
             saveProgressForType(currentExercise.type, state.level);
         }
         // Limpar progresso transitório
-        transientProgress[currentExercise.type] = 0;
+        if (currentExercise?.type) transientProgress[currentExercise.type] = 0;
         state.roundProgress = 0;
         updateProgressBar();
 
-        // Trigger resumo / confetti / level up flow
-        triggerConfetti();
-        showLevelUpUI?.();
+        // Confetti / feedback / som / resumo
+        try { triggerConfetti?.(); } catch (e) {}
+        try { showLevelUpUI(); } catch (e) { console.warn('showLevelUpUI error', e); }
     }
 
     if (state.roundProgress <= state.explanationLimit) {
@@ -945,6 +987,41 @@ function applyTheme(theme) {
     } else {
         document.body.classList.remove('dark-mode');
         DOM.themeToggleButton.textContent = '🌙';
+    }
+}
+
+// --- Sons da aplicação ---
+// Objecto que armazenará os sons; inicializado por initSounds
+const sounds = { correct: null, incorrect: null, levelup: null };
+
+/**
+ * Inicializa os objetos de áudio de forma robusta.
+ * Tenta pré-carregar os ficheiros se existirem; cria fallbacks silenciosos caso contrário.
+ */
+function initSounds() {
+    try {
+        // Verifica a existência com requests HEAD antes de criar os Audio objects para evitar 404s
+        const base = './audio';
+        const files = { correct: 'correct.mp3', incorrect: 'incorrect.mp3', levelup: 'levelup.mp3' };
+
+        Object.keys(files).forEach(key => {
+            const path = `${base}/${files[key]}`;
+            // criar objecto Audio pronto a usar; se o ficheiro faltar, fallback será tratado no catch abaixo
+            try {
+                const a = new Audio(path);
+                a.load();
+                sounds[key] = a;
+            } catch (e) {
+                // fallback dummy
+                sounds[key] = { play: () => {}, load: () => {} };
+            }
+        });
+
+        console.log('initSounds: audio objects inicializados');
+    } catch (e) {
+        console.warn('initSounds falhou, audio desactivado', e);
+        // define fallbacks silenciosos
+        sounds.correct = sounds.incorrect = sounds.levelup = { play: () => {}, load: () => {} };
     }
 }
 

@@ -165,6 +165,7 @@
 
     <!-- Carrega lottie localmente (preferível para PWA); fallback é feito no JS -->
     <script src="./js/vendor/lottie.min.js" defer></script>
-    <script src="./js/app.js" defer></script>
+    <!-- Carrega app.js como módulo (ESM) para permitir imports directos -->
+    <script type="module" src="./js/app.js"></script>
 </body>
 </html>
