@@ -78,6 +78,10 @@ function generateNewExercise() {
     }
     if (feedbackEl) feedbackEl.textContent = '';
     state.answered = false;
+    
+    // Restaurar visibilidade dos botões
+    DOM.checkButton.style.display = 'block';
+    DOM.nextButton.style.display = 'none';
 }
 
 // Função para verificar resposta
