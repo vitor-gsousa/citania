@@ -108,11 +108,11 @@ export function showAchievementsPanel(DOM, state) {
   if (!panel) return;
   try {
     renderAchievementsPanel(DOM, state);
-    panel.classList.add('open');
-    const closeBtn = panel.querySelector('#close-achievements');
+    panel.classList.add("open");
+    const closeBtn = panel.querySelector("#close-achievements");
     closeBtn?.focus();
   } catch (e) {
-    console.warn('showAchievementsPanel error', e);
+    console.warn("showAchievementsPanel error", e);
   }
 }
 
