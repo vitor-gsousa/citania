@@ -26,6 +26,7 @@ import {
 } from "./features/gamification.js";
 import { safeGetItem, safeSetItem } from "./utils/storage.js";
 import normalizeIcons from "./utils/icon-utils.js";
+import { generateAddSub } from "./modules/arithmetic/progression.js";
 
 // Elementos do DOM
 const DOM = {
@@ -206,6 +207,15 @@ function exitExercise() {
 
 // --- Lógica dos Exercícios ---
 const exercises = {
+  addSub: {
+    generate: (level) => {
+      return generateAddSub(level);
+    },
+    check: (userAnswer, correctAnswer) => {
+      const val = parseInt(userAnswer.trim(), 10);
+      return !Number.isNaN(val) && val === correctAnswer;
+    },
+  },
   fractionToDecimal: {
     generate: (level) => {
       let numerator, denominator;
