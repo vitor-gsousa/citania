@@ -25,6 +25,7 @@ import {
   showAchievementsPanel,
 } from "./features/gamification.js";
 import { safeGetItem, safeSetItem } from "./utils/storage.js";
+import normalizeIcons from "./utils/icon-utils.js";
 
 // Elementos do DOM
 const DOM = {
@@ -396,29 +397,7 @@ async function inlineSvgs() {
   );
 }
 
-// Normaliza ícones SVG que por acaso têm fills/strokes não herdados.
-// Executar no DOMContentLoaded para corrigir SVGs inline gerados no HTML.
-function normalizeSvgIcons() {
-  document.querySelectorAll("svg.card-icon").forEach((svg) => {
-    // assegura que o svg tem a propriedade color herdada (usado por currentColor)
-    svg.style.color =
-      getComputedStyle(svg.closest(".card") || svg).color || "currentColor";
-
-    // percorre nós gráficos e aplica currentColor quando aplicável
-    svg.querySelectorAll("*").forEach((el) => {
-      const tag = el.tagName.toLowerCase();
-      // mantém explicitamente 'none' quando presente (ex.: stroke="none" intentional)
-      if (!el.hasAttribute("fill") || el.getAttribute("fill") === "null") {
-        if (tag !== "svg" && tag !== "defs")
-          el.setAttribute("fill", "currentColor");
-      }
-      if (!el.hasAttribute("stroke") || el.getAttribute("stroke") === "null") {
-        if (tag !== "svg" && tag !== "defs")
-          el.setAttribute("stroke", "currentColor");
-      }
-    });
-  });
-}
+// normalizeIcons() handles both svg.card-icon and .material-symbols-outlined.card-icon
 
 // Dispatcher centralizado para actions/data-type dos cartões.
 // - exercise types -> startExercise(type)
@@ -647,9 +626,9 @@ function showLevelUpUI() {
 // Executar inicializações quando DOM estiver pronto
 document.addEventListener("DOMContentLoaded", () => {
   try {
-    normalizeSvgIcons();
+    normalizeIcons();
   } catch (e) {
-    console.warn("normalizeSvgIcons failed", e);
+    console.warn("normalizeIcons failed", e);
   }
   try {
     bindCardActions();
