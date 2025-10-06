@@ -822,6 +822,27 @@ main {
     }
 }
 
+/* Material Symbols (Google) sizing for card icons - responsive */
+.material-symbols-outlined.card-icon {
+    /* Use clamp to scale between mobile and desktop nicely */
+    font-family: 'Material Symbols Outlined', sans-serif;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+    font-size: clamp(32px, 6.5vw, 64px); /* min 32px on small screens, scales with viewport, max 64px on large screens */
+    line-height: 1;
+    display: inline-block;
+    vertical-align: middle;
+    width: auto;
+    height: auto;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+@media (max-width: 480px) {
+    .material-symbols-outlined.card-icon {
+        font-size: clamp(28px, 9vw, 40px); /* slightly smaller caps on very small screens */
+    }
+}
+
 /* Imagens SVG externas usadas como ícones devem herdar a cor do texto e ter 75px */
 img.card-icon {
     width: 75px;
@@ -977,4 +998,22 @@ img.card-icon {
 .card {
     cursor: pointer;
     color: inherit; /* permite que icones usem a mesma cor do texto do cartão */
+}
+
+/* Local Material Symbols setup: tenta carregar a versão local em /fonts/ antes do fallback remoto.
+   Coloca os ficheiros WOFF2 na pasta /fonts/ (ver tools/download-material-symbols.ps1 para automatizar).
+*/
+@font-face {
+    font-family: 'Material Symbols Outlined Local';
+    src: url('../fonts/MaterialSymbolsOutlined.woff2') format('woff2');
+    font-weight: 100 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Define a família que o CSS usa: primeiro a local (se existir), depois a remote family name.
+   Mantemos a entrada genérica 'Material Symbols Outlined' como fallback para compatibilidade.
+*/
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined Local', 'Material Symbols Outlined', sans-serif;
 }

@@ -107,6 +107,17 @@ citania/
      ```
    - Aceda a `http://localhost:8000`
 
+#### Usar ícones localmente (opcional)
+
+Se preferires embalar a família de ícones Material Symbols localmente (útil para PWA/offline), existe um pequeno script PowerShell que tenta descarregar um ficheiro WOFF2 para `./fonts/`:
+
+```powershell
+# a partir da raíz do repositório
+pwsh ./tools/download-material-symbols.ps1
+```
+
+Depois de descarregares a fonte, faz um hard-refresh (Ctrl+F5) no browser para garantir que a nova fonte é usada. O CSS da aplicação tenta carregar primeiro a cópia local e recorre ao serviço remoto como fallback.
+
 ### Como Jogar
 
 1. **Escolhe um Tema**: No menu principal, seleciona um dos 6 tipos de exercícios
