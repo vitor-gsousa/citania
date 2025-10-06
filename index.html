@@ -1,171 +1,662 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-PT">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Citânia">
-    <meta name="theme-color" content="#6366f1">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Citânia" />
+    <meta name="theme-color" content="#6366f1" />
     <title>Citânia - Matemática Divertida</title>
-    <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="manifest" href="manifest.json">
-</head>
-<body>
+    <link rel="icon" type="image/x-icon" href="./images/favicon.ico" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="manifest" href="manifest.json" />
+  </head>
+  <body>
     <header class="app-header">
-        <div class="header-inner">
-            <!-- botão tema (já existe) -->
-            <button id="theme-toggle" title="Alternar tema" aria-label="Alternar tema">🌙</button>
+      <div class="header-inner">
+        <!-- botão tema (já existe) -->
+        <button
+          id="theme-toggle"
+          title="Alternar tema"
+          aria-label="Alternar tema"
+        >
+          🌙
+        </button>
 
-            <!-- Gamification bar: user + pontos + badges -->
-            <div id="gamification-bar" class="gamification-bar" role="region" aria-label="Barra de gamificação">
-                <button id="user-button" class="user-btn" title="Definir nome" aria-label="Definir nome">
-                    <!-- SVG ícone utilizador -->
-                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
-                        <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z"/>
-                    </svg>
-                    <span id="user-name">Jogador</span>
-                </button>
+        <!-- Gamification bar: user + pontos + badges -->
+        <div
+          id="gamification-bar"
+          class="gamification-bar"
+          role="region"
+          aria-label="Barra de gamificação"
+        >
+          <button
+            id="user-button"
+            class="user-btn"
+            title="Definir nome"
+            aria-label="Definir nome"
+          >
+            <!-- SVG ícone utilizador -->
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+              fill="currentColor"
+            >
+              <path
+                d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z"
+              />
+            </svg>
+            <span id="user-name">Jogador</span>
+          </button>
 
-                <div class="points-badges" aria-hidden="false">
-                    <span id="points-pill" class="points-pill" title="Pontos totais">⭐ <span id="points-count">0</span></span>
-                        <!-- Badge strip moved to achievements panel for a cleaner navbar -->
-                        <button id="achievements-button" title="Ver Conquistas" aria-label="Ver Conquistas" class="ach-btn">🏆</button>
-                        <div id="badges-strip" class="badges-strip visually-hidden" aria-label="Medalhas (moved)"></div>
-                </div>
-            </div>
+          <div class="points-badges" aria-hidden="false">
+            <span id="points-pill" class="points-pill" title="Pontos totais"
+              >⭐ <span id="points-count">0</span></span
+            >
+            <!-- Badge strip moved to achievements panel for a cleaner navbar -->
+            <button
+              id="achievements-button"
+              title="Ver Conquistas"
+              aria-label="Ver Conquistas"
+              class="ach-btn"
+            >
+              🏆
+            </button>
+            <div
+              id="badges-strip"
+              class="badges-strip visually-hidden"
+              aria-label="Medalhas (moved)"
+            ></div>
+          </div>
         </div>
+      </div>
     </header>
 
-        <!-- Achievements sliding panel -->
-        <aside id="achievements-panel" class="achievements-panel" aria-hidden="true"></aside>
+    <!-- Achievements sliding panel -->
+    <aside
+      id="achievements-panel"
+      class="achievements-panel"
+      aria-hidden="true"
+    ></aside>
 
     <!-- Mantemos o score-container escondido para não partir o JS existente -->
     <div id="score-container" class="hidden" aria-hidden="true"></div>
-    
+
     <main>
-        <h1>Citânia - Matemática Divertida</h1>
+      <h1>Citânia - Matemática Divertida</h1>
 
-        <!-- Narrativa/Missão -->
-        <div id="narrativa" class="gamification-narrativa" aria-live="polite"></div>
+      <!-- Narrativa/Missão -->
+      <div
+        id="narrativa"
+        class="gamification-narrativa"
+        aria-live="polite"
+      ></div>
 
-        <!-- Menu principal com cards (exemplos com SVG inline) -->
-        <div id="menu-container">
-            <div class="card-container">
-                <div class="card" data-type="fractionToDecimal" role="button" tabindex="0" aria-label="Frações para Decimais">
-                    <img class="card-icon" src="./images/icons/ftd.svg" width="75" height="75" alt="" aria-hidden="true">
-                    <span class="card-text">Frações para Decimais</span>
-                </div>
-
-                <div class="card" data-type="primeFactorization" role="button" tabindex="0" aria-label="Decomposição em Fatores Primos">
-                    <img class="card-icon" src="./images/icons/pfd.svg" width="75" height="75" alt="" aria-hidden="true">
-                    <span class="card-text">Decomposição em Fatores Primos</span>
-                </div>
-
-                <div class="card" data-type="gcd" role="button" tabindex="0" aria-label="Máximo Divisor Comum">
-                    <img class="card-icon" src="./images/icons/gcd.svg" width="75" height="75" alt="" aria-hidden="true">
-                    <span class="card-text">Máximo Divisor Comum (MDC)</span>
-                </div>
-
-                <div class="card" data-type="lcm" role="button" tabindex="0" aria-label="Mínimo Múltiplo Comum (MMC)">
-                    <img class="card-icon" src="./images/icons/lcm.svg" width="75" height="75" alt="" aria-hidden="true">
-                    <span class="card-text">Mínimo Múltiplo Comum (MMC)</span>
-                </div>
-
-                <div class="card" data-type="powerMultiplication" role="button" tabindex="0" aria-label="Multiplicação de Potências">
-                    <svg class="card-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path d="M4 4h4v4H4zM10 10h4v8h-4zM16 4h4v6h-4z" fill="currentColor"/>
-                    </svg>
-                    <span class="card-text">Multiplicação de Potências</span>
-                </div>
-
-                <div class="card" data-type="powerDivision" role="button" tabindex="0" aria-label="Divisão de Potências">
-                    <svg class="card-icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path d="M3 6h18v2H3zM6 10h12v10H6z" fill="currentColor"/>
-                    </svg>
-                    <span class="card-text">Divisão de Potências</span>
-                </div>
+      <!-- Menu principal com áreas e secções -->
+      <div id="menu-container">
+        <!-- Temas/Áreas principais (cards) -->
+        <section id="themes" class="themes">
+          <h2>Áreas</h2>
+          <div class="card-container themes-grid">
+            <!-- Aritmética -->
+            <div
+              class="card area-card"
+              role="button"
+              tabindex="0"
+              aria-label="Aritmética"
+              data-action="open-section"
+              data-target="section-aritmetica"
+            >
+              <!-- Google-style icon: calculate -->
+              <svg
+                class="card-icon"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+                fill="currentColor"
+              >
+                <path
+                  d="M7 2h10a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm1 3v2h8V5H8zm0 4v8h8V9H8z"
+                />
+              </svg>
+              <span class="card-text">Aritmética</span>
             </div>
+
+            <!-- Geometria -->
+            <div
+              class="card area-card"
+              role="button"
+              tabindex="0"
+              aria-label="Geometria"
+              data-action="open-section"
+              data-target="section-geometria"
+            >
+              <!-- Google-style icon: square_foot -->
+              <svg
+                class="card-icon"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+                fill="currentColor"
+              >
+                <path d="M3 3h18v18H3V3zm5 5h8v2H8V8zm0 4h8v6H8v-6z" />
+              </svg>
+              <span class="card-text">Geometria</span>
+            </div>
+
+            <!-- Álgebra -->
+            <div
+              class="card area-card"
+              role="button"
+              tabindex="0"
+              aria-label="Álgebra"
+              data-action="open-section"
+              data-target="section-algebra"
+            >
+              <!-- Google-style icon: functions -->
+              <svg
+                class="card-icon"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+                fill="currentColor"
+              >
+                <path
+                  d="M3 3h2v2H3V3zm4 0h14v2H7V3zM3 7h2v14H3V7zm4 4h14v10H7V11z"
+                />
+              </svg>
+              <span class="card-text">Álgebra</span>
+            </div>
+
+            <!-- Probabilidade -->
+            <div
+              class="card area-card"
+              role="button"
+              tabindex="0"
+              aria-label="Probabilidade"
+              data-action="open-section"
+              data-target="section-probabilidade"
+            >
+              <!-- Google-style icon: percent -->
+              <svg
+                class="card-icon"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+                fill="currentColor"
+              >
+                <path
+                  d="M3 21l18-18M8 8a2 2 0 110-4 2 2 0 010 4zm8 12a2 2 0 110-4 2 2 0 010 4z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span class="card-text">Probabilidade</span>
+            </div>
+
+            <!-- Estatística -->
+            <div
+              class="card area-card"
+              role="button"
+              tabindex="0"
+              aria-label="Estatística"
+              data-action="open-section"
+              data-target="section-estatistica"
+            >
+              <!-- Google-style icon: bar_chart -->
+              <svg
+                class="card-icon"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+                fill="currentColor"
+              >
+                <path d="M5 9h3v11H5zM10.5 4h3v16h-3zM16 14h3v6h-3z" />
+              </svg>
+              <span class="card-text">Estatística</span>
+            </div>
+
+            <!-- Trigonometria -->
+            <div
+              class="card area-card"
+              role="button"
+              tabindex="0"
+              aria-label="Trigonometria"
+              data-action="open-section"
+              data-target="section-trigonometria"
+            >
+              <!-- Google-style icon: explore (sine wave stylized) -->
+              <svg
+                class="card-icon"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+                fill="currentColor"
+              >
+                <path
+                  d="M2 12c4 0 4-6 8-6s4 6 8 6 4-6 8-6v8c-4 0-4 6-8 6s-4-6-8-6-4 6-8 6V12z"
+                />
+              </svg>
+              <span class="card-text">Trigonometria</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sections for each theme; subtopics are cards inside each section -->
+        <section
+          id="section-aritmetica"
+          class="theme-section hidden"
+          aria-hidden="true"
+        >
+          <h3>Aritmética</h3>
+    <button class="close-section" data-action="close-section" aria-label="Voltar às Áreas">← Voltar</button>
+          <div class="card-container">
+            <!-- Moved existing exercise cards here (mantendo data-type para compatibilidade JS) -->
+            <div
+              class="card"
+              data-type="fractionToDecimal"
+              role="button"
+              tabindex="0"
+              aria-label="Frações para Decimais"
+            >
+              <!-- Google icon: percent (fraction) -->
+              <svg
+                class="card-icon"
+                width="75"
+                height="75"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+                fill="currentColor"
+              >
+                <path d="M7 2h10v2H7zM7 6h10v2H7zM7 10h10v2H7z" />
+              </svg>
+              <span class="card-text">Frações para Decimais</span>
+            </div>
+
+            <div
+              class="card"
+              data-type="primeFactorization"
+              role="button"
+              tabindex="0"
+              aria-label="Decomposição em Fatores Primos"
+            >
+              <!-- Google icon: settings_ethernet (factor-like) -->
+              <svg
+                class="card-icon"
+                width="75"
+                height="75"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+                fill="currentColor"
+              >
+                <path d="M7 7h10v2H7zM7 11h10v2H7zM7 15h10v2H7z" />
+              </svg>
+              <span class="card-text">Decomposição em Fatores Primos</span>
+            </div>
+
+            <div
+              class="card"
+              data-type="gcd"
+              role="button"
+              tabindex="0"
+              aria-label="Máximo Divisor Comum"
+            >
+              <!-- Google icon: link (gcd idea) -->
+              <svg
+                class="card-icon"
+                width="75"
+                height="75"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+                fill="currentColor"
+              >
+                <path
+                  d="M3.9 12a5 5 0 017.1-7.1l1.4 1.4-1.4 1.4-1.4-1.4A3 3 0 004.7 12 3 3 0 007.1 15.4l1.4-1.4 1.4 1.4L8.5 16.8A5 5 0 013.9 12zM20.1 12a5 5 0 01-7.1 7.1l-1.4-1.4 1.4-1.4 1.4 1.4a3 3 0 004.4-4.4l-1.4 1.4-1.4-1.4 1.4-1.4A5 5 0 0120.1 12z"
+                />
+              </svg>
+              <span class="card-text">Máximo Divisor Comum (MDC)</span>
+            </div>
+
+            <div
+              class="card"
+              data-type="lcm"
+              role="button"
+              tabindex="0"
+              aria-label="Mínimo Múltiplo Comum (MMC)"
+            >
+              <!-- Google icon: timeline (lcm idea) -->
+              <svg
+                class="card-icon"
+                width="75"
+                height="75"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+                fill="currentColor"
+              >
+                <path
+                  d="M3 3h2v18H3zM8 8h2v13H8zM13 5h2v16h-2zM18 11h2v10h-2z"
+                />
+              </svg>
+              <span class="card-text">Mínimo Múltiplo Comum (MMC)</span>
+            </div>
+
+            <div
+              class="card"
+              data-type="powerMultiplication"
+              role="button"
+              tabindex="0"
+              aria-label="Multiplicação de Potências"
+            >
+              <!-- Google icon: expo (power) -->
+              <svg
+                class="card-icon"
+                width="75"
+                height="75"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+                fill="currentColor"
+              >
+                <path d="M6 6h12v2H6zM8 10h8v10H8z" />
+              </svg>
+              <span class="card-text">Multiplicação de Potências</span>
+            </div>
+
+            <div
+              class="card"
+              data-type="powerDivision"
+              role="button"
+              tabindex="0"
+              aria-label="Divisão de Potências"
+            >
+              <!-- Google icon: divide -->
+              <svg
+                class="card-icon"
+                width="75"
+                height="75"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+                fill="currentColor"
+              >
+                <path
+                  d="M5 12h14M12 7h.01M12 17h.01"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span class="card-text">Divisão de Potências</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Placeholder sections for other themes (empty subtopics for now) -->
+        <section
+          id="section-geometria"
+          class="theme-section hidden"
+          aria-hidden="true"
+        >
+          <h3>Geometria</h3>
+    <button class="close-section" data-action="close-section" aria-label="Voltar às Áreas">← Voltar</button>
+          <div class="card-container">
+            <div
+              class="card"
+              role="button"
+              tabindex="0"
+              aria-label="Subtema: Área e Perímetro"
+            >
+              <svg
+                class="card-icon"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M3 3h18v18H3z" />
+              </svg>
+              <span class="card-text">Área e Perímetro</span>
+            </div>
+            <div
+              class="card"
+              role="button"
+              tabindex="0"
+              aria-label="Subtema: Triângulos"
+            >
+              <svg
+                class="card-icon"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 2l10 20H2z" />
+              </svg>
+              <span class="card-text">Triângulos</span>
+            </div>
+          </div>
+        </section>
+
+  <section id="section-algebra" class="theme-section hidden" aria-hidden="true">
+          <h3>Álgebra</h3>
+    <button class="close-section" data-action="close-section" aria-label="Voltar às Áreas">← Voltar</button>
+          <div class="card-container">
+            <div
+              class="card"
+              role="button"
+              tabindex="0"
+              aria-label="Subtema: Equações"
+            >
+              <svg
+                class="card-icon"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M3 3h18v2H3zM3 7h18v2H3z" />
+              </svg>
+              <span class="card-text">Equações</span>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="section-probabilidade"
+          class="theme-section hidden"
+          aria-hidden="true"
+        >
+          <h3>Probabilidade</h3>
+    <button class="close-section" data-action="close-section" aria-label="Voltar às Áreas">← Voltar</button>
+          <div class="card-container">
+            <div
+              class="card"
+              role="button"
+              tabindex="0"
+              aria-label="Subtema: Eventos e Espaços"
+            >
+              <svg
+                class="card-icon"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
+              </svg>
+              <span class="card-text">Eventos e Espaços</span>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="section-estatistica"
+          class="theme-section hidden"
+          aria-hidden="true"
+        >
+          <h3>Estatística</h3>
+    <button class="close-section" data-action="close-section" aria-label="Voltar às Áreas">← Voltar</button>
+          <div class="card-container">
+            <div
+              class="card"
+              role="button"
+              tabindex="0"
+              aria-label="Subtema: Médias e Medianas"
+            >
+              <svg
+                class="card-icon"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M4 20h16v-2H4zM8 6h2v12H8zM14 10h2v8h-2z" />
+              </svg>
+              <span class="card-text">Médias e Medianas</span>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="section-trigonometria"
+          class="theme-section hidden"
+          aria-hidden="true"
+        >
+          <h3>Trigonometria</h3>
+    <button class="close-section" data-action="close-section" aria-label="Voltar às Áreas">← Voltar</button>
+          <div class="card-container">
+            <div
+              class="card"
+              role="button"
+              tabindex="0"
+              aria-label="Subtema: Funções Trigonométricas"
+            >
+              <svg
+                class="card-icon"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8S2 12 2 12z" />
+              </svg>
+              <span class="card-text">Funções Trigonométricas</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Área de Exercícios -->
+      <div id="exercise-area" class="hidden">
+        <button id="back-to-menu">← Voltar ao Menu</button>
+
+        <div id="progress-bar-container">
+          <div id="progress-bar"></div>
         </div>
 
-        <!-- Área de Exercícios -->
-        <div id="exercise-area" class="hidden">
-            <button id="back-to-menu">← Voltar ao Menu</button>
-            
-            <div id="progress-bar-container">
-                <div id="progress-bar"></div>
+        <div class="exercise-container">
+          <p id="question">Qual é o valor?</p>
+          <input
+            type="text"
+            id="answer-input"
+            placeholder="A tua resposta"
+            inputmode="none"
+            autocomplete="off"
+            aria-label="Campo de resposta"
+            readonly
+          />
+          <button id="check-button">Verificar Resposta</button>
+          <p id="feedback" role="status" aria-live="polite"></p>
+          <button id="next-button">Próximo Exercício →</button>
+
+          <!-- Teclado Personalizado -->
+          <div id="custom-keyboard" class="custom-keyboard hidden">
+            <div class="keyboard-row">
+              <button class="key" data-value="1">1</button>
+              <button class="key" data-value="2">2</button>
+              <button class="key" data-value="3">3</button>
             </div>
-            
-            <div class="exercise-container">
-                <p id="question">Qual é o valor?</p>
-                <input 
-                    type="text" 
-                    id="answer-input" 
-                    placeholder="A tua resposta" 
-                    inputmode="none" 
-                    autocomplete="off"
-                    aria-label="Campo de resposta"
-                    readonly>
-                <button id="check-button">Verificar Resposta</button>
-                <p id="feedback" role="status" aria-live="polite"></p>
-                <button id="next-button">Próximo Exercício →</button>
-                
-                <!-- Teclado Personalizado -->
-                <div id="custom-keyboard" class="custom-keyboard hidden">
-                    <div class="keyboard-row">
-                        <button class="key" data-value="1">1</button>
-                        <button class="key" data-value="2">2</button>
-                        <button class="key" data-value="3">3</button>
-                    </div>
-                    <div class="keyboard-row">
-                        <button class="key" data-value="4">4</button>
-                        <button class="key" data-value="5">5</button>
-                        <button class="key" data-value="6">6</button>
-                    </div>
-                    <div class="keyboard-row">
-                        <button class="key" data-value="7">7</button>
-                        <button class="key" data-value="8">8</button>
-                        <button class="key" data-value="9">9</button>
-                    </div>
-                    <div class="keyboard-row">
-                        <button class="key" data-value="0">0</button>
-                        <button class="key" data-value=".">.</button>
-                        <button class="key delete" data-value="delete">⌫</button>
-                    </div>
-                    <div class="keyboard-row">
-                        <button class="key" data-value="x">×</button>
-                        <button class="key" data-value="^">^</button>
-                        <button class="key" data-value="clear">C</button>
-                    </div>
-                </div>
+            <div class="keyboard-row">
+              <button class="key" data-value="4">4</button>
+              <button class="key" data-value="5">5</button>
+              <button class="key" data-value="6">6</button>
             </div>
+            <div class="keyboard-row">
+              <button class="key" data-value="7">7</button>
+              <button class="key" data-value="8">8</button>
+              <button class="key" data-value="9">9</button>
+            </div>
+            <div class="keyboard-row">
+              <button class="key" data-value="0">0</button>
+              <button class="key" data-value=".">.</button>
+              <button class="key delete" data-value="delete">⌫</button>
+            </div>
+            <div class="keyboard-row">
+              <button class="key" data-value="x">×</button>
+              <button class="key" data-value="^">^</button>
+              <button class="key" data-value="clear">C</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumo da Ronda -->
+      <div id="summary-area" class="hidden">
+        <div class="summary-header">
+          <h2>🎉 Ronda Concluída!</h2>
+          <p>
+            Conseguiste <strong id="summary-correct">0</strong> em
+            <strong id="summary-total">0</strong> respostas certas.
+          </p>
+          <p id="summary-record-message" role="status"></p>
+          <p id="summary-message">Vamos para o próximo nível?</p>
+          <button id="next-level-button" class="btn primary">
+            Avançar para Nível <span id="next-level-number"></span> →
+          </button>
         </div>
 
-        <!-- Resumo da Ronda -->
-        <div id="summary-area" class="hidden">
-            <div class="summary-header">
-                <h2>🎉 Ronda Concluída!</h2>
-                <p>Conseguiste <strong id="summary-correct">0</strong> em <strong id="summary-total">0</strong> respostas certas.</p>
-                <p id="summary-record-message" role="status"></p>
-                <p id="summary-message">Vamos para o próximo nível?</p>
-                <button id="next-level-button" class="btn primary">Avançar para Nível <span id="next-level-number"></span> →</button>
-            </div>
+        <div class="summary-panels">
+          <!-- Leaderboard -->
+          <section id="leaderboard" class="panel leaderboard"></section>
 
-            <div class="summary-panels">
-                <!-- Leaderboard -->
-                <section id="leaderboard" class="panel leaderboard"></section>
-                
-                <!-- Medalhas/Badges -->
-                <section id="medalhas" class="panel medals"></section>
-            </div>
+          <!-- Medalhas/Badges -->
+          <section id="medalhas" class="panel medals"></section>
         </div>
+      </div>
     </main>
 
     <!-- Carrega lottie localmente (preferível para PWA); fallback é feito no JS -->
     <script src="./js/vendor/lottie.min.js" defer></script>
     <!-- Carrega app.js como módulo (ESM) para permitir imports directos -->
     <script type="module" src="./js/app.js"></script>
-</body>
+  </body>
 </html>

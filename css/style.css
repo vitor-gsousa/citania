@@ -783,6 +783,45 @@ main {
 }
 .card:hover .card-icon { transform: translateY(-3px); }
 
+/* Animações para transições entre a grid de temas e as secções */
+#themes, .theme-section, #exercise-area {
+    transition: opacity 240ms ease, transform 220ms ease;
+    will-change: opacity, transform;
+}
+
+/* Estados iniciais quando escondido (manter a classe .hidden para compatibilidade) */
+.theme-section.hidden, #themes.hidden, #exercise-area.hidden {
+    /* display:none continua a ser aplicado pela classe .hidden; estas propriedades
+       servem de estado inicial quando a classe for removida temporariamente para animar */
+    opacity: 0;
+    transform: translateY(8px);
+}
+
+/* Classes de animação explícitas (usadas pelo JS para acionar transições de forma robusta) */
+.animating-in {
+    /* estado inicial para entrada: opaco e deslocado para baixo; ao remover a classe
+       o elemento transita para o seu estado natural (opacity:1, translateY(0)) */
+    opacity: 0 !important;
+    transform: translateY(8px) !important;
+}
+
+.animating-out {
+    /* estado final para saída: opaco e deslocado para baixo; ao adicionar a classe
+       o elemento transita do estado natural para este estado de saída */
+    opacity: 0 !important;
+    transform: translateY(8px) !important;
+}
+
+/* Respeitar preferências de animação reduzida */
+@media (prefers-reduced-motion: reduce) {
+    #themes, .theme-section, #exercise-area,
+    .animating-in, .animating-out {
+        transition: none !important;
+        transform: none !important;
+        opacity: 1 !important;
+    }
+}
+
 /* Imagens SVG externas usadas como ícones devem herdar a cor do texto e ter 75px */
 img.card-icon {
     width: 75px;

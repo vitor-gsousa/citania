@@ -425,11 +425,32 @@ function normalizeSvgIcons() {
 // - achievements -> showAchievementsPanel()
 // - theme -> toggleTheme()
 function bindCardActions() {
+  // Delegar no container que agrupa a lista de temas e as secções
   const container = document.getElementById("menu-container") || document.body;
   container.addEventListener("click", (ev) => {
-    const card = ev.target.closest(".card");
-    if (!card) return;
-    const type = card.dataset.type || card.dataset.action;
+    // Aceitar tanto cartões (.card) como elementos com data-action (ex.: close buttons)
+    const actionEl = ev.target.closest('[data-action], .card');
+    if (!actionEl) return;
+    const action = actionEl.dataset.action || null;
+    const target = actionEl.dataset.target || null;
+    const type = actionEl.dataset.type || actionEl.dataset.action || null;
+    // Tratamento de actions customizadas
+    if (action === "open-section" && target) {
+      try {
+        showSection(target);
+      } catch (e) {
+        console.warn("open-section failed", e);
+      }
+      return;
+    }
+    if (action === "close-section") {
+      try {
+        showThemes();
+      } catch (e) {
+        console.warn("close-section failed", e);
+      }
+      return;
+    }
     if (!type) return;
 
     // Mapeamento simples
@@ -458,28 +479,129 @@ function bindCardActions() {
 
   // Keyboard accessibility
   container.addEventListener("keydown", (ev) => {
-    const card = ev.target.closest(".card");
-    if (!card) return;
+    const actionEl = ev.target.closest('[data-action], .card');
+    if (!actionEl) return;
     if (ev.key === "Enter" || ev.key === " ") {
       ev.preventDefault();
-      const type = card.dataset.type || card.dataset.action;
+      const type = actionEl.dataset.type || actionEl.dataset.action;
       if (!type) return;
-      if (
-        type === "achievements" &&
-        typeof showAchievementsPanel === "function"
-      ) {
+      if (type === "achievements" && typeof showAchievementsPanel === "function") {
         showAchievementsPanel(DOM, state);
         return;
       }
-      if (
-        (type === "theme" || type === "toggle-theme") &&
-        typeof toggleTheme === "function"
-      ) {
+      if ((type === "theme" || type === "toggle-theme") && typeof toggleTheme === "function") {
         toggleTheme();
         return;
       }
       if (typeof startExercise === "function") startExercise(type);
     }
+  });
+}
+
+// Mostra a secção identificada por id e esconde o menu principal
+async function showSection(sectionId) {
+  // Mostrar a secção pedida e esconder apenas a grid de temas (#themes)
+  const themesList = document.getElementById("themes");
+  const section = document.getElementById(sectionId);
+  if (!section) return;
+  // esconder lista de temas (se existir) mas manter o container que agrupa as sections
+  if (themesList) {
+    // animar e só esconder após a animação terminar
+    await animateHide(themesList);
+    themesList.classList.add("hidden");
+  }
+  // esconder todas as sections (sem forçar display none ainda)
+  const sections = Array.from(document.querySelectorAll(".theme-section"));
+  sections.forEach((s) => {
+    s.setAttribute("aria-hidden", "true");
+  });
+  // Mostrar a secção com animação (remoção de hidden antes de animar)
+  section.classList.remove("hidden");
+  section.setAttribute("aria-hidden", "false");
+  await animateShow(section);
+  // optional: scroll to top of main exercise area
+  try {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (e) {}
+}
+
+// Regressa ao menu de temas
+async function showThemes() {
+  // Mostrar a lista de temas e esconder todas as theme-section
+  const themesList = document.getElementById("themes");
+  // esconder todas as sections com animação e só adicionar .hidden depois
+  const sections = Array.from(document.querySelectorAll(".theme-section"));
+  await Promise.all(
+    sections.map(async (s) => {
+      await animateHide(s);
+      s.classList.add("hidden");
+      s.setAttribute("aria-hidden", "true");
+    }),
+  );
+  if (themesList) {
+    themesList.classList.remove("hidden");
+    await animateShow(themesList);
+  }
+  try {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (e) {}
+}
+
+// Helpers de animação: aplicam classes temporárias para forçar transições
+function animateShow(el) {
+  return new Promise((resolve) => {
+    if (!el) return resolve();
+    // Respeitar preferências do utilizador
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return resolve();
+    }
+    // limpar qualquer classe de saída
+    el.classList.remove("animating-out");
+    // preparar para entrada
+    el.classList.add("animating-in");
+    // forçar repaint
+    void el.offsetWidth;
+    // remover a classe animating-in para deixar a transição ocorrer até o estado natural
+    requestAnimationFrame(() => {
+      el.classList.remove("animating-in");
+    });
+    const handler = (ev) => {
+      if (ev.target !== el) return;
+      el.removeEventListener("transitionend", handler);
+      resolve();
+    };
+    el.addEventListener("transitionend", handler);
+    setTimeout(() => {
+      el.removeEventListener("transitionend", handler);
+      resolve();
+    }, 400);
+  });
+}
+
+function animateHide(el) {
+  return new Promise((resolve) => {
+    if (!el) return resolve();
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return resolve();
+    }
+    // garantir que não estamos num estado animating-in
+    el.classList.remove("animating-in");
+    // adicionar classe de saída — transição irá correr para o estado definido por .animating-out
+    // forçar repaint
+    void el.offsetWidth;
+    requestAnimationFrame(() => {
+      el.classList.add("animating-out");
+    });
+    const handler = (ev) => {
+      if (ev.target !== el) return;
+      el.removeEventListener("transitionend", handler);
+      resolve();
+    };
+    el.addEventListener("transitionend", handler);
+    setTimeout(() => {
+      el.removeEventListener("transitionend", handler);
+      resolve();
+    }, 400);
   });
 }
 
