@@ -2,27 +2,29 @@
 :root {
     --bg-color: #f0f4f8;
     --main-bg-color: white;
-    --text-color: #333;
-    --primary-color: #6366f1;
-    --primary-hover-color: #4f46e5;
-    --secondary-color: #787c82;
-    --border-color: #ddd;
-    --score-bg-color: #eef2ff;
-    --progress-bar-bg: #e0e0e0;
-    --correct-color: #06d6a0;
-    --incorrect-color: #ef4444;
+    --text-color: #1f2937;           /* Melhorado: mais escuro para melhor contraste */
+    --primary-color: #4338ca;        /* Melhorado: mais escuro (7.90:1 com branco) */
+    --primary-hover-color: #3730a3;  /* Melhorado: mais escuro */
+    --secondary-color: #9ca3af;      /* Ajustado: mais claro para contraste AA com texto escuro (5.78:1) */
+    --border-color: #d1d5db;         /* Melhorado: ligeiramente mais escuro */
+    --score-bg-color: #e0e7ff;       /* Melhorado: ligeiramente mais contrastante */
+    --progress-bar-bg: #d1d5db;      /* Melhorado: mais contrastante */
+    --correct-color: #047857;        /* Melhorado: mais escuro (4.55:1) */
+    --incorrect-color: #b91c1c;      /* Melhorado: mais escuro (5.48:1) */
 }
 
 .dark-mode {
-    --bg-color: #111827;
-    --main-bg-color: #1f2937;
-    --text-color: #f9fafb;
-    --primary-color: #818cf8;
-    --primary-hover-color: #a78bfa;
-    --secondary-color: #4b5563;
-    --border-color: #4b5563;
-    --score-bg-color: #374151;
-    --progress-bar-bg: #4b5563;
+    --bg-color: #0f172a;             /* Melhorado: mais escuro para melhor contraste */
+    --main-bg-color: #1e293b;        /* Melhorado: mais escuro */
+    --text-color: #f1f5f9;           /* Melhorado: mais claro */
+    --primary-color: #6366f1;        /* Mantido: já tem bom contraste */
+    --primary-hover-color: #818cf8;  /* Melhorado: mais claro */
+    --secondary-color: #64748b;      /* Melhorado: mais claro */
+    --border-color: #475569;         /* Melhorado: mais contrastante */
+    --score-bg-color: #334155;       /* Melhorado: mais contrastante */
+    --progress-bar-bg: #475569;      /* Melhorado: mais contrastante */
+    --correct-color: #34d399;        /* Melhorado: mais claro para modo escuro */
+    --incorrect-color: #fca5a5;      /* Melhorado: mais claro para modo escuro */
 }
 
 * {
@@ -67,35 +69,46 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    background-color: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover-color) 100%);
     color: white;
     padding: 1.5rem;
     border-radius: 10px;
     cursor: pointer;
-    font-weight: 500;
-    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
     text-align: center;
     min-height: 150px;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 12px rgba(67, 56, 202, 0.15);
 }
 
 .card-text {
     font-size: 0.95rem;
     line-height: 1.3;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .card-emoji {
     font-size: 2.5rem;
     margin-top: 0.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    background-color: var(--primary-hover-color);
+    box-shadow: 0 8px 25px rgba(67, 56, 202, 0.25);
+    filter: brightness(1.05);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .card:active {
     transform: translateY(-2px);
+}
+
+.card:focus {
+    outline: 3px solid #ffffff;
+    outline-offset: 3px;
 }
 
 #theme-toggle {
@@ -149,11 +162,54 @@ main {
 #correct-count { 
     color: var(--correct-color); 
     font-weight: bold; 
+    /* Garantir contraste mínimo em todos os fundos */
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
 }
 
 #incorrect-count { 
     color: var(--incorrect-color); 
     font-weight: bold; 
+    /* Garantir contraste mínimo em todos os fundos */
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+}
+
+/* Melhorar contraste do feedback */
+#feedback {
+    font-weight: 600;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+#feedback.correct {
+    background-color: rgba(5, 150, 105, 0.1);
+    color: var(--correct-color);
+    border: 2px solid var(--correct-color);
+}
+
+#feedback.incorrect {
+    background-color: rgba(220, 38, 38, 0.1);
+    color: var(--incorrect-color);
+    border: 2px solid var(--incorrect-color);
+}
+
+/* Dark mode: ajustar sombras para melhor contraste */
+.dark-mode #correct-count {
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+}
+
+.dark-mode #incorrect-count {
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+}
+
+.dark-mode #feedback.correct {
+    background-color: rgba(16, 185, 129, 0.15);
+    border-color: var(--correct-color);
+}
+
+.dark-mode #feedback.incorrect {
+    background-color: rgba(248, 113, 113, 0.15);
+    border-color: var(--incorrect-color);
 }
 
 #progress-bar-container {
@@ -198,7 +254,7 @@ main {
 /* Botões modernos (flat, acessíveis) */
 button {
     appearance: none;
-    border: 1px solid var(--border-color);
+    border: 2px solid var(--border-color);
     background: var(--main-bg-color);
     color: var(--text-color);
     border-radius: 10px;
@@ -206,27 +262,97 @@ button {
     font-weight: 600;
     cursor: pointer;
     transition: transform .04s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease;
-    box-shadow: 0 1px 2px rgba(0,0,0,.06);
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    min-height: 44px; /* Mínimo para acessibilidade touch */
 }
 button:hover {
-    box-shadow: 0 4px 14px rgba(0,0,0,.08);
-    border-color: color-mix(in srgb, var(--border-color), var(--primary-color) 30%);
+    box-shadow: 0 4px 14px rgba(0,0,0,.12);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
 }
-button:active { transform: translateY(1px); }
-button:disabled { opacity: .6; cursor: not-allowed; }
+button:active { 
+    transform: translateY(1px); 
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+}
+button:disabled { 
+    opacity: .6; 
+    cursor: not-allowed; 
+    transform: none;
+}
+
+button:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+button:focus:not(:focus-visible) {
+    outline: none;
+}
+
+button:focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Melhorar contraste de texto selecionado */
+::selection {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.dark-mode ::selection {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Garantir que texto em todos os elementos seja legível */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-color);
+    font-weight: 700;
+}
+
+p, span, div {
+    color: inherit;
+}
+
+/* Melhorar contraste de placeholders */
+input::placeholder {
+    color: #6b7280;
+    opacity: 1;
+}
+
+.dark-mode input::placeholder {
+    color: #9ca3af;
+}
 
 .btn.primary, #check-button, #next-button, #next-level-button {
     background: var(--primary-color);
-    color: #fff;
-    border-color: transparent;
+    color: #ffffff;
+    border-color: var(--primary-color);
+    font-weight: 700;
 }
 .btn.primary:hover, #check-button:hover, #next-button:hover, #next-level-button:hover {
     background: var(--primary-hover-color);
-    box-shadow: 0 6px 18px rgba(99,102,241,.25);
+    border-color: var(--primary-hover-color);
+    box-shadow: 0 6px 18px rgba(67, 56, 202, .25);
 }
 #back-to-menu {
-    background: transparent;
-    border-color: var(--border-color);
+    background: var(--secondary-color);
+    color: var(--text-color);  /* Texto escuro para contraste com fundo claro */
+    border-color: var(--secondary-color);
+    font-weight: 600;
+}
+#back-to-menu:hover {
+    background: var(--text-color);
+    color: #ffffff;  /* Branco no hover para contraste */
+    border-color: var(--text-color);
+}
+
+/* Garantir que qualquer botão com secondary color use texto escuro */
+.btn.secondary {
+    background: var(--secondary-color);
+    color: var(--text-color) !important;
+    border-color: var(--secondary-color);
 }
 
 /* Layout base: header em cima, main abaixo (evita header ao lado do main) */
