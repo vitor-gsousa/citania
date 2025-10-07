@@ -1,5 +1,9 @@
 // js/features/gamification.js
 import { safeGetItem, safeSetItem } from "../utils/storage.js";
+import { getRandomMathFact, getLevelBasedMathFact, startFactRotation } from "../modules/utils/math-facts.js";
+
+// Variável para controlar a rotação automática
+let factRotationController = null;
 
 export const GAMIFICATION_KEY = "citaniaGamification";
 export const LEADERBOARD_KEY = "citaniaLeaderboard";
@@ -15,8 +19,8 @@ export const BADGES = {
 export const gamification = {
   pontos: 0,
   medalhas: [],
-  narrativa:
-    "Bem-vindo à missão Citania! Descobre os segredos da cidade antiga completando desafios.",
+  curiosidade:
+    "Bem-vindo à Citânia! Prepare-se para descobrir curiosidades matemáticas fascinantes!",
   leaderboard: [],
   userName: localStorage.getItem("citaniaUserName") || "Jogador",
 };
@@ -30,11 +34,15 @@ export function loadGamification() {
       gamification.medalhas = Array.isArray(data.medalhas)
         ? data.medalhas
         : gamification.medalhas;
-      gamification.narrativa = data.narrativa ?? gamification.narrativa;
+      gamification.curiosidade = data.curiosidade ?? gamification.curiosidade;
       gamification.userName = data.userName ?? gamification.userName;
     } catch {}
   }
   gamification.leaderboard = JSON.parse(safeGetItem(LEADERBOARD_KEY) || "[]");
+  
+  // Gerar nova curiosidade e iniciar rotação automática
+  generateNewMathFact();
+  startAutoFactRotation();
 }
 
 export function saveGamification() {
@@ -43,7 +51,7 @@ export function saveGamification() {
     JSON.stringify({
       pontos: gamification.pontos,
       medalhas: gamification.medalhas,
-      narrativa: gamification.narrativa,
+      curiosidade: gamification.curiosidade,
       userName: gamification.userName,
     }),
   );
@@ -116,28 +124,72 @@ export function showAchievementsPanel(DOM, state) {
   }
 }
 
-// Mostra a narrativa/missão para o nível actual
-export function mostrarNarrativa(DOM, level) {
-  const lvl = Number(level) || 1;
-  // Texto da narrativa (poderia ser externalizado)
-  function narrativaPorNivel(level) {
-    switch (level) {
-      case 1:
-        return "Bem-vindo à Citânia de Sanfins, um antigo povoado fortificado (castro) em Paços de Ferreira. Começa a explorar as primeiras casas e caminhos.";
-      case 2:
-        return "Observa as muralhas concêntricas que protegiam a comunidade e as casas circulares construídas em pedra. Avança com cuidado pelos becos do castro.";
-      case 3:
-        return "Chegam influências romanas: novas técnicas e objetos do dia a dia. Descobre como a romanização mudou a vida no povoado.";
-      case 4:
-        return "Visita o Museu Arqueológico da Citânia e liga as pistas: ferramentas, cerâmica e estruturas defensivas contam histórias de séculos.";
-      default:
-        return "Continua a tua missão arqueológica: cada desafio revela mais segredos da Citânia de Sanfins!";
+// Gera e mostra uma nova curiosidade matemática
+export function generateNewMathFact(level = null) {
+  let newFact;
+  
+  if (level) {
+    // Se um nível for especificado, usar curiosidade baseada no nível
+    newFact = getLevelBasedMathFact(level);
+  } else {
+    // Caso contrário, usar curiosidade aleatória
+    newFact = getRandomMathFact();
+  }
+  
+  gamification.curiosidade = newFact;
+  updateMathFactDisplay();
+  saveGamification();
+}
+
+// Inicia a rotação automática de curiosidades
+export function startAutoFactRotation(level = null) {
+  // Parar rotação anterior se existir
+  if (factRotationController) {
+    factRotationController.stop();
+  }
+  
+  // Função callback para atualizar a curiosidade
+  const updateCallback = (fact) => {
+    gamification.curiosidade = fact;
+    updateMathFactDisplay();
+    saveGamification();
+  };
+  
+  // Iniciar nova rotação
+  factRotationController = startFactRotation(updateCallback, !!level, level);
+}
+
+// Para a rotação automática
+export function stopAutoFactRotation() {
+  if (factRotationController) {
+    factRotationController.stop();
+    factRotationController = null;
+  }
+}
+
+// Atualiza a exibição da curiosidade matemática no DOM
+function updateMathFactDisplay() {
+  const curiosidadeEl = document.getElementById("narrativa") || 
+                        document.getElementById("curiosidade") ||
+                        document.querySelector(".curiosidade-matematica");
+  
+  if (curiosidadeEl) {
+    curiosidadeEl.textContent = gamification.curiosidade;
+    
+    // Adicionar ícone de curiosidade se não existir
+    if (!curiosidadeEl.querySelector('.curiosidade-icon')) {
+      const icon = document.createElement('span');
+      icon.className = 'curiosidade-icon';
+      icon.textContent = '🧠 ';
+      icon.style.marginRight = '0.5rem';
+      curiosidadeEl.insertBefore(icon, curiosidadeEl.firstChild);
     }
   }
+}
 
-  gamification.narrativa = narrativaPorNivel(lvl);
-  if (DOM.narrativa) DOM.narrativa.textContent = gamification.narrativa;
-  saveGamification();
+// Função de compatibilidade - substitui mostrarNarrativa
+export function mostrarNarrativa(DOM, level) {
+  generateNewMathFact(level);
 }
 
 export function mostrarFeedbackGamificacao(DOM, mensagem) {

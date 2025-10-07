@@ -22,11 +22,16 @@ import {
   BADGES,
   renderAchievementsPanel,
   mostrarNarrativa,
+  generateNewMathFact,
+  startAutoFactRotation,
+  stopAutoFactRotation,
   showAchievementsPanel,
 } from "./features/gamification.js";
+import { getArithmeticFact } from "./modules/utils/math-facts.js";
 import { safeGetItem, safeSetItem } from "./utils/storage.js";
 import normalizeIcons from "./utils/icon-utils.js";
 import { generateAddSub } from "./modules/arithmetic/progression.js";
+import { getArithmeticFact } from "./modules/utils/math-facts.js";
 
 // Elementos do DOM
 const DOM = {
@@ -118,7 +123,10 @@ function generateNewExercise() {
       /* silent */
     }
   }
-  if (DOM.feedbackEl) DOM.feedbackEl.textContent = "";
+  if (DOM.feedbackEl) {
+    DOM.feedbackEl.textContent = "";
+    DOM.feedbackEl.className = "hidden"; // Ocultar feedback vazio
+  }
   state.answered = false;
 
   // Restaurar visibilidade dos botões
@@ -218,7 +226,10 @@ function exitExercise() {
     DOM.answerInput.classList.remove("hidden");
     DOM.answerInput.value = "";
   }
-  if (DOM.feedbackEl) DOM.feedbackEl.textContent = "";
+  if (DOM.feedbackEl) {
+    DOM.feedbackEl.textContent = "";
+    DOM.feedbackEl.className = "hidden"; // Ocultar feedback vazio
+  }
 
   // Garantir scroll para o topo do menu
   try {
@@ -481,26 +492,54 @@ async function showSection(sectionId) {
   // Mostrar a secção pedida e esconder apenas a grid de temas (#themes)
   const themesList = document.getElementById("themes");
   const section = document.getElementById(sectionId);
+  const mainElement = document.querySelector('main');
   if (!section) return;
-  // esconder lista de temas (se existir) mas manter o container que agrupa as sections
+  
+  // Preservar altura atual do main durante a transição
+  if (mainElement) {
+    const currentHeight = mainElement.offsetHeight;
+    mainElement.style.setProperty('--preserved-height', currentHeight + 'px');
+    mainElement.classList.add('transitioning');
+  }
+  
+  // Pré-carregar a secção para calcular layout
+  section.classList.remove("hidden");
+  section.classList.add("preloading");
+  section.setAttribute("aria-hidden", "false");
+  
+  // Aguardar que o layout seja calculado
+  await waitForLayout(section);
+  
+  // Agora esconder a lista de temas e animar a entrada da secção
   if (themesList) {
-    // animar e só esconder após a animação terminar
     console.debug("showSection: hiding themesList", themesList);
     ensureFocusNotInside(themesList);
     await animateHide(themesList);
     themesList.classList.add("hidden");
   }
-  // esconder todas as sections (sem forçar display none ainda)
+  
+  // esconder todas as outras sections
   const sections = Array.from(document.querySelectorAll(".theme-section"));
   sections.forEach((s) => {
-    console.debug("showSection: marking aria-hidden on section", s.id || s);
-    ensureFocusNotInside(s);
-    s.setAttribute("aria-hidden", "true");
+    if (s !== section) {
+      console.debug("showSection: marking aria-hidden on section", s.id || s);
+      ensureFocusNotInside(s);
+      s.setAttribute("aria-hidden", "true");
+    }
   });
-  // Mostrar a secção com animação (remoção de hidden antes de animar)
-  section.classList.remove("hidden");
-  section.setAttribute("aria-hidden", "false");
+  
+  // Remover preloading e animar entrada
+  section.classList.remove("preloading");
   await animateShow(section);
+  
+  // Remover preservação de altura após transição
+  if (mainElement) {
+    setTimeout(() => {
+      mainElement.classList.remove('transitioning');
+      mainElement.style.removeProperty('--preserved-height');
+    }, 50);
+  }
+  
   // optional: scroll to top of main exercise area
   try {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -509,8 +548,25 @@ async function showSection(sectionId) {
 
 // Regressa ao menu de temas
 async function showThemes() {
-  // Mostrar a lista de temas e esconder todas as theme-section
+  // Pré-carregar a lista de temas para calcular layout
   const themesList = document.getElementById("themes");
+  const mainElement = document.querySelector('main');
+  
+  // Preservar altura atual do main durante a transição
+  if (mainElement) {
+    const currentHeight = mainElement.offsetHeight;
+    mainElement.style.setProperty('--preserved-height', currentHeight + 'px');
+    mainElement.classList.add('transitioning');
+  }
+  
+  if (themesList) {
+    themesList.classList.remove("hidden");
+    themesList.classList.add("preloading");
+    
+    // Aguardar que o layout seja calculado
+    await waitForLayout(themesList);
+  }
+  
   // esconder todas as sections com animação e só adicionar .hidden depois
   const sections = Array.from(document.querySelectorAll(".theme-section"));
   await Promise.all(
@@ -522,15 +578,60 @@ async function showThemes() {
       s.setAttribute("aria-hidden", "true");
     }),
   );
+  
   if (themesList) {
     console.debug("showThemes: showing themesList", themesList);
     ensureFocusNotInside(themesList);
-    themesList.classList.remove("hidden");
+    themesList.classList.remove("preloading");
     await animateShow(themesList);
   }
+  
+  // Remover preservação de altura após transição
+  if (mainElement) {
+    setTimeout(() => {
+      mainElement.classList.remove('transitioning');
+      mainElement.style.removeProperty('--preserved-height');
+    }, 50);
+  }
+  
   try {
     window.scrollTo({ top: 0, behavior: "smooth" });
   } catch (e) {}
+}
+
+// Helper para aguardar que o layout seja calculado
+function waitForLayout(element) {
+  return new Promise((resolve) => {
+    // Se não há cards para aguardar, resolve imediatamente
+    const cards = element.querySelectorAll('.card');
+    if (cards.length === 0) {
+      resolve();
+      return;
+    }
+    
+    // Aguarda que as imagens estejam carregadas (se houver)
+    const images = element.querySelectorAll('img');
+    const imagePromises = Array.from(images).map(img => {
+      if (img.complete) return Promise.resolve();
+      return new Promise(resolve => {
+        img.addEventListener('load', resolve, { once: true });
+        img.addEventListener('error', resolve, { once: true });
+      });
+    });
+    
+    Promise.all(imagePromises).then(() => {
+      // Aguarda um frame para garantir que o layout foi calculado
+      requestAnimationFrame(() => {
+        // Força o browser a calcular as dimensões
+        void element.offsetHeight;
+        
+        // Aguarda mais um frame para estabilizar
+        requestAnimationFrame(() => {
+          resolve();
+        });
+      });
+    });
+  });
 }
 
 // Helpers de animação: aplicam classes temporárias para forçar transições
@@ -943,6 +1044,21 @@ function checkAnswer() {
 
 // Função invocada quando o utilizador clica em Next: prepara e gera o próximo exercício
 function nextExercise() {
+  // Ocasionalmente mostrar curiosidade relacionada com aritmética (20% das vezes)
+  if (currentExercise.type === 'addSub' && Math.random() < 0.2) {
+    const arithmeticFact = getArithmeticFact();
+    const curiosidadeEl = document.getElementById("narrativa");
+    if (curiosidadeEl) {
+      const originalText = curiosidadeEl.textContent;
+      curiosidadeEl.textContent = `💡 ${arithmeticFact}`;
+      
+      // Voltar ao texto original após 4 segundos
+      setTimeout(() => {
+        curiosidadeEl.textContent = originalText;
+      }, 4000);
+    }
+  }
+  
   // Reativar a caixa de resposta e limpar feedback
   DOM.answerInput.classList.remove("hidden");
   DOM.answerInput.value = "";
@@ -952,6 +1068,7 @@ function nextExercise() {
     /* silent */
   }
   DOM.feedbackEl.textContent = "";
+  DOM.feedbackEl.className = "hidden"; // Ocultar feedback vazio
 
   // Restaurar botões
   DOM.checkButton.style.display = "block";
@@ -1018,6 +1135,32 @@ function initApp() {
       : "dark";
     localStorage.setItem("matematicaAppTheme", currentTheme);
     applyTheme(currentTheme);
+  });
+
+  // Botão para nova curiosidade matemática
+  const novaCuriosidadeBtn = document.getElementById("nova-curiosidade");
+  novaCuriosidadeBtn?.addEventListener("click", () => {
+    generateNewMathFact();
+  });
+
+  // Botão para pausar/retomar rotação automática
+  const toggleRotacaoBtn = document.getElementById("toggle-rotacao");
+  let rotacaoPausada = false;
+  
+  toggleRotacaoBtn?.addEventListener("click", () => {
+    rotacaoPausada = !rotacaoPausada;
+    
+    if (rotacaoPausada) {
+      stopAutoFactRotation();
+      toggleRotacaoBtn.textContent = "▶️";
+      toggleRotacaoBtn.title = "Retomar rotação automática";
+      toggleRotacaoBtn.classList.add("paused");
+    } else {
+      startAutoFactRotation();
+      toggleRotacaoBtn.textContent = "⏸️";
+      toggleRotacaoBtn.title = "Pausar rotação automática";
+      toggleRotacaoBtn.classList.remove("paused");
+    }
   });
 
   // Cards do menu: os handlers são registados em bindCardActions() para centralizar o comportamento.

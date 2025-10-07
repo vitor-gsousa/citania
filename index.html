@@ -95,12 +95,33 @@
     <main>
       <h1>Citânia - Matemática Divertida</h1>
 
-      <!-- Narrativa/Missão -->
+      <!-- Curiosidade Matemática -->
       <div
         id="narrativa"
-        class="gamification-narrativa"
+        class="curiosidade-matematica"
         aria-live="polite"
-      ></div>
+        aria-label="Curiosidade matemática"
+      >
+        🧠 Carregando curiosidade matemática...
+        <div class="curiosidade-controls">
+          <button 
+            id="nova-curiosidade" 
+            class="nova-curiosidade-btn"
+            title="Gerar nova curiosidade"
+            aria-label="Gerar nova curiosidade matemática"
+          >
+            🔄
+          </button>
+          <button 
+            id="toggle-rotacao" 
+            class="toggle-rotacao-btn"
+            title="Pausar/Retomar rotação automática"
+            aria-label="Pausar ou retomar rotação automática"
+          >
+            ⏸️
+          </button>
+        </div>
+      </div>
 
       <!-- Menu principal com áreas e secções -->
       <div id="menu-container">
@@ -404,7 +425,7 @@
             readonly
           />
           <button id="check-button">Verificar Resposta</button>
-          <p id="feedback" role="status" aria-live="polite"></p>
+          <p id="feedback" class="hidden" role="status" aria-live="polite"></p>
           <button id="next-button">Próximo Exercício →</button>
 
           <!-- Teclado Personalizado -->

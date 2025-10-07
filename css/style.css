@@ -65,6 +65,10 @@ main {
     max-width: 960px; /* antes: 800px */
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    /* Altura mínima para evitar ajustes abruptos durante transições */
+    min-height: 400px;
+    /* Transição suave para mudanças de altura */
+    transition: min-height var(--transition-medium) var(--easing-standard);
 }
 
 .card-container {
@@ -934,6 +938,19 @@ main {
     transform: translateY(8px);
 }
 
+/* Estado de pré-carregamento: layout calculado mas invisível */
+.preloading {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    /* Manter display e position para calcular layout */
+    visibility: hidden !important;
+}
+
+/* Durante transições, preservar altura para evitar ajustes abruptos */
+main.transitioning {
+    min-height: var(--preserved-height, 400px);
+}
+
 /* Classes de animação explícitas (usadas pelo JS para acionar transições de forma robusta) */
 .animating-in {
     /* estado inicial para entrada: opaco e deslocado para baixo; ao remover a classe
@@ -1138,6 +1155,86 @@ img.card-icon {
 .card {
     cursor: pointer;
     color: inherit; /* permite que icones usem a mesma cor do texto do cartão */
+}
+
+/* Curiosidade Matemática */
+.curiosidade-matematica {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.2rem;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    border-left: 4px solid #4facfe;
+    transition: transform var(--transition-fast) var(--easing-standard);
+    position: relative;
+    /* Adicionar padding para os controlos */
+    padding-right: 4rem;
+}
+
+.curiosidade-matematica:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.curiosidade-controls {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.nova-curiosidade-btn,
+.toggle-rotacao-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all var(--transition-fast) var(--easing-standard);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nova-curiosidade-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(180deg);
+}
+
+.toggle-rotacao-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.toggle-rotacao-btn.paused {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.curiosidade-icon {
+    font-size: 1.2em;
+    margin-right: 0.5rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.dark-mode .curiosidade-matematica {
+    background: linear-gradient(135deg, #4338ca 0%, #5b21b6 100%);
+    border-left-color: #6366f1;
+    box-shadow: 0 4px 12px rgba(67, 56, 202, 0.4);
+}
+
+.dark-mode .curiosidade-matematica:hover {
+    box-shadow: 0 6px 16px rgba(67, 56, 202, 0.5);
 }
 
 /* Local Material Symbols setup: tenta carregar a versão local em /fonts/ antes do fallback remoto.
