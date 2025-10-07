@@ -11,6 +11,14 @@
     --progress-bar-bg: #d1d5db;      /* Melhorado: mais contrastante */
     --correct-color: #047857;        /* Melhorado: mais escuro (4.55:1) */
     --incorrect-color: #b91c1c;      /* Melhorado: mais escuro (5.48:1) */
+    /* Cores dos cartões (ajustáveis por tema) - opção 3: gradiente azul suave + texto escuro */
+    --card-bg: linear-gradient(135deg, #e6f0ff 0%, #cfe0ff 100%);
+    --card-text: #0b3a66; /* tom azul-escuro para bom contraste contra o fundo claro */
+    /* Transitions */
+    --transition-fast: 180ms;
+    --transition-medium: 320ms;
+    --transition-slow: 480ms;
+    --easing-standard: cubic-bezier(.2,.9,.2,1);
 }
 
 .dark-mode {
@@ -25,6 +33,8 @@
     --progress-bar-bg: #475569;      /* Melhorado: mais contrastante */
     --correct-color: #34d399;        /* Melhorado: mais claro para modo escuro */
     --incorrect-color: #fca5a5;      /* Melhorado: mais claro para modo escuro */
+    --card-bg: var(--primary-color);
+    --card-text: #0f172a;
 }
 
 * {
@@ -69,13 +79,14 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover-color) 100%);
-    color: white;
+    /* Usar cores específicas do tema para garantir contraste adequado */
+    background: var(--card-bg, linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover-color) 100%));
+    color: var(--card-text, #fff);
     padding: 1.5rem;
     border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
-    transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+    transition: transform var(--transition-medium) var(--easing-standard), box-shadow var(--transition-medium) var(--easing-standard), filter var(--transition-medium) var(--easing-standard);
     text-align: center;
     min-height: 150px;
     border: 2px solid transparent;
@@ -96,10 +107,10 @@ main {
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(67, 56, 202, 0.25);
-    filter: brightness(1.05);
-    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-6px);
+    box-shadow: 0 10px 30px rgba(67, 56, 202, 0.22);
+    filter: brightness(1.04);
+    border-color: rgba(255, 255, 255, 0.12);
 }
 
 .card:active {
@@ -911,7 +922,7 @@ main {
 
 /* Animações para transições entre a grid de temas e as secções */
 #themes, .theme-section, #exercise-area {
-    transition: opacity 240ms ease, transform 220ms ease;
+    transition: opacity var(--transition-medium) var(--easing-standard), transform var(--transition-medium) var(--easing-standard);
     will-change: opacity, transform;
 }
 
@@ -928,14 +939,18 @@ main {
     /* estado inicial para entrada: opaco e deslocado para baixo; ao remover a classe
        o elemento transita para o seu estado natural (opacity:1, translateY(0)) */
     opacity: 0 !important;
-    transform: translateY(8px) !important;
+    transform: translateY(12px) !important;
+    transition: opacity var(--transition-medium) var(--easing-standard) !important;
+    transition-property: opacity, transform !important;
 }
 
 .animating-out {
     /* estado final para saída: opaco e deslocado para baixo; ao adicionar a classe
        o elemento transita do estado natural para este estado de saída */
     opacity: 0 !important;
-    transform: translateY(8px) !important;
+    transform: translateY(12px) !important;
+    transition: opacity var(--transition-medium) var(--easing-standard) !important;
+    transition-property: opacity, transform !important;
 }
 
 /* Respeitar preferências de animação reduzida */
@@ -1089,8 +1104,7 @@ img.card-icon {
 
 /* Garantir visibilidade dos ícones nos cartões */
 .card {
-    color: white; /* força cor branca nos textos */
-    /* ou: color: inherit; se quiseres herdar do body */
+    color: var(--card-text); /* usar a variável do tema para garantir contraste correto */
 }
 
 .card-icon {

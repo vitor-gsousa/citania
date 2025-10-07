@@ -53,9 +53,9 @@ export function saveGamification() {
 export function renderGamificationBar(DOM) {
   if (DOM.pointsCountEl) DOM.pointsCountEl.textContent = gamification.pontos;
   if (DOM.userNameEl) DOM.userNameEl.textContent = gamification.userName;
-  const medalsList = DOM.medalhasList;
+  const medalsList = DOM.medalhasList || DOM.medalhasEl || document.getElementById("medalhas");
   if (medalsList) {
-    medalsList.innerHTML = gamification.medalhas
+    medalsList.innerHTML = (gamification.medalhas || [])
       .map(
         (b) =>
           `<span class="badge big" title="${b.label}">${b.emoji} ${b.label}</span>`,

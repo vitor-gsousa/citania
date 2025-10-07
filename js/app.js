@@ -56,7 +56,7 @@ const DOM = {
   userButton: document.getElementById("user-button"),
   userNameEl: document.getElementById("user-name"),
   // elementos adicionais referenciados no código
-  medalhasList: document.getElementById("medalhas-list"),
+  medalhasList: document.getElementById("medalhas-list") || document.getElementById("medalhas"),
   narrativa: document.getElementById("narrativa"),
   achievementsPanel: document.getElementById("achievements-panel"),
   achievementsButton: document.getElementById("achievements-button"),
@@ -144,9 +144,32 @@ function updateProgressBar() {
 }
 
 // Função para mostrar confetti
-function triggerConfetti() {
-  // Implementação stub
-  console.log("Confetti triggered");
+// Função para mostrar confetti usando canvas-confetti CDN (carrega dinamicamente)
+async function triggerConfetti() {
+  try {
+    // Se já existir, usa directamente
+    if (typeof window.confetti === "function") {
+      window.confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      return;
+    }
+
+    // Carrega script CDN de forma dinâmica
+    await new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js";
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = (e) => reject(e);
+      document.head.appendChild(s);
+    });
+
+    if (typeof window.confetti === "function") {
+      window.confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+    }
+  } catch (e) {
+    // fallback silencioso
+    console.warn("triggerConfetti failed:", e);
+  }
 }
 
 // Função para mostrar UI de level up (implementação completa mais abaixo)
@@ -371,41 +394,7 @@ const lcm = lcm_imported;
 const isPrime = isPrime_imported;
 const getPrimeFactors = getPrimeFactors_imported;
 
-// Inline external SVG images so they can inherit currentColor
-async function inlineSvgs() {
-  const imgs = Array.from(
-    document.querySelectorAll('img.card-icon[src$=".svg"]'),
-  );
-  await Promise.all(
-    imgs.map(async (img) => {
-      try {
-        const src = img.getAttribute("src");
-        const resp = await fetch(src);
-        if (!resp.ok) return;
-        const text = await resp.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(text, "image/svg+xml");
-        const svg = doc.querySelector("svg");
-        if (!svg) return;
-        // copy width/height from img to svg if present
-        if (img.hasAttribute("width"))
-          svg.setAttribute("width", img.getAttribute("width"));
-        if (img.hasAttribute("height"))
-          svg.setAttribute("height", img.getAttribute("height"));
-        // ensure svg uses currentColor as fallback
-        svg.setAttribute(
-          "aria-hidden",
-          img.getAttribute("aria-hidden") || "true",
-        );
-        svg.classList.add(...(img.className ? img.className.split(" ") : []));
-        img.replaceWith(svg);
-      } catch (e) {
-        // ignore, keep the <img>
-        console.warn("inlineSvgs error for", img, e);
-      }
-    }),
-  );
-}
+// medalhasList fallback will be initialized below inside DOM map usage
 
 // normalizeIcons() handles both svg.card-icon and .material-symbols-outlined.card-icon
 
@@ -496,12 +485,16 @@ async function showSection(sectionId) {
   // esconder lista de temas (se existir) mas manter o container que agrupa as sections
   if (themesList) {
     // animar e só esconder após a animação terminar
+    console.debug("showSection: hiding themesList", themesList);
+    ensureFocusNotInside(themesList);
     await animateHide(themesList);
     themesList.classList.add("hidden");
   }
   // esconder todas as sections (sem forçar display none ainda)
   const sections = Array.from(document.querySelectorAll(".theme-section"));
   sections.forEach((s) => {
+    console.debug("showSection: marking aria-hidden on section", s.id || s);
+    ensureFocusNotInside(s);
     s.setAttribute("aria-hidden", "true");
   });
   // Mostrar a secção com animação (remoção de hidden antes de animar)
@@ -522,12 +515,16 @@ async function showThemes() {
   const sections = Array.from(document.querySelectorAll(".theme-section"));
   await Promise.all(
     sections.map(async (s) => {
+      console.debug("showThemes: animating hide for section", s.id || s);
+      ensureFocusNotInside(s);
       await animateHide(s);
       s.classList.add("hidden");
       s.setAttribute("aria-hidden", "true");
     }),
   );
   if (themesList) {
+    console.debug("showThemes: showing themesList", themesList);
+    ensureFocusNotInside(themesList);
     themesList.classList.remove("hidden");
     await animateShow(themesList);
   }
@@ -544,7 +541,8 @@ function animateShow(el) {
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return resolve();
     }
-    // limpar qualquer classe de saída
+  console.debug("animateShow: element", el);
+  // limpar qualquer classe de saída
     el.classList.remove("animating-out");
     // preparar para entrada
     el.classList.add("animating-in");
@@ -556,14 +554,20 @@ function animateShow(el) {
     });
     const handler = (ev) => {
       if (ev.target !== el) return;
+      console.debug("animateShow: transitionend on", el);
       el.removeEventListener("transitionend", handler);
       resolve();
     };
     el.addEventListener("transitionend", handler);
+    // Debug: log computed transition style
+    try {
+      const cs = getComputedStyle(el);
+      console.debug("animateShow: computed transition", cs.transition || cs.transitionProperty, cs.transitionDuration);
+    } catch (e) {}
     setTimeout(() => {
       el.removeEventListener("transitionend", handler);
       resolve();
-    }, 400);
+    }, 600);
   });
 }
 
@@ -573,7 +577,8 @@ function animateHide(el) {
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return resolve();
     }
-    // garantir que não estamos num estado animating-in
+  console.debug("animateHide: element", el);
+  // garantir que não estamos num estado animating-in
     el.classList.remove("animating-in");
     // adicionar classe de saída — transição irá correr para o estado definido por .animating-out
     // forçar repaint
@@ -583,15 +588,46 @@ function animateHide(el) {
     });
     const handler = (ev) => {
       if (ev.target !== el) return;
+      console.debug("animateHide: transitionend on", el);
       el.removeEventListener("transitionend", handler);
       resolve();
     };
     el.addEventListener("transitionend", handler);
+    try {
+      const cs = getComputedStyle(el);
+      console.debug("animateHide: computed transition", cs.transition || cs.transitionProperty, cs.transitionDuration);
+    } catch (e) {}
     setTimeout(() => {
       el.removeEventListener("transitionend", handler);
       resolve();
-    }, 400);
+    }, 600);
   });
+}
+
+// Move focus out of `el` if any descendant currently has focus.
+function ensureFocusNotInside(el) {
+  try {
+    const active = document.activeElement;
+    if (!active) return;
+    if (el && el.contains(active)) {
+      // Tenta focar o container do menu ou o body como fallback
+      const fallback = document.getElementById("menu-container") || document.body;
+      if (fallback && typeof fallback.focus === "function") {
+        // tornar focable temporariamente se necessário
+        const prevTabIndex = fallback.getAttribute("tabindex");
+        if (prevTabIndex === null) fallback.setAttribute("tabindex", "-1");
+        fallback.focus();
+        if (prevTabIndex === null) fallback.removeAttribute("tabindex");
+      } else {
+        // blur actual element
+        try {
+          active.blur();
+        } catch (e) {}
+      }
+    }
+  } catch (e) {
+    /* silent */
+  }
 }
 
 // Mostrar UI de Level Up: reproduz som e atualiza resumo
@@ -880,7 +916,8 @@ function checkAnswer() {
 
     // Confetti / feedback / som / resumo
     try {
-      triggerConfetti?.();
+      // invoke confetti and ignore rejection (non-blocking)
+      triggerConfetti().catch(() => {});
     } catch (e) {}
     try {
       showLevelUpUI();
@@ -966,8 +1003,6 @@ function initApp() {
 
   // 2. Carregar dados persistidos
   migrateOldProgress();
-  // Inline external SVGs so they inherit currentColor
-  inlineSvgs().catch(() => {});
   loadGamification();
   renderGamificationBar(DOM);
   mostrarNarrativa(DOM, state.level);
