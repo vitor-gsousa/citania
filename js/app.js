@@ -27,11 +27,9 @@ import {
   stopAutoFactRotation,
   showAchievementsPanel,
 } from "./features/gamification.js";
-import { getArithmeticFact } from "./modules/utils/math-facts.js";
 import { safeGetItem, safeSetItem } from "./utils/storage.js";
 import normalizeIcons from "./utils/icon-utils.js";
 import { generateAddSub } from "./modules/arithmetic/progression.js";
-import { getArithmeticFact } from "./modules/utils/math-facts.js";
 
 // Elementos do DOM
 const DOM = {
@@ -1044,21 +1042,6 @@ function checkAnswer() {
 
 // Função invocada quando o utilizador clica em Next: prepara e gera o próximo exercício
 function nextExercise() {
-  // Ocasionalmente mostrar curiosidade relacionada com aritmética (20% das vezes)
-  if (currentExercise.type === 'addSub' && Math.random() < 0.2) {
-    const arithmeticFact = getArithmeticFact();
-    const curiosidadeEl = document.getElementById("narrativa");
-    if (curiosidadeEl) {
-      const originalText = curiosidadeEl.textContent;
-      curiosidadeEl.textContent = `💡 ${arithmeticFact}`;
-      
-      // Voltar ao texto original após 4 segundos
-      setTimeout(() => {
-        curiosidadeEl.textContent = originalText;
-      }, 4000);
-    }
-  }
-  
   // Reativar a caixa de resposta e limpar feedback
   DOM.answerInput.classList.remove("hidden");
   DOM.answerInput.value = "";
