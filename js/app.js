@@ -1113,21 +1113,43 @@ function applyTheme(theme) {
 
 // --- Inicialização da Aplicação ---
 
-function initApp() {
-  // 1. Aplicar tema guardado
-  const savedTheme = localStorage.getItem("matematicaAppTheme") || "light";
-  applyTheme(savedTheme);
+async function initApp() {
+  console.log("Iniciando aplicação...");
+  
+  try {
+    // 1. Aplicar tema guardado
+    const savedTheme = localStorage.getItem("matematicaAppTheme") || "light";
+    applyTheme(savedTheme);
 
-  // 2. Carregar dados persistidos
-  migrateOldProgress();
-  loadGamification();
-  renderGamificationBar(DOM);
-  mostrarNarrativa(DOM, state.level);
+    // 2. Carregar dados persistidos
+    console.log("Carregando dados de gamificação...");
+    migrateOldProgress();
+    await loadGamification();
+    renderGamificationBar(DOM);
+    mostrarNarrativa(DOM, state.level);
+    
+    console.log("Gamificação carregada com sucesso");
+  } catch (error) {
+    console.error("Erro na inicialização da gamificação:", error);
+    // Fallback - definir curiosidade manualmente se a importação falhar
+    const narrativaEl = document.getElementById("narrativa");
+    if (narrativaEl) {
+      narrativaEl.textContent = "🧠 Bem-vindos à Citânia! Vamos explorar a matemática juntos!";
+    }
+  }
 
   // 3. Inicializar sons
   initSounds();
 
-  // 4. Configurar todos os event listeners
+  // 4. Configurar event listeners dos cards/menus
+  try {
+    bindCardActions();
+    console.log("Event listeners dos cards configurados");
+  } catch (error) {
+    console.error("Erro ao configurar event listeners dos cards:", error);
+  }
+
+  // 5. Configurar todos os outros event listeners
   // Botão de tema
   DOM.themeToggleButton?.addEventListener("click", () => {
     const currentTheme = document.body.classList.contains("dark-mode")
@@ -1140,7 +1162,11 @@ function initApp() {
   // Botão para nova curiosidade matemática
   const novaCuriosidadeBtn = document.getElementById("nova-curiosidade");
   novaCuriosidadeBtn?.addEventListener("click", () => {
-    generateNewMathFact();
+    try {
+      generateNewMathFact();
+    } catch (error) {
+      console.error("Erro ao gerar nova curiosidade:", error);
+    }
   });
 
   // Botão para pausar/retomar rotação automática
@@ -1148,18 +1174,22 @@ function initApp() {
   let rotacaoPausada = false;
   
   toggleRotacaoBtn?.addEventListener("click", () => {
-    rotacaoPausada = !rotacaoPausada;
-    
-    if (rotacaoPausada) {
-      stopAutoFactRotation();
-      toggleRotacaoBtn.textContent = "▶️";
-      toggleRotacaoBtn.title = "Retomar rotação automática";
-      toggleRotacaoBtn.classList.add("paused");
-    } else {
-      startAutoFactRotation();
-      toggleRotacaoBtn.textContent = "⏸️";
-      toggleRotacaoBtn.title = "Pausar rotação automática";
-      toggleRotacaoBtn.classList.remove("paused");
+    try {
+      rotacaoPausada = !rotacaoPausada;
+      
+      if (rotacaoPausada) {
+        stopAutoFactRotation();
+        toggleRotacaoBtn.textContent = "▶️";
+        toggleRotacaoBtn.title = "Retomar rotação automática";
+        toggleRotacaoBtn.classList.add("paused");
+      } else {
+        startAutoFactRotation();
+        toggleRotacaoBtn.textContent = "⏸️";
+        toggleRotacaoBtn.title = "Pausar rotação automática";
+        toggleRotacaoBtn.classList.remove("paused");
+      }
+    } catch (error) {
+      console.error("Erro ao controlar rotação:", error);
     }
   });
 

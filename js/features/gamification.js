@@ -1,6 +1,45 @@
 // js/features/gamification.js
 import { safeGetItem, safeSetItem } from "../utils/storage.js";
-import { getRandomMathFact, getLevelBasedMathFact, startFactRotation } from "../modules/utils/math-facts.js";
+
+// Curiosidades de fallback embutidas
+const FALLBACK_FACTS = [
+  "🧠 A matemática é a linguagem universal do universo!",
+  "🧠 Os números estão em toda a parte - desde as pétalas das flores até às galáxias!",
+  "🧠 A soma de dois números ímpares é sempre par!",
+  "🧠 O número zero foi uma das maiores invenções da humanidade!",
+  "🧠 Pedro Nunes foi um grande matemático português do século XVI!",
+  "🧠 O número Pi tem infinitas casas decimais que nunca se repetem!",
+  "🧠 A sequência de Fibonacci aparece na natureza!",
+  "🧠 As abelhas fazem favos hexagonais porque usam menos cera!",
+  "🧠 Leonardo da Vinci usava a proporção áurea nas suas pinturas!",
+  "🧠 O teorema de Pitágoras era conhecido antes de Pitágoras!"
+];
+
+// Funções de fallback
+function getFallbackMathFact() {
+  const randomIndex = Math.floor(Math.random() * FALLBACK_FACTS.length);
+  return FALLBACK_FACTS[randomIndex];
+}
+
+// Variáveis para as funções importadas
+let getRandomMathFact = getFallbackMathFact;
+let getLevelBasedMathFact = getFallbackMathFact;
+let startFactRotation = null;
+
+// Tentar importar math-facts dinamicamente
+async function loadMathFactsModule() {
+  try {
+    const mathFactsModule = await import("../modules/utils/math-facts.js");
+    getRandomMathFact = mathFactsModule.getRandomMathFact;
+    getLevelBasedMathFact = mathFactsModule.getLevelBasedMathFact;
+    startFactRotation = mathFactsModule.startFactRotation;
+    console.log("Módulo math-facts carregado com sucesso");
+    return true;
+  } catch (error) {
+    console.warn("Usando funções de fallback para curiosidades:", error);
+    return false;
+  }
+}
 
 // Variável para controlar a rotação automática
 let factRotationController = null;
@@ -25,7 +64,12 @@ export const gamification = {
   userName: localStorage.getItem("citaniaUserName") || "Jogador",
 };
 
-export function loadGamification() {
+export async function loadGamification() {
+  console.log("Carregando gamificação...");
+  
+  // Tentar carregar o módulo de math-facts
+  await loadMathFactsModule();
+  
   const saved = safeGetItem(GAMIFICATION_KEY);
   if (saved) {
     try {
@@ -40,9 +84,17 @@ export function loadGamification() {
   }
   gamification.leaderboard = JSON.parse(safeGetItem(LEADERBOARD_KEY) || "[]");
   
-  // Gerar nova curiosidade e iniciar rotação automática
-  generateNewMathFact();
-  startAutoFactRotation();
+  // Tentar gerar nova curiosidade com fallback
+  try {
+    generateNewMathFact();
+    startAutoFactRotation();
+    console.log("Rotação de curiosidades iniciada");
+  } catch (error) {
+    console.error("Erro ao iniciar curiosidades:", error);
+    // Fallback - definir curiosidade estática
+    gamification.curiosidade = "🧠 Sabia que a matemática está em toda a parte? Desde as pétalas das flores até às galáxias!";
+    updateMathFactDisplay();
+  }
 }
 
 export function saveGamification() {
@@ -126,64 +178,113 @@ export function showAchievementsPanel(DOM, state) {
 
 // Gera e mostra uma nova curiosidade matemática
 export function generateNewMathFact(level = null) {
-  let newFact;
-  
-  if (level) {
-    // Se um nível for especificado, usar curiosidade baseada no nível
-    newFact = getLevelBasedMathFact(level);
-  } else {
-    // Caso contrário, usar curiosidade aleatória
-    newFact = getRandomMathFact();
+  try {
+    let newFact;
+    
+    if (level) {
+      // Se um nível for especificado, usar curiosidade baseada no nível
+      newFact = getLevelBasedMathFact(level);
+    } else {
+      // Caso contrário, usar curiosidade aleatória
+      newFact = getRandomMathFact();
+    }
+    
+    gamification.curiosidade = newFact;
+    updateMathFactDisplay();
+    saveGamification();
+  } catch (error) {
+    console.error("Erro ao gerar curiosidade:", error);
+    // Fallback para curiosidades estáticas
+    const fallbackFacts = [
+      "🧠 A matemática é a linguagem universal do universo!",
+      "🧠 Os números estão em toda a parte - desde as pétalas das flores até às galáxias!",
+      "🧠 A soma de dois números ímpares é sempre par!",
+      "🧠 O número zero foi uma das maiores invenções da humanidade!",
+      "🧠 Pedro Nunes foi um grande matemático português do século XVI!"
+    ];
+    const randomIndex = Math.floor(Math.random() * fallbackFacts.length);
+    gamification.curiosidade = fallbackFacts[randomIndex];
+    updateMathFactDisplay();
+    saveGamification();
   }
-  
-  gamification.curiosidade = newFact;
-  updateMathFactDisplay();
-  saveGamification();
 }
 
 // Inicia a rotação automática de curiosidades
 export function startAutoFactRotation(level = null) {
-  // Parar rotação anterior se existir
-  if (factRotationController) {
-    factRotationController.stop();
+  try {
+    // Parar rotação anterior se existir
+    if (factRotationController) {
+      factRotationController.stop();
+    }
+    
+    // Função callback para atualizar a curiosidade
+    const updateCallback = (fact) => {
+      gamification.curiosidade = fact;
+      updateMathFactDisplay();
+      saveGamification();
+    };
+    
+    // Iniciar nova rotação
+    factRotationController = startFactRotation(updateCallback, !!level, level);
+    console.log("Rotação automática iniciada");
+  } catch (error) {
+    console.error("Erro ao iniciar rotação automática:", error);
+    // Fallback - usar timer simples
+    factRotationController = {
+      intervalId: setInterval(() => {
+        generateNewMathFact(level);
+      }, 15000), // 15 segundos
+      stop: function() {
+        if (this.intervalId) {
+          clearInterval(this.intervalId);
+        }
+      }
+    };
   }
-  
-  // Função callback para atualizar a curiosidade
-  const updateCallback = (fact) => {
-    gamification.curiosidade = fact;
-    updateMathFactDisplay();
-    saveGamification();
-  };
-  
-  // Iniciar nova rotação
-  factRotationController = startFactRotation(updateCallback, !!level, level);
 }
 
 // Para a rotação automática
 export function stopAutoFactRotation() {
-  if (factRotationController) {
-    factRotationController.stop();
-    factRotationController = null;
+  try {
+    if (factRotationController) {
+      factRotationController.stop();
+      factRotationController = null;
+      console.log("Rotação automática parada");
+    }
+  } catch (error) {
+    console.error("Erro ao parar rotação automática:", error);
   }
 }
 
 // Atualiza a exibição da curiosidade matemática no DOM
 function updateMathFactDisplay() {
-  const curiosidadeEl = document.getElementById("narrativa") || 
-                        document.getElementById("curiosidade") ||
-                        document.querySelector(".curiosidade-matematica");
-  
-  if (curiosidadeEl) {
-    curiosidadeEl.textContent = gamification.curiosidade;
+  try {
+    const curiosidadeEl = document.getElementById("narrativa") || 
+                          document.getElementById("curiosidade") ||
+                          document.querySelector(".curiosidade-matematica");
     
-    // Adicionar ícone de curiosidade se não existir
-    if (!curiosidadeEl.querySelector('.curiosidade-icon')) {
+    if (curiosidadeEl) {
+      // Limpar conteúdo anterior
+      curiosidadeEl.innerHTML = '';
+      
+      // Adicionar ícone de curiosidade
       const icon = document.createElement('span');
       icon.className = 'curiosidade-icon';
       icon.textContent = '🧠 ';
       icon.style.marginRight = '0.5rem';
-      curiosidadeEl.insertBefore(icon, curiosidadeEl.firstChild);
+      
+      // Adicionar texto da curiosidade
+      const textNode = document.createTextNode(gamification.curiosidade);
+      
+      curiosidadeEl.appendChild(icon);
+      curiosidadeEl.appendChild(textNode);
+      
+      console.log("Curiosidade atualizada:", gamification.curiosidade.substring(0, 50) + "...");
+    } else {
+      console.warn("Elemento de curiosidade não encontrado");
     }
+  } catch (error) {
+    console.error("Erro ao atualizar curiosidade:", error);
   }
 }
 
