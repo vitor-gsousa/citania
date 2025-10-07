@@ -235,6 +235,8 @@ main {
     display: flex;
     align-items: center;
     gap: 1rem;
+    position: relative;
+    z-index: 10; /* Garantir que fica visível */
 }
 
 #level-indicator {
@@ -674,12 +676,15 @@ main {
     #progress-section {
         flex-direction: column;
         gap: 0.75rem;
-        margin-top: 1rem;
+        margin: 1rem auto 0;
+        max-width: calc(100vw - 2rem);
+        order: -1; /* Colocar no topo em tablets também */
     }
 
     #level-badge {
         font-size: 0.85rem;
         padding: 0.4rem 0.8rem;
+        align-self: center; /* Centralizar o badge em tablet */
     }
 
     #current-level {
@@ -757,6 +762,56 @@ main {
 
     #question {
         font-size: 1rem;
+    }
+
+    /* Garantir visibilidade da barra de progresso em mobile */
+    #progress-section {
+        margin: 0.5rem auto;
+        max-width: calc(100vw - 1.5rem);
+        order: -1; /* Colocar no topo da área de exercício */
+    }
+
+    #level-badge {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    #current-level {
+        padding: 0.1rem 0.4rem;
+        min-width: 1.2rem;
+        font-size: 0.85rem;
+    }
+
+    #progress-bar-container {
+        height: 12px;
+    }
+
+    #progress-bar {
+        height: 12px;
+    }
+
+    /* Assegurar que a área de exercício tem flexbox ordenação */
+    #exercise-area {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Layout alternativo ultra-compacto para mobile muito pequeno */
+    #progress-section {
+        position: sticky;
+        top: 3.5rem;
+        background: var(--bg-color);
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.5rem;
+        margin: 0;
+        max-width: 100vw;
+        z-index: 20;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    #level-indicator {
+        margin-bottom: 0.3rem;
+        text-align: center;
     }
 
     #theme-toggle {
@@ -1148,6 +1203,30 @@ img.card-icon {
     height: auto;
     font-size: 1.05rem;
     border-radius: 8px;
+}
+
+/* Telas médias - layout híbrido */
+@media (min-width: 481px) and (max-width: 767px) {
+    #progress-section {
+        flex-direction: row;
+        gap: 1rem;
+        margin: 1rem auto 0;
+        position: relative;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    #level-indicator {
+        margin-bottom: 0;
+        text-align: left;
+    }
+
+    #level-badge {
+        font-size: 0.9rem;
+        padding: 0.35rem 0.7rem;
+    }
 }
 
 @media (max-width: 768px) {
