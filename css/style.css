@@ -227,12 +227,47 @@ main {
     border-color: var(--incorrect-color);
 }
 
-#progress-bar-container {
+/* Seção de progresso com nível */
+#progress-section {
     width: 100%;
     max-width: 600px;
+    margin: 1.5rem auto 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#level-indicator {
+    flex-shrink: 0;
+}
+
+#level-badge {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+#current-level {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-weight: 700;
+    min-width: 1.5rem;
+    text-align: center;
+}
+
+#progress-bar-container {
+    flex: 1;
     background-color: var(--progress-bar-bg);
     border-radius: 10px;
-    margin: 1.5rem auto 0;
     overflow: hidden;
 }
 
@@ -636,7 +671,23 @@ main {
         padding-top: 4rem; /* Espaço adicional para o botão voltar */
     }
 
-    #progress-bar-container {
+    #progress-section {
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    #level-badge {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    #current-level {
+        padding: 0.15rem 0.5rem;
+        min-width: 1.3rem;
+    }
+
+    .custom-keyboard {
         margin-top: 1rem;
     }
 

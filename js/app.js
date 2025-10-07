@@ -46,6 +46,7 @@ const DOM = {
   correctCountEl: document.getElementById("correct-count"),
   incorrectCountEl: document.getElementById("incorrect-count"),
   levelDisplayEl: document.getElementById("level-display"),
+  currentLevelEl: document.getElementById("current-level"),
   progressBar: document.getElementById("progress-bar"),
   summaryCorrect: document.getElementById("summary-correct"),
   summaryTotal: document.getElementById("summary-total"),
@@ -146,6 +147,11 @@ function updateProgressBar() {
     progressBar.style.width = pct + "%";
     progressBar.setAttribute("aria-valuenow", state.roundProgress);
     progressBar.setAttribute("aria-valuemax", state.exercisesPerRound);
+  }
+  
+  // Atualizar indicador de nível
+  if (DOM.currentLevelEl) {
+    DOM.currentLevelEl.textContent = state.level;
   }
 }
 
