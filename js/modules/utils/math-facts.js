@@ -4,7 +4,7 @@
 const MATH_FACTS = [
   // Curiosidades sobre números
   "Sabia que o número zero foi inventado na Índia por volta do século V? Antes disso, os matemáticos tinham dificuldades com cálculos!",
-  "O número Pi (π) tem infinitas casas decimais e nunca se repete. Até hoje, foram calculadas mais de 100 biliões de casas decimais!",
+  "O número Pi (π) tem infinitas casas decimais e nunca se repete. Até hoje, foram calculadas mais de 100 mil milhões de casas decimais!",
   "O número 142857 é mágico: multiplique-o por 2, 3, 4, 5 ou 6 e obterá as mesmas cifras numa ordem diferente!",
   "O número 40 é o único número em português onde as letras aparecem por ordem alfabética: q-u-a-r-e-n-t-a.",
   "O número primo mais pequeno é 2, e é também o único número primo par.",
@@ -68,7 +68,14 @@ const MATH_FACTS = [
   "Um googolplex é tão grande que não haveria átomos suficientes no universo para escrever todos os seus zeros!",
   "O metro foi originalmente definido como 1/10.000.000 da distância do equador ao polo norte!",
   "Um nano é tão pequeno que um nanómetro está para um metro como uma bolinha de gude está para a Terra!",
-  "Se pudéssemos contar até um bilião a um número por segundo, levaríamos mais de 31.000 anos!"
+  "Se pudéssemos contar até mil milhões a um número por segundo, levaríamos mais de 31 anos!",
+  
+  // Curiosidades com vocabulário português correto
+  "Em Portugal, mil milhões equivale ao 'billion' americano, mas o nosso bilião são mil milhões de milhões!",
+  "Uma centena são 100 unidades, um milhar são 1000, e um milhão são 1000 milhares!",
+  "O termo 'algarismo' é usado em português, enquanto outros países dizem 'dígito' - honramos Al-Khwarizmi!",
+  "Em Portugal escrevemos números grandes com espaços: 1 000 000 em vez de vírgulas como noutros países.",
+  "O nosso sistema decimal usa vírgula para separar decimais: 3,14159... é o Pi em notação portuguesa!"
 ];
 
 const PORTUGUESE_MATH_TERMS = [
@@ -105,10 +112,10 @@ const PORTUGUESE_MATH_TERMS = [
  * @returns {number} Tempo em milissegundos
  */
 function calculateReadingTime(text) {
-  const wordsPerMinute = 150; // Velocidade de leitura para crianças
-  const minimumTime = 8000; // Mínimo 8 segundos
-  const maximumTime = 20000; // Máximo 20 segundos
-  
+  const wordsPerMinute = 55; // Velocidade de leitura para crianças
+  const minimumTime = 10000; // Mínimo 10 segundos
+  const maximumTime = 30000; // Máximo 30 segundos
+
   const wordCount = text.split(' ').length;
   const readingTimeMs = (wordCount / wordsPerMinute) * 60 * 1000;
   
