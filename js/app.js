@@ -67,6 +67,7 @@ const DOM = {
   medalhasEl: document.getElementById("medalhas"),
   // NOVO: teclado personalizado
   customKeyboard: document.getElementById("custom-keyboard"),
+  levelBadgeEl: document.getElementById("level-badge"),
 };
 
 // Estado UI global — declarar cedo para evitar TDZ
@@ -107,27 +108,48 @@ function generateNewExercise() {
   currentExercise.answer = problem.answer;
   currentExercise.explanation = problem.explanation;
   currentExercise.checkType = problem.checkType;
+  currentExercise.isMissingTerm = problem.isMissingTerm || false;
 
-  // Atualizar UI
-  if (DOM.questionEl) DOM.questionEl.innerHTML = problem.question;
-  if (DOM.answerInput) {
+  // Renderização interativa para addSub (sempre com input inline)
+  if (currentExercise.type === 'addSub') {
+    // Garante que o input principal está escondido
+    DOM.answerInput.classList.add("hidden");
     DOM.answerInput.value = "";
-    // Garantir que a caixa de resposta está visível quando um novo exercício é gerado
-    DOM.answerInput.classList.remove("hidden");
-    // Reativar foco para permitir uso do teclado personalizado
-    try {
-      DOM.answerInput.focus();
-    } catch (e) {
-      /* silent */
+    // Define o HTML diretamente (input já incluído)
+    DOM.questionEl.innerHTML = problem.question;
+    // Foco automático no input inline
+    const inlineInput = document.getElementById("inline-missing-input");
+    if (inlineInput) {
+      setTimeout(() => { inlineInput.focus(); }, 50);
+      // Sincronizar valor com o input "invisível" para manter compatibilidade com checkAnswer
+      inlineInput.addEventListener("input", (ev) => {
+        DOM.answerInput.value = ev.target.value;
+      });
+      // Enter submete resposta
+      inlineInput.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter") {
+          checkAnswer();
+        }
+      });
+    }
+    // Manter teclado personalizado sempre visível para addSub
+    DOM.customKeyboard.classList.remove("hidden");
+  } else {
+    // Outros exercícios: sem input inline
+    if (DOM.questionEl) DOM.questionEl.innerHTML = problem.question;
+    if (DOM.answerInput) {
+      DOM.answerInput.value = "";
+      DOM.answerInput.classList.remove("hidden");
+      try {
+        DOM.answerInput.focus();
+      } catch (e) {}
     }
   }
   if (DOM.feedbackEl) {
     DOM.feedbackEl.textContent = "";
-    DOM.feedbackEl.className = "hidden"; // Ocultar feedback vazio
+    DOM.feedbackEl.className = "hidden";
   }
   state.answered = false;
-
-  // Restaurar visibilidade dos botões
   DOM.checkButton.style.display = "block";
   DOM.nextButton.style.display = "none";
 }
@@ -149,8 +171,13 @@ function updateProgressBar() {
   }
   
   // Atualizar indicador de nível
-  if (DOM.currentLevelEl) {
-    DOM.currentLevelEl.textContent = state.level;
+  if (DOM.levelBadgeEl) {
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      DOM.levelBadgeEl.innerHTML = `<span id="current-level">${state.level}</span>`;
+    } else {
+      DOM.levelBadgeEl.innerHTML = `Nível <span id="current-level">${state.level}</span>`;
+    }
   }
 }
 
@@ -258,17 +285,22 @@ const exercises = {
   },
   fractionToDecimal: {
     generate: (level) => {
+      // Níveis: 1 - denominadores pequenos, 2 - numeradores maiores, 3+ - ambos maiores
+      let cfg;
+      if (level === 1) cfg = { numMin: 1, numMax: 9, denMin: 2, denMax: 9 };
+      else if (level === 2) cfg = { numMin: 10, numMax: 20, denMin: 2, denMax: 10 };
+      else if (level === 3) cfg = { numMin: 10, numMax: 50, denMin: 5, denMax: 20 };
+      else if (level === 4) cfg = { numMin: 20, numMax: 99, denMin: 10, denMax: 30 };
+      else cfg = { numMin: 50, numMax: 199, denMin: 10, denMax: 99 };
       let numerator, denominator;
-      const maxNum = 10 + level * 2;
       do {
-        numerator = getRandomInt(1, maxNum - 1);
-        denominator = getRandomInt(2, maxNum);
-      } while (numerator % denominator === 0);
-
+        numerator = getRandomInt(cfg.numMin, cfg.numMax);
+        denominator = getRandomInt(cfg.denMin, cfg.denMax);
+      } while (numerator % denominator === 0 || denominator >= numerator);
       return {
-        question: `Quanto é ${numerator}/${denominator} em decimal? (arredonda às centésimas)`,
+        question: `Quanto é <span class="term-box">${numerator}</span>/<span class="term-box">${denominator}</span> em decimal? (arredonda às centésimas)`,
         answer: (numerator / denominator).toFixed(2),
-        explanation: `Para converter ${numerator}/${denominator} para decimal, divide-se o numerador (${numerator}) pelo denominador (${denominator}). O resultado é ${numerator / denominator}, que arredondado às centésimas fica ${(numerator / denominator).toFixed(2)}.`,
+        explanation: `Para converter ${numerator}/${denominator} para decimal, divide-se o numerador (${numerator}) pelo denominador (${denominator}). O resultado é ${(numerator / denominator)}, que arredondado às centésimas fica ${(numerator / denominator).toFixed(2)}.`,
       };
     },
     check: (userAnswer, correctAnswer) => {
@@ -280,16 +312,20 @@ const exercises = {
   },
   primeFactorization: {
     generate: (level) => {
+      // Níveis: 1 - números até 20, 2 - até 50, 3 - até 100, 4 - até 200, 5+ - até 500
+      let minNum, maxNum;
+      if (level === 1) { minNum = 10; maxNum = 20; }
+      else if (level === 2) { minNum = 15; maxNum = 50; }
+      else if (level === 3) { minNum = 30; maxNum = 100; }
+      else if (level === 4) { minNum = 50; maxNum = 200; }
+      else { minNum = 100; maxNum = 500; }
       let number;
-      const minNum = 10 + (level - 1) * 10;
-      const maxNum = 100 + (level - 1) * 20;
       do {
         number = getRandomInt(minNum, maxNum);
       } while (isPrime(number));
-
       const factors = getPrimeFactors(number);
       return {
-        question: `Decompõe o número ${number} em fatores primos. (ex: 2 x 2 x 3)`,
+        question: `Decompõe o número <span class="term-box">${number}</span> em fatores primos. (ex: 2 x 2 x 3)`,
         answer: factors,
         explanation: `Para decompor ${number}, dividimos sucessivamente por números primos: ${factors.join(" x ")}.`,
       };
@@ -308,12 +344,18 @@ const exercises = {
   },
   gcd: {
     generate: (level) => {
-      const factor = getRandomInt(2, 5 + level);
-      const num1 = factor * getRandomInt(2, 5 + level);
-      const num2 = factor * getRandomInt(2, 5 + level);
+      // Níveis: 1 - números pequenos, 2 - até 30, 3 - até 100, 4 - até 200, 5+ - até 500
+      let min = 2, max = 10;
+      if (level === 2) { min = 5; max = 30; }
+      else if (level === 3) { min = 10; max = 100; }
+      else if (level === 4) { min = 20; max = 200; }
+      else if (level >= 5) { min = 50; max = 500; }
+      const factor = getRandomInt(2, Math.max(3, Math.floor(max / 5)));
+      const num1 = factor * getRandomInt(min, max);
+      const num2 = factor * getRandomInt(min, max);
       const answer = gcd(num1, num2);
       return {
-        question: `Qual é o Máximo Divisor Comum (MDC) entre ${num1} e ${num2}?`,
+        question: `Qual é o Máximo Divisor Comum (MDC) entre <span class="term-box">${num1}</span> e <span class="term-box">${num2}</span>?`,
         answer,
         explanation: `O MDC é o maior número que divide ${num1} e ${num2} sem deixar resto. Neste caso, a resposta é ${answer}.`,
       };
@@ -324,11 +366,17 @@ const exercises = {
   },
   lcm: {
     generate: (level) => {
-      const num1 = getRandomInt(2, 10 + level);
-      const num2 = getRandomInt(2, 10 + level);
+      // Níveis: 1 - números pequenos, 2 - até 20, 3 - até 50, 4 - até 100, 5+ - até 200
+      let min = 2, max = 10;
+      if (level === 2) { min = 5; max = 20; }
+      else if (level === 3) { min = 10; max = 50; }
+      else if (level === 4) { min = 20; max = 100; }
+      else if (level >= 5) { min = 50; max = 200; }
+      const num1 = getRandomInt(min, max);
+      const num2 = getRandomInt(min, max);
       const answer = lcm(num1, num2);
       return {
-        question: `Qual é o Mínimo Múltiplo Comum (MMC) entre ${num1} e ${num2}?`,
+        question: `Qual é o Mínimo Múltiplo Comum (MMC) entre <span class="term-box">${num1}</span> e <span class="term-box">${num2}</span>?`,
         answer,
         explanation: `O MMC é o menor número que é múltiplo de ${num1} e de ${num2}. A resposta é ${answer}. Uma forma de calcular é (num1 * num2) / MDC(num1, num2).`,
       };
@@ -339,28 +387,30 @@ const exercises = {
   },
   powerMultiplication: {
     generate: (level) => {
+      // Níveis: 1 - bases pequenas, expoentes 2-3; 2 - bases até 6, expoentes até 4; 3+ - maiores
+      let baseMin = 2, baseMax = 4, expMin = 2, expMax = 3;
+      if (level === 2) { baseMax = 6; expMax = 4; }
+      else if (level >= 3) { baseMax = 9; expMax = 5; }
       if (Math.random() < 0.5) {
-        const base = getRandomInt(2, 5 + level);
-        const exp1 = getRandomInt(2, 5 + level);
-        const exp2 = getRandomInt(2, 5 + level);
+        const base = getRandomInt(baseMin, baseMax);
+        const exp1 = getRandomInt(expMin, expMax);
+        const exp2 = getRandomInt(expMin, expMax);
         const finalExp = exp1 + exp2;
-
         return {
-          question: `Qual é o resultado de <strong>${base}<sup>${exp1}</sup> &times; ${base}<sup>${exp2}</sup></strong>? <br><small>(responda na forma de potência, ex: 2^5)</small>`,
+          question: `Qual é o resultado de <strong><span class="term-box">${base}</span><sup><span class="term-box">${exp1}</span></sup> &times; <span class="term-box">${base}</span><sup><span class="term-box">${exp2}</span></sup></strong>? <br><small>(responda na forma de potência, ex: 2^5)</small>`,
           answer: `${base}^${finalExp}`,
           explanation: `Para multiplicar potências com a mesma base, mantém-se a base (${base}) e somam-se os expoentes (${exp1} + ${exp2} = ${finalExp}).`,
           checkType: "string",
         };
       } else {
-        let base1 = getRandomInt(2, 5);
-        let base2 = getRandomInt(2, 5);
+        let base1 = getRandomInt(baseMin, baseMax);
+        let base2 = getRandomInt(baseMin, baseMax);
         if (base1 === base2) base2++;
-        const exp1 = getRandomInt(2, 3);
-        const exp2 = getRandomInt(2, 3);
+        const exp1 = getRandomInt(expMin, expMax);
+        const exp2 = getRandomInt(expMin, expMax);
         const result = Math.pow(base1, exp1) * Math.pow(base2, exp2);
-
         return {
-          question: `Qual é o resultado de <strong>${base1}<sup>${exp1}</sup> &times; ${base2}<sup>${exp2}</sup></strong>?`,
+          question: `Qual é o resultado de <strong><span class="term-box">${base1}</span><sup><span class="term-box">${exp1}</span></sup> &times; <span class="term-box">${base2}</span><sup><span class="term-box">${exp2}</span></sup></strong>?`,
           answer: result,
           explanation: `Como as bases são diferentes (${base1} e ${base2}), não podemos somar os expoentes. Calculamos o valor de cada potência e depois multiplicamos: ${base1 ** exp1} &times; ${base2 ** exp2} = ${result}.`,
           checkType: "number",
@@ -376,14 +426,17 @@ const exercises = {
   },
   powerDivision: {
     generate: (level) => {
-      const base = getRandomInt(2, 5 + level);
-      const exp1 = getRandomInt(3, 8 + level);
-      const exp2 = getRandomInt(2, exp1 - 1);
+      // Níveis: 1 - base pequena, expoentes 3-4; 2 - base até 6, expoentes até 6; 3+ - maiores
+      let baseMin = 2, baseMax = 4, expMin = 3, expMax = 4;
+      if (level === 2) { baseMax = 6; expMax = 6; }
+      else if (level >= 3) { baseMax = 9; expMax = 8; }
+      const base = getRandomInt(baseMin, baseMax);
+      const exp1 = getRandomInt(expMin + 1, expMax + 1);
+      const exp2 = getRandomInt(expMin, exp1 - 1);
       const finalExp = exp1 - exp2;
-
       const answer = `${base}^${finalExp}`;
       return {
-        question: `Qual é o resultado de <strong>${base}<sup>${exp1}</sup> &divide; ${base}<sup>${exp2}</sup></strong>? <br><small>(responda na forma de potência, ex: 2^5)</small>`,
+        question: `Qual é o resultado de <strong><span class="term-box">${base}</span><sup><span class="term-box">${exp1}</span></sup> &divide; <span class="term-box">${base}</span><sup><span class="term-box">${exp2}</span></sup></strong>? <br><small>(responda na forma de potência, ex: 2^5)</small>`,
         answer,
         explanation: `Para dividir potências com a mesma base, mantém-se a base (${base}) e subtraem-se os expoentes (${exp1} - ${exp2} = ${finalExp}).`,
       };
@@ -859,9 +912,16 @@ function startExercise(type) {
 // Se for necessário remover handlers, armazene a referência da função quando a registar
 // e passe a mesma referência aqui. Removidas chamadas inválidas.
 
-// Mostra o teclado quando o input recebe foco (único listener)
+
+// Mostra o teclado quando o input principal ou o input inline recebem foco
 DOM.answerInput.addEventListener("focus", () => {
   DOM.customKeyboard.classList.remove("hidden");
+});
+document.addEventListener("focusin", (ev) => {
+  const inlineInput = document.getElementById("inline-missing-input");
+  if (inlineInput && ev.target === inlineInput) {
+    DOM.customKeyboard.classList.remove("hidden");
+  }
 });
 
 // Blur seguro: só esconde se o foco não estiver no teclado e não houver pointer activo
@@ -973,8 +1033,10 @@ function checkAnswer() {
   DOM.nextButton.style.display = "block";
   DOM.nextButton.focus();
 
-  // Esconde o teclado após verificar a resposta
-  DOM.customKeyboard.classList.add("hidden");
+  // Esconde o teclado após verificar a resposta (exceto para addSub)
+  if (currentExercise.type !== 'addSub') {
+    DOM.customKeyboard.classList.add("hidden");
+  }
 }
 
 // Função invocada quando o utilizador clica em Next: prepara e gera o próximo exercício
@@ -1154,15 +1216,26 @@ async function initApp() {
     const key = ev.target.closest(".key");
     if (!key) return;
     const value = key.dataset.value;
+    // Suporte para input inline (addSub com termo em falta)
+    const inlineInput = document.getElementById("inline-missing-input");
+    let targetInput = inlineInput && !inlineInput.disabled && !inlineInput.readOnly ? inlineInput : DOM.answerInput;
     if (value === "delete") {
-      DOM.answerInput.value = DOM.answerInput.value.slice(0, -1);
+      targetInput.value = targetInput.value.slice(0, -1);
     } else if (value === "clear") {
-      DOM.answerInput.value = "";
+      targetInput.value = "";
     } else if (value === "enter") {
       checkAnswer();
     } else {
-      DOM.answerInput.value += value;
+      targetInput.value += value;
     }
+    // Sincronizar ambos os inputs
+    if (inlineInput && targetInput === inlineInput) {
+      DOM.answerInput.value = inlineInput.value;
+    } else if (inlineInput) {
+      inlineInput.value = DOM.answerInput.value;
+    }
+    // Foco no input ativo
+    if (targetInput) targetInput.focus();
   });
 
   // 5. Registar Service Worker

@@ -767,8 +767,11 @@ main {
     /* Garantir visibilidade da barra de progresso em mobile */
     #progress-section {
         margin: 0.5rem auto;
-        max-width: calc(100vw - 1.5rem);
+        max-width: 100%; /* Alterado de calc(100vw - 1.5rem) para 100% para não sair do container */
         order: -1; /* Colocar no topo da área de exercício */
+        display: flex !important;
+        visibility: visible !important;
+        border: 1px solid rgba(0,0,0,0.1); /* Borda sutil para confirmar visibilidade */
     }
 
     #level-badge {
@@ -798,9 +801,9 @@ main {
 
     /* Layout alternativo ultra-compacto para mobile muito pequeno */
     #progress-section {
-        position: sticky;
-        top: 3.5rem;
-        background: var(--bg-color);
+        position: relative; /* Alterado de sticky para relative para garantir visibilidade */
+        top: auto; /* Removido top sticky */
+        background: transparent; /* Fundo transparente para consistência */
         border-bottom: 1px solid var(--border-color);
         padding: 0.5rem;
         margin: 0;
@@ -1463,3 +1466,59 @@ img.card-icon {
 .op-sub { background: #fde2e1; color: #7f1d1d; /* contraste ~6:1 */ }
 .dark-mode .op-add { background: #064e3b; color: #d1fae5; }
 .dark-mode .op-sub { background: #7f1d1d; color: #fee2e2; }
+
+/* Term boxes para exercícios com termo em falta */
+.term-box {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    margin: 0.25rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--main-bg-color);
+    color: var(--text-color);
+    font-size: 1.1em;
+    font-weight: bold;
+    text-align: center;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    vertical-align: middle;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.term-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.inline-missing-input {
+    border: none;
+    background: transparent;
+    font-size: inherit;
+    font-weight: inherit;
+    text-align: center;
+    width: 100%;
+    outline: none;
+    color: inherit;
+}
+
+.inline-missing-input:focus {
+    background: rgba(var(--primary-color), 0.1);
+    border-radius: 4px;
+}
+
+/* Ajustes para mobile: normalizar tamanho do input inline */
+@media (max-width: 768px) {
+    .inline-missing-input {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1rem;
+        padding: 0;
+    }
+    
+    .term-box {
+        min-width: 2rem;
+        min-height: 2rem;
+        padding: 0.25rem 0.5rem;
+    }
+}
