@@ -51,7 +51,17 @@ if command -v node &> /dev/null; then
         try {
             const vercel = JSON.parse(fs.readFileSync('vercel.json', 'utf8'));
             console.log('✓ vercel.json válido');
+            
+            // Verificar conflitos entre routes e outras configurações
+            if (vercel.routes && (vercel.rewrites || vercel.redirects || vercel.headers || vercel.cleanUrls !== undefined || vercel.trailingSlash !== undefined)) {
+                console.error('❌ ERRO: \\'routes\\' não pode ser usado com \\'rewrites\\', \\'redirects\\', \\'headers\\', \\'cleanUrls\\' ou \\'trailingSlash\\'');
+                console.error('   Solução: Migrar \\'routes\\' para \\'rewrites\\' e \\'headers\\' separados');
+                process.exit(1);
+            }
+            
             if (vercel.builds) console.log('⚠️ Aviso: configuração builds presente (pode não ser necessária para apps estáticas)');
+            if (vercel.routes) console.log('⚠️ Aviso: \\'routes\\' é deprecated, considere usar \\'rewrites\\' e \\'headers\\'');
+            if (vercel.rewrites) console.log('✓ Configuração moderna com rewrites');
         } catch (e) {
             console.error('❌ Erro no vercel.json:', e.message);
             process.exit(1);

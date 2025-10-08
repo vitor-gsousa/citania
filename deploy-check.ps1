@@ -47,8 +47,23 @@ try {
     $vercel = Get-Content "vercel.json" -Raw | ConvertFrom-Json
     Write-Host "✓ vercel.json válido" -ForegroundColor Green
     
+    # Verificar conflitos entre routes e outras configurações
+    if ($vercel.routes -and ($vercel.rewrites -or $vercel.redirects -or $vercel.headers -or $vercel.cleanUrls -or $vercel.trailingSlash)) {
+        Write-Host "❌ ERRO: 'routes' não pode ser usado com 'rewrites', 'redirects', 'headers', 'cleanUrls' ou 'trailingSlash'" -ForegroundColor Red
+        Write-Host "   Solução: Migrar 'routes' para 'rewrites' e 'headers' separados" -ForegroundColor Yellow
+        exit 1
+    }
+    
     if ($vercel.builds) {
         Write-Host "⚠️ Aviso: configuração builds presente (pode não ser necessária para apps estáticas)" -ForegroundColor Yellow
+    }
+    
+    if ($vercel.routes) {
+        Write-Host "⚠️ Aviso: 'routes' é deprecated, considere usar 'rewrites' e 'headers'" -ForegroundColor Yellow
+    }
+    
+    if ($vercel.rewrites) {
+        Write-Host "✓ Configuração moderna com rewrites" -ForegroundColor Green
     }
 } catch {
     Write-Host "❌ Erro no vercel.json: $($_.Exception.Message)" -ForegroundColor Red

@@ -86,11 +86,13 @@ npm run dev
 - Configuração `@vercel/static-build` desnecessária
 - Scripts de build que não fazem nada
 - Dependências dev desnecessárias
+- **CONFLITO**: Uso de `routes` junto com `headers` (não permitido)
 
 ### ✅ Soluções Aplicadas:
 - Vercel.json simplificado para apps estáticas
 - Package.json minimal sem builds
 - Verificação automática de ficheiros essenciais
+- **CORRIGIDO**: Migração de `routes` para `rewrites` + `headers` separados
 
 ## Verificação Pós-Deployment
 
