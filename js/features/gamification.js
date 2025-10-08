@@ -205,16 +205,8 @@ export function generateNewMathFact(level = null) {
     saveGamification();
   } catch (error) {
     console.error("Erro ao gerar curiosidade:", error);
-    // Fallback para curiosidades estáticas
-    const fallbackFacts = [
-      "🧠 A matemática é a linguagem universal do universo!",
-      "🧠 Os números estão em toda a parte - desde as pétalas das flores até às galáxias!",
-      "🧠 A soma de dois números ímpares é sempre par!",
-      "🧠 O número zero foi uma das maiores invenções da humanidade!",
-      "🧠 Pedro Nunes foi um grande matemático português do século XVI!"
-    ];
-    const randomIndex = Math.floor(Math.random() * fallbackFacts.length);
-    gamification.curiosidade = fallbackFacts[randomIndex];
+    // Fallback para curiosidades estáticas usando a função de fallback
+    gamification.curiosidade = getFallbackMathFact();
     updateMathFactDisplay();
     saveGamification();
   }

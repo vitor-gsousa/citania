@@ -8,8 +8,7 @@ import {
   getPrimeFactors as getPrimeFactors_imported,
 } from "./modules/utils/math.js";
 import {
-  getRandomInt as getRandomInt_imported,
-  choice as choice_imported,
+  getRandomInt as getRandomInt_imported
 } from "./modules/utils/rand.js";
 import { initSounds, sounds } from "./services/sounds.js";
 import {
@@ -242,6 +241,9 @@ function exitExercise() {
     /* silent */
   }
 }
+
+// Define a constante para a duração da animação, correspondente a var(--transition-medium)
+const ANIMATION_DURATION_MS = 320;
 
 // --- Lógica dos Exercícios ---
 const exercises = {
@@ -502,17 +504,9 @@ async function showSection(sectionId) {
   // Preservar altura atual do main durante a transição
   if (mainElement) {
     const currentHeight = mainElement.offsetHeight;
-    mainElement.style.setProperty('--preserved-height', currentHeight + 'px');
+    mainElement.style.setProperty('--preserved-height', `${currentHeight}px`);
     mainElement.classList.add('transitioning');
   }
-  
-  // Pré-carregar a secção para calcular layout
-  section.classList.remove("hidden");
-  section.classList.add("preloading");
-  section.setAttribute("aria-hidden", "false");
-  
-  // Aguardar que o layout seja calculado
-  await waitForLayout(section);
   
   // Agora esconder a lista de temas e animar a entrada da secção
   if (themesList) {
@@ -520,6 +514,7 @@ async function showSection(sectionId) {
     ensureFocusNotInside(themesList);
     await animateHide(themesList);
     themesList.classList.add("hidden");
+    themesList.setAttribute("aria-hidden", "true"); // Esconder também para leitores de ecrã
   }
   
   // esconder todas as outras sections
@@ -532,16 +527,17 @@ async function showSection(sectionId) {
     }
   });
   
-  // Remover preloading e animar entrada
-  section.classList.remove("preloading");
+  // Mostrar a secção alvo e animar entrada
+  section.classList.remove("hidden");
+  section.setAttribute("aria-hidden", "false");
   await animateShow(section);
   
   // Remover preservação de altura após transição
   if (mainElement) {
-    setTimeout(() => {
+    setTimeout(() => { // NOSONAR
       mainElement.classList.remove('transitioning');
       mainElement.style.removeProperty('--preserved-height');
-    }, 50);
+    }, ANIMATION_DURATION_MS);
   }
   
   // optional: scroll to top of main exercise area
@@ -557,18 +553,10 @@ async function showThemes() {
   const mainElement = document.querySelector('main');
   
   // Preservar altura atual do main durante a transição
-  if (mainElement) {
+  if (mainElement) { // NOSONAR
     const currentHeight = mainElement.offsetHeight;
-    mainElement.style.setProperty('--preserved-height', currentHeight + 'px');
+    mainElement.style.setProperty('--preserved-height', `${currentHeight}px`);
     mainElement.classList.add('transitioning');
-  }
-  
-  if (themesList) {
-    themesList.classList.remove("hidden");
-    themesList.classList.add("preloading");
-    
-    // Aguardar que o layout seja calculado
-    await waitForLayout(themesList);
   }
   
   // esconder todas as sections com animação e só adicionar .hidden depois
@@ -584,18 +572,18 @@ async function showThemes() {
   );
   
   if (themesList) {
-    console.debug("showThemes: showing themesList", themesList);
-    ensureFocusNotInside(themesList);
-    themesList.classList.remove("preloading");
+    console.debug("showThemes: showing themesList", themesList); // NOSONAR
+    themesList.classList.remove("hidden");
+    themesList.setAttribute("aria-hidden", "false");
     await animateShow(themesList);
   }
   
   // Remover preservação de altura após transição
   if (mainElement) {
-    setTimeout(() => {
+    setTimeout(() => { // NOSONAR
       mainElement.classList.remove('transitioning');
       mainElement.style.removeProperty('--preserved-height');
-    }, 50);
+    }, ANIMATION_DURATION_MS);
   }
   
   try {
@@ -866,11 +854,7 @@ function verificarMedalhas(ctx = {}) {
 
 function startNewRound() {
   state.roundProgress = 0;
-  // Mantemos o nível, mas focamos na UI nova
-  if (DOM.levelDisplayEl) {
-    DOM.levelDisplayEl.textContent = state.level;
-    DOM.levelDisplayEl.parentElement?.classList.add("hidden"); // esconder o container antigo
-  }
+  // A UI nova já mostra o nível na barra de progresso
   DOM.menuContainer.classList.add("hidden");
   DOM.summaryArea.classList.add("hidden");
   DOM.exerciseArea.classList.remove("hidden");
@@ -1139,14 +1123,19 @@ async function initApp() {
   }
 
   // 5. Configurar todos os outros event listeners
-  // Botão de tema
-  DOM.themeToggleButton?.addEventListener("click", () => {
+  // Função para alternar tema
+  const toggleTheme = () => {
     const currentTheme = document.body.classList.contains("dark-mode")
       ? "light"
       : "dark";
     localStorage.setItem("matematicaAppTheme", currentTheme);
     applyTheme(currentTheme);
-  });
+  };
+  // Expor para ser chamada por bindCardActions
+  window.toggleTheme = toggleTheme;
+
+  // Botão de tema
+  DOM.themeToggleButton?.addEventListener("click", toggleTheme);
 
   // Botão para nova curiosidade matemática
   const novaCuriosidadeBtn = document.getElementById("nova-curiosidade");

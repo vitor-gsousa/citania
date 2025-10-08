@@ -60,18 +60,18 @@ const MATH_FACTS = [
   // Aplicações práticas
   "A matemática ajuda a prever o tempo, mas é tão complexa que pequenas mudanças podem alterar tudo!",
   "Os códigos de barras usam matemática para detectar erros de leitura automaticamente!",
-  "A criptografia que protege as nossas passwords baseia-se na dificuldade de factorizar números grandes!",
+  "A criptografia que protege as nossas palavras-passe baseia-se na dificuldade de fatorizar números grandes!",
   "O GPS funciona graças à teoria da relatividade de Einstein - sem ela, teria erros de quilómetros!",
   "Os algoritmos de compressão de imagens usam transformadas matemáticas para reduzir o tamanho dos ficheiros!",
   
   // Curiosidades sobre medição
   "Um googolplex é tão grande que não haveria átomos suficientes no universo para escrever todos os seus zeros!",
   "O metro foi originalmente definido como 1/10.000.000 da distância do equador ao polo norte!",
-  "Um nano é tão pequeno que um nanómetro está para um metro como uma bolinha de gude está para a Terra!",
+  "Um nano é tão pequeno que um nanómetro está para um metro como um berlinde está para a Terra!",
   "Se pudéssemos contar até mil milhões a um número por segundo, levaríamos mais de 31 anos!",
   
   // Curiosidades com vocabulário português correto
-  "Em Portugal, mil milhões equivale ao 'billion' americano, mas o nosso bilião são mil milhões de milhões!",
+  "Em Portugal, usamos 'mil milhões' para o que os americanos chamam de 'billion', enquanto o nosso 'bilião' são mil milhões de milhões!",
   "Uma centena são 100 unidades, um milhar são 1000, e um milhão são 1000 milhares!",
   "O termo 'algarismo' é usado em português, enquanto outros países dizem 'dígito' - honramos Al-Khwarizmi!",
   "Em Portugal escrevemos números grandes com espaços: 1 000 000 em vez de vírgulas como noutros países.",

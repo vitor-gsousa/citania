@@ -68,6 +68,8 @@
               id="achievements-button"
               title="Ver Conquistas"
               aria-label="Ver Conquistas"
+              aria-haspopup="true"
+              aria-expanded="false"
               class="ach-btn"
             >
               🏆
@@ -87,6 +89,7 @@
       id="achievements-panel"
       class="achievements-panel"
       aria-hidden="true"
+      role="dialog"
     ></aside>
 
     <!-- Mantemos o score-container escondido para não partir o JS existente -->
@@ -414,7 +417,13 @@
             <span id="level-badge">Nível <span id="current-level">1</span></span>
           </div>
           <div id="progress-bar-container">
-            <div id="progress-bar"></div>
+            <div
+              id="progress-bar"
+              role="progressbar"
+              aria-valuenow="0"
+              aria-valuemin="0"
+              aria-valuemax="8"
+            ></div>
           </div>
         </div>
 
@@ -434,7 +443,12 @@
           <button id="next-button">Próximo Exercício →</button>
 
           <!-- Teclado Personalizado -->
-          <div id="custom-keyboard" class="custom-keyboard hidden">
+          <div
+            id="custom-keyboard"
+            class="custom-keyboard hidden"
+            role="group"
+            aria-label="Teclado numérico"
+          >
             <div class="keyboard-row">
               <button class="key" data-value="1">1</button>
               <button class="key" data-value="2">2</button>
@@ -452,13 +466,23 @@
             </div>
             <div class="keyboard-row">
               <button class="key" data-value="0">0</button>
-              <button class="key" data-value=".">.</button>
-              <button class="key delete" data-value="delete">⌫</button>
+              <button class="key" data-value="." aria-label="Ponto">.</button>
+              <button
+                class="key delete"
+                data-value="delete"
+                aria-label="Apagar"
+              >
+                ⌫
+              </button>
             </div>
             <div class="keyboard-row">
-              <button class="key" data-value="x">×</button>
+              <button class="key" data-value="x" aria-label="Multiplicar">
+                ×
+              </button>
               <button class="key" data-value="^">^</button>
-              <button class="key" data-value="clear">C</button>
+              <button class="key" data-value="clear" aria-label="Limpar">
+                C
+              </button>
             </div>
           </div>
         </div>
