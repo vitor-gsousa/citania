@@ -1031,50 +1031,34 @@ main {
 .card:hover .card-icon { transform: translateY(-3px); }
 
 /* Animações para transições entre a grid de temas e as secções */
-#themes, .theme-section, #exercise-area {
-    transition: opacity var(--transition-medium) var(--easing-standard), transform var(--transition-medium) var(--easing-standard);
-    will-change: opacity, transform;
-}
-
-/* Estados iniciais quando escondido (manter a classe .hidden para compatibilidade) */
-.theme-section.hidden, #themes.hidden, #exercise-area.hidden {
-    /* display:none continua a ser aplicado pela classe .hidden; estas propriedades
-       servem de estado inicial quando a classe for removida temporariamente para animar */
-    opacity: 0;
-    transform: translateY(8px);
-}
-
-/* Durante transições, preservar altura para evitar ajustes abruptos */
+/* Estado base dos elementos que serão animados */
 main.transitioning {
     min-height: var(--preserved-height, 400px);
 }
 
-/* Classes de animação explícitas (usadas pelo JS para acionar transições de forma robusta) */
-.animating-in {
-    /* estado inicial para entrada: opaco e deslocado para baixo; ao remover a classe
-       o elemento transita para o seu estado natural (opacity:1, translateY(0)) */
-    opacity: 0 !important;
-    transform: translateY(12px) !important;
-    transition: opacity var(--transition-medium) var(--easing-standard) !important;
-    transition-property: opacity, transform !important;
+/* Os elementos que podem ser animados têm uma transição por defeito. */
+#themes, .theme-section, #exercise-area {
+    transition: opacity var(--transition-medium) var(--easing-standard), 
+                transform var(--transition-medium) var(--easing-standard);
 }
 
+/* Estado inicial para a animação de entrada (fade in e slide up) */
+.animating-in {
+    opacity: 0;
+    transform: translateY(12px);
+}
+
+/* Estado final para a animação de saída (fade out e slide up) */
 .animating-out {
-    /* estado final para saída: opaco e deslocado para baixo; ao adicionar a classe
-       o elemento transita do estado natural para este estado de saída */
-    opacity: 0 !important;
-    transform: translateY(12px) !important;
-    transition: opacity var(--transition-medium) var(--easing-standard) !important;
-    transition-property: opacity, transform !important;
+    opacity: 0;
+    transform: translateY(-12px);
 }
 
 /* Respeitar preferências de animação reduzida */
 @media (prefers-reduced-motion: reduce) {
-    #themes, .theme-section, #exercise-area,
-    .animating-in, .animating-out {
+    #themes, .theme-section, #exercise-area, .animating-in, .animating-out {
         transition: none !important;
         transform: none !important;
-        opacity: 1 !important;
     }
 }
 

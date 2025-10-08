@@ -591,109 +591,56 @@ async function showThemes() {
   } catch (e) {}
 }
 
-// Helper para aguardar que o layout seja calculado
-function waitForLayout(element) {
-  return new Promise((resolve) => {
-    // Se não há cards para aguardar, resolve imediatamente
-    const cards = element.querySelectorAll('.card');
-    if (cards.length === 0) {
-      resolve();
-      return;
-    }
-    
-    // Aguarda que as imagens estejam carregadas (se houver)
-    const images = element.querySelectorAll('img');
-    const imagePromises = Array.from(images).map(img => {
-      if (img.complete) return Promise.resolve();
-      return new Promise(resolve => {
-        img.addEventListener('load', resolve, { once: true });
-        img.addEventListener('error', resolve, { once: true });
-      });
-    });
-    
-    Promise.all(imagePromises).then(() => {
-      // Aguarda um frame para garantir que o layout foi calculado
-      requestAnimationFrame(() => {
-        // Força o browser a calcular as dimensões
-        void element.offsetHeight;
-        
-        // Aguarda mais um frame para estabilizar
-        requestAnimationFrame(() => {
-          resolve();
-        });
-      });
-    });
-  });
-}
+// A função `waitForLayout` foi removida, pois para animações de opacidade e transformação,
+// o browser geralmente lida bem com o layout sem a necessidade de forçar um cálculo explícito.
 
 // Helpers de animação: aplicam classes temporárias para forçar transições
 function animateShow(el) {
   return new Promise((resolve) => {
     if (!el) return resolve();
     // Respeitar preferências do utilizador
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { // NOSONAR
+      el.classList.remove("hidden");
       return resolve();
     }
-  console.debug("animateShow: element", el);
-  // limpar qualquer classe de saída
-    el.classList.remove("animating-out");
-    // preparar para entrada
+
+    // 1. Definir o estado inicial da animação (invisível e deslocado)
     el.classList.add("animating-in");
-    // forçar repaint
-    void el.offsetWidth;
-    // remover a classe animating-in para deixar a transição ocorrer até o estado natural
+    // 2. Tornar o elemento visível (display: block)
+    el.classList.remove("hidden");
+
+    // 3. Forçar um reflow para que o browser renderize o estado inicial ANTES da transição
+    void el.offsetWidth; // Crucial para que a transição seja percebida
+
+    // 4. No próximo frame, remover a classe 'animating-in' para que o elemento transite para o seu estado final (visível)
     requestAnimationFrame(() => {
       el.classList.remove("animating-in");
     });
-    const handler = (ev) => {
-      if (ev.target !== el) return;
-      console.debug("animateShow: transitionend on", el);
-      el.removeEventListener("transitionend", handler);
-      resolve();
-    };
-    el.addEventListener("transitionend", handler);
-    // Debug: log computed transition style
-    try {
-      const cs = getComputedStyle(el);
-      console.debug("animateShow: computed transition", cs.transition || cs.transitionProperty, cs.transitionDuration);
-    } catch (e) {}
+
+    // 5. Concluir: Após a duração total da animação, resolvemos a promessa.
     setTimeout(() => {
-      el.removeEventListener("transitionend", handler);
       resolve();
-    }, 600);
+    }, ANIMATION_DURATION_MS);
   });
 }
 
 function animateHide(el) {
   return new Promise((resolve) => {
     if (!el) return resolve();
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { // NOSONAR
+      el.classList.add("hidden");
       return resolve();
     }
-  console.debug("animateHide: element", el);
-  // garantir que não estamos num estado animating-in
-    el.classList.remove("animating-in");
-    // adicionar classe de saída — transição irá correr para o estado definido por .animating-out
-    // forçar repaint
-    void el.offsetWidth;
-    requestAnimationFrame(() => {
-      el.classList.add("animating-out");
-    });
-    const handler = (ev) => {
-      if (ev.target !== el) return;
-      console.debug("animateHide: transitionend on", el);
-      el.removeEventListener("transitionend", handler);
-      resolve();
-    };
-    el.addEventListener("transitionend", handler);
-    try {
-      const cs = getComputedStyle(el);
-      console.debug("animateHide: computed transition", cs.transition || cs.transitionProperty, cs.transitionDuration);
-    } catch (e) {}
+
+    // 1. Iniciar animação: Adicionar a classe que o fará transitar para o estado invisível.
+    el.classList.add("animating-out");
+
+    // 2. Concluir: Após a animação, escondemos o elemento com display:none e limpamos a classe.
     setTimeout(() => {
-      el.removeEventListener("transitionend", handler);
+      el.classList.add("hidden"); // Adiciona display:none
+      el.classList.remove("animating-out"); // Limpa a classe de animação
       resolve();
-    }, 600);
+    }, ANIMATION_DURATION_MS);
   });
 }
 
