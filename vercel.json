@@ -1,15 +1,9 @@
 {
   "version": 2,
-  "name": "citania",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "."
-      }
-    }
-  ],
+  "public": true,
+  "github": {
+    "silent": true
+  },
   "routes": [
     {
       "src": "/sw.js",
@@ -21,14 +15,7 @@
     {
       "src": "/manifest.json",
       "headers": {
-        "Content-Type": "application/manifest+json",
-        "Cache-Control": "public, max-age=31536000, immutable"
-      }
-    },
-    {
-      "src": "/audio/(.*)",
-      "headers": {
-        "Cache-Control": "public, max-age=31536000, immutable"
+        "Content-Type": "application/manifest+json"
       }
     },
     {
@@ -39,6 +26,12 @@
     },
     {
       "src": "/js/(.*)",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/audio/(.*)",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable"
       }
@@ -69,17 +62,8 @@
         {
           "key": "X-XSS-Protection",
           "value": "1; mode=block"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
         }
       ]
     }
-  ],
-  "functions": {
-    "app.js": {
-      "includeFiles": "**"
-    }
-  }
+  ]
 }

@@ -1,129 +1,131 @@
 # Deployment da Citânia no Vercel
 
+## ⚠️ Resolução de Problemas de Deployment
+
+Se o deployment resultou numa página vazia, siga estes passos:
+
+### Verificação Rápida
+Execute o script de verificação:
+
+```powershell
+# No Windows
+.\deploy-check.ps1
+
+# No Linux/Mac  
+bash deploy-check.sh
+```
+
+### Configuração Corrigida
+
+O projeto está agora configurado como **aplicação estática pura**, sem builds desnecessários.
+
+#### Ficheiros Importantes:
+- ✅ `vercel.json` - Configuração simplificada para apps estáticas
+- ✅ `package.json` - Sem dependências de build
+- ✅ `.vercelignore` - Exclui ficheiros desnecessários
+
 ## Configuração Automática
 
 O projeto está configurado para deployment automático no Vercel através dos seguintes ficheiros:
 
-### `package.json`
-- Scripts de build e desenvolvimento
-- Dependências necessárias para servir a aplicação
-- Metadados do projeto
-
-### `vercel.json`
-- Configuração específica do Vercel
-- Headers de segurança para PWA
+### `vercel.json` (Simplificado)
+- **SEM** secção `builds` (para apps estáticas)
+- Headers de segurança para PWA  
 - Cache otimizado para recursos estáticos
 - Redirecionamentos para SPA
 
-### `.vercelignore`
-- Ficheiros excluídos do deployment
-- Otimização do tamanho do build
+### `package.json` (Minimal)
+- **SEM** scripts de build complexos
+- **SEM** dependências desnecessárias
+- Scripts apenas para desenvolvimento local
 
 ## Processo de Deployment
 
-### 1. Através do GitHub (Recomendado)
-
-1. Fazer push das alterações para o repositório GitHub
-2. Conectar o repositório ao Vercel Dashboard
-3. O deployment será automático a cada push para `main`
-
-### 2. Através da CLI do Vercel
+### 1. Corrigir Deployment Vazio
 
 ```bash
-# Instalar Vercel CLI
-npm i -g vercel
+# 1. Fazer commit das correções
+git add .
+git commit -m "Corrigir configuração Vercel para app estática"
+git push origin main
 
-# Login no Vercel
-vercel login
-
-# Deploy
-vercel
-
-# Deploy para produção
-vercel --prod
+# 2. Redeploy automático acontecerá
+# OU redeploy manual no dashboard Vercel
 ```
 
-### 3. Comandos de Desenvolvimento
+### 2. Através do GitHub (Recomendado)
+
+1. Push para repositório GitHub ✅
+2. Redeploy automático no Vercel ✅
+3. Verificar em https://citania.vercel.app
+
+### 3. Redeploy Manual
+
+1. Aceder ao [Vercel Dashboard](https://vercel.com/dashboard)
+2. Ir ao projeto "citania"
+3. Clicar em "Redeploy" 
+4. Selecionar "Use existing Build Cache" = **NÃO**
+
+## Comandos de Desenvolvimento
 
 ```bash
-# Instalar dependências
-npm install
-
-# Servidor de desenvolvimento
-npm run dev
-
-# Servidor de produção local
-npm start
-
-# Validar aplicação
+# Validar configuração
 npm run validate
 
-# Testar PWA (requer Lighthouse)
-npm run test:pwa
-```
-
-## Configurações Importantes
-
-### Headers de Segurança
-- `X-Content-Type-Options: nosniff`
-- `X-Frame-Options: DENY`
-- `X-XSS-Protection: 1; mode=block`
-- `Referrer-Policy: strict-origin-when-cross-origin`
-
-### Cache Strategy
-- **Service Worker**: `Cache-Control: public, max-age=0, must-revalidate`
-- **Assets estáticos**: `Cache-Control: public, max-age=31536000, immutable`
-- **Manifest**: Cache longo com immutable
-
-### PWA Requirements
-- ✅ Manifest configurado
-- ✅ Service Worker ativo
-- ✅ Icons para todas as plataformas
-- ✅ HTTPS (automático no Vercel)
-
-## Verificação Pré-Deployment
-
-Execute o script de verificação:
-
-```bash
-chmod +x deploy-check.sh
-./deploy-check.sh
-```
-
-Ou manualmente:
-
-```bash
-# Verificar manifest
-npm run validate:manifest
-
-# Testar servidor local
+# Servidor local (várias opções)
+python -m http.server 8000
+# ou
+npx http-server -p 8000
+# ou
 npm run dev
 ```
 
-## URLs após Deployment
+## Principais Correções Feitas
 
-- **Produção**: `https://citania.vercel.app`
-- **Preview**: URLs geradas automaticamente para cada PR
-- **Development**: `http://localhost:8000`
+### ❌ Problemas Anteriores:
+- Configuração `@vercel/static-build` desnecessária
+- Scripts de build que não fazem nada
+- Dependências dev desnecessárias
 
-## Resolução de Problemas
+### ✅ Soluções Aplicadas:
+- Vercel.json simplificado para apps estáticas
+- Package.json minimal sem builds
+- Verificação automática de ficheiros essenciais
 
-### Service Worker não carrega
-- Verificar se o `sw.js` está na raiz
-- Confirmar headers no `vercel.json`
+## Verificação Pós-Deployment
 
-### Recursos não carregam
+### URLs para Testar:
+- **Produção**: https://citania.vercel.app
+- **PWA Manifest**: https://citania.vercel.app/manifest.json
+- **Service Worker**: https://citania.vercel.app/sw.js
+
+### Checklist PWA:
+- ✅ Aplicação carrega
+- ✅ Manifest disponível
+- ✅ Service Worker ativo
+- ✅ Instalação PWA funciona
+- ✅ Funcionamento offline
+
+## Resolução de Problemas Específicos
+
+### Página Ainda Vazia?
+1. Verificar se `index.html` está na raiz
+2. Confirmar que não há erros no console do browser
+3. Redeploy manual sem cache
+4. Verificar logs de deployment no Vercel
+
+### Service Worker não carrega?
+- Verificar headers no `vercel.json`
+- Path correto: `/sw.js` (na raiz)
+
+### Assets não carregam?
 - Verificar paths relativos no código
-- Confirmar configuração de cache
-
-### PWA não instala
-- Validar `manifest.json`
-- Verificar icons e configurações PWA
+- Confirmar estrutura de pastas
 
 ## Monitorização
 
 Após deployment, verificar:
 - Lighthouse PWA score
 - Performance metrics no Vercel Dashboard
-- Funcionamento offline
-- Instalação PWA em diferentes dispositivos
+- Funcionamento em diferentes dispositivos
+- Instalação PWA

@@ -3,18 +3,13 @@
   "version": "1.0.0",
   "description": "Citânia - Uma aplicação PWA gamificada para aprendizagem de matemática, inspirada no Castro de Citânia de Sanfins",
   "main": "index.html",
-  "type": "module",
   "scripts": {
     "dev": "npx http-server -p 8000 -c-1 --cors",
     "start": "npx http-server -p 8080 -c-1 --cors",
-    "build": "npm run build:icons && npm run build:manifest",
-    "build:icons": "echo 'Verificando ícones PWA...' && node -e \"console.log('Ícones verificados')\"",
-    "build:manifest": "echo 'Validando manifest.json...' && node -e \"const fs = require('fs'); const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8')); console.log('Manifest válido:', manifest.name);\"",
     "serve": "npx http-server -p 3000",
     "test:pwa": "npx lighthouse http://localhost:8000 --view",
-    "validate": "npm run validate:html && npm run validate:manifest",
-    "validate:html": "echo 'Validando HTML...'",
-    "validate:manifest": "node -e \"const fs = require('fs'); const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8')); console.log('✓ Manifest válido');\""
+    "validate": "npm run validate:manifest",
+    "validate:manifest": "node -e \"const fs = require('fs'); const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8')); console.log('✓ Manifest válido:', manifest.name);\""
   },
   "repository": {
     "type": "git",
@@ -31,18 +26,5 @@
   ],
   "author": "Vitor Sousa",
   "license": "MIT",
-  "homepage": "https://citania.vercel.app",
-  "devDependencies": {
-    "http-server": "^14.1.1"
-  },
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "not ie 11"
-  ]
+  "homepage": "https://citania.vercel.app"
 }
