@@ -435,7 +435,6 @@
             inputmode="none"
             autocomplete="off"
             aria-label="Campo de resposta"
-            readonly
           />
           <button id="check-button">Verificar Resposta</button>
           <p id="feedback" class="hidden" role="status" aria-live="polite"></p>
@@ -511,6 +510,17 @@
         </div>
       </div>
     </main>
+
+    <!-- Popup da Narrativa para Mobile -->
+    <div id="narrative-popup" class="narrative-popup hidden" role="dialog" aria-modal="true" aria-labelledby="narrative-popup-text">
+      <div class="narrative-popup-content">
+        <button id="close-narrative-popup" class="close-narrative-popup" aria-label="Fechar">&times;</button>
+        <div id="narrative-popup-text-container">
+          <span class="curiosidade-icon">🧠</span>
+          <p id="narrative-popup-text">Carregando curiosidade...</p>
+        </div>
+      </div>
+    </div>
 
     <!-- Carrega lottie localmente (preferível para PWA); fallback é feito no JS -->
     <script src="./js/vendor/lottie.min.js" defer></script>

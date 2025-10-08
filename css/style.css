@@ -693,7 +693,10 @@ main {
     }
 
     .custom-keyboard {
-        margin-top: 1rem;
+        margin-top: 0.75rem;
+        max-width: 280px; /* Mais compacto */
+        padding: 0 0.5rem;
+        box-sizing: border-box;
     }
 
     .exercise-container {
@@ -771,7 +774,6 @@ main {
         order: -1; /* Colocar no topo da área de exercício */
         display: flex !important;
         visibility: visible !important;
-        border: 1px solid rgba(0,0,0,0.1); /* Borda sutil para confirmar visibilidade */
     }
 
     #level-badge {
@@ -787,6 +789,7 @@ main {
 
     #progress-bar-container {
         height: 12px;
+        width: 100%; /* Garantir que o contentor tem largura */
     }
 
     #progress-bar {
@@ -804,12 +807,10 @@ main {
         position: relative; /* Alterado de sticky para relative para garantir visibilidade */
         top: auto; /* Removido top sticky */
         background: transparent; /* Fundo transparente para consistência */
-        border-bottom: 1px solid var(--border-color);
         padding: 0.5rem;
         margin: 0;
         max-width: 100vw;
         z-index: 20;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     #level-indicator {
@@ -963,6 +964,18 @@ main {
     /* reduzir o padding-top agora que o botão não é fixed */
     #exercise-area {
         padding-top: 0;
+    }
+
+    /* Ajustes para o teclado personalizado em mobile */
+    .keyboard-row {
+        gap: 0.3rem; /* Menos espaço entre teclas */
+        margin-bottom: 0.3rem;
+    }
+
+    .key {
+        height: 44px; /* Altura de toque acessível */
+        min-width: 40px;
+        font-size: 1.1rem;
     }
 }
 
@@ -1423,6 +1436,11 @@ img.card-icon {
         min-height: 4.5rem; /* padding (0.8*2) + line-height (1.6 * 0.85 * 2) */
         max-height: 6rem;
     }
+
+    /* Esconder a curiosidade no layout principal em mobile */
+    .curiosidade-matematica {
+        display: none;
+    }
 }
 
 /* Otimizações de acessibilidade para redução de movimento */
@@ -1440,6 +1458,71 @@ img.card-icon {
 .curiosidade-matematica:focus-within {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
+}
+
+/* Popup da Narrativa (Mobile) */
+.narrative-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 1rem;
+    opacity: 0;
+    transition: opacity var(--transition-medium) var(--easing-standard);
+}
+
+.narrative-popup:not(.hidden) {
+    opacity: 1;
+}
+
+.narrative-popup-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    transform: scale(0.95);
+    transition: transform var(--transition-medium) var(--easing-standard);
+}
+
+.narrative-popup:not(.hidden) .narrative-popup-content {
+    transform: scale(1);
+}
+
+#narrative-popup-text-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* Remover a sombra de texto do ícone do popup para evitar artefactos visuais */
+#narrative-popup-text-container .curiosidade-icon {
+    text-shadow: none;
+}
+
+.close-narrative-popup {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: white;
+    /* Remover sombra herdada de botões globais */
+    box-shadow: none;
 }
 
 /* Local Material Symbols setup: tenta carregar a versão local em /fonts/ antes do fallback remoto.
@@ -1466,6 +1549,11 @@ img.card-icon {
 .op-sub { background: #fde2e1; color: #7f1d1d; /* contraste ~6:1 */ }
 .dark-mode .op-add { background: #064e3b; color: #d1fae5; }
 .dark-mode .op-sub { background: #7f1d1d; color: #fee2e2; }
+
+.dark-mode .narrative-popup-content {
+    background: linear-gradient(135deg, #4338ca 0%, #5b21b6 100%);
+    border-color: rgba(255, 255, 255, 0.2);
+}
 
 /* Term boxes para exercícios com termo em falta */
 .term-box {

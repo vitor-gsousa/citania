@@ -261,33 +261,20 @@ export function stopAutoFactRotation() {
 
 // Atualiza a exibição da curiosidade matemática no DOM
 function updateMathFactDisplay() {
-  try {
-    const curiosidadeEl = document.getElementById("narrativa") || 
-                          document.getElementById("curiosidade") ||
-                          document.querySelector(".curiosidade-matematica");
-    
-    if (curiosidadeEl) {
-      // Limpar conteúdo anterior
-      curiosidadeEl.innerHTML = '';
-      
-      // Adicionar ícone de curiosidade
-      const icon = document.createElement('span');
-      icon.className = 'curiosidade-icon';
-      icon.textContent = '🧠 ';
-      icon.style.marginRight = '0.5rem';
-      
-      // Adicionar texto da curiosidade
-      const textNode = document.createTextNode(gamification.curiosidade);
-      
-      curiosidadeEl.appendChild(icon);
-      curiosidadeEl.appendChild(textNode);
-      
-      console.log("Curiosidade atualizada:", gamification.curiosidade.substring(0, 50) + "...");
-    } else {
-      console.warn("Elemento de curiosidade não encontrado");
-    }
-  } catch (error) {
-    console.error("Erro ao atualizar curiosidade:", error);
+  const curiosidadeEl = document.getElementById("narrativa");
+  const popupTextEl = document.getElementById("narrative-popup-text");
+
+  // Atualiza o card no desktop
+  if (curiosidadeEl) {
+    curiosidadeEl.innerHTML = `
+      <span class="curiosidade-icon">🧠</span>
+      ${gamification.curiosidade}
+    `;
+  }
+
+  // Atualiza o popup em mobile
+  if (popupTextEl) {
+    popupTextEl.textContent = gamification.curiosidade;
   }
 }
 
@@ -296,6 +283,13 @@ export function mostrarNarrativa(DOM, level) {
   generateNewMathFact(level);
 }
 
+export function showNarrativePopup(DOM) {
+  if (window.innerWidth > 768) return; // Apenas em mobile
+  if (DOM.narrativePopup) {
+    DOM.narrativePopup.classList.remove("hidden");
+    DOM.closeNarrativePopup.focus();
+  }
+}
 export function mostrarFeedbackGamificacao(DOM, mensagem) {
   if (DOM.feedbackEl) {
     DOM.feedbackEl.innerHTML += `<br><span class="gamification-feedback">${mensagem}</span>`;

@@ -6,6 +6,10 @@ yarn-error.log*
 
 # Development files (keep for development)
 /tools/
+/.github/
+/.vscode/
+*.gitignore
+AGENTS.md
 
 # Logs
 *.log
