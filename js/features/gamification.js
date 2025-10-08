@@ -158,7 +158,17 @@ export function renderAchievementsPanel(DOM, state) {
   // fechar
   const closeBtn = panel.querySelector("#close-achievements");
   closeBtn?.addEventListener("click", () => {
+    // Primeiro move o foco para fora do painel antes de esconder
+    const achievementsButton = document.getElementById("achievements-button");
+    if (achievementsButton) {
+      achievementsButton.focus();
+    } else {
+      // Fallback para o body se o botão não existir
+      document.body.focus();
+    }
+    
     panel.classList.remove("open");
+    panel.setAttribute("aria-hidden", "true"); // Agora é seguro restaurar aria-hidden
   });
 }
 
@@ -169,6 +179,7 @@ export function showAchievementsPanel(DOM, state) {
   try {
     renderAchievementsPanel(DOM, state);
     panel.classList.add("open");
+    panel.setAttribute("aria-hidden", "false"); // Remove aria-hidden quando aberto
     const closeBtn = panel.querySelector("#close-achievements");
     closeBtn?.focus();
   } catch (e) {
