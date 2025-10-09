@@ -83,15 +83,17 @@ export function generateFractionToDecimal(level = 1) {
   // Formata a resposta para ter no máximo 4 casas decimais para evitar problemas de precisão
   const formattedAnswer = parseFloat(answer.toFixed(4));
 
-  const question = `Qual é o valor de <sup>${numerator}</sup>/<sub>${denominator}</sub> em decimal?`;
+  const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
+  const question = `<span class="fraction-display"><sup>${numerator}</sup>/<sub>${denominator}</sub></span> <span class="equals">=</span> ${inputHtml}`;
 
-  const explanation = `Para converter a fração <sup>${numerator}</sup>/<sub>${denominator}</sub> para decimal, divide-se o numerador (${numerator}) pelo denominador (${denominator}). O resultado é ${formattedAnswer}.`;
+  const explanation = `Para converter a fração ${numerator}/${denominator} para decimal, divide-se o numerador (${numerator}) pelo denominador (${denominator}). O resultado é ${formattedAnswer}.`;
 
   return {
     question,
     answer: formattedAnswer,
     explanation,
     checkType: "number",
+    hasInlineInput: true,
   };
 }
 

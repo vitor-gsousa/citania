@@ -77,11 +77,11 @@ console.log();
 // 2. Verificar se a imagem Open Graph existe
 console.log('🖼️ Verificando imagem Open Graph...');
 try {
-    const ogImagePath = path.join(__dirname, 'images', 'ogcitania.png');
+    const ogImagePath = path.join(__dirname, 'images', 'ogcitania.jpg');
     if (fs.existsSync(ogImagePath)) {
         const stats = fs.statSync(ogImagePath);
         const fileSizeKB = Math.round(stats.size / 1024);
-        console.log(`✅ Imagem ogcitania.png encontrada (${fileSizeKB} KB)`);
+        console.log(`✅ Imagem ogcitania.jpg encontrada (${fileSizeKB} KB)`);
         
         // Verificar se o tamanho é razoável para Open Graph (recomendado: < 300KB)
         if (fileSizeKB < 300) {
@@ -90,7 +90,7 @@ try {
             console.log('⚠️ Imagem pode ser muito grande (recomendado: < 300KB)');
         }
     } else {
-        console.log('❌ Imagem ogcitania.png não encontrada em images/');
+        console.log('❌ Imagem ogcitania.jpg não encontrada em images/');
     }
 } catch (error) {
     console.log(`❌ Erro ao verificar imagem: ${error.message}`);
@@ -105,7 +105,7 @@ try {
     if (fs.existsSync(swPath)) {
         const swContent = fs.readFileSync(swPath, 'utf8');
         
-        if (swContent.includes('ogcitania.png')) {
+        if (swContent.includes('ogcitania.jpg')) {
             console.log('✅ Imagem Open Graph está no cache do Service Worker');
         } else {
             console.log('⚠️ Imagem Open Graph pode não estar em cache');
@@ -120,7 +120,7 @@ console.log();
 // 4. Verificar URLs válidos
 console.log('🔗 Verificando URLs...');
 const expectedURL = 'https://citania.vercel.app/';
-const expectedImageURL = 'https://citania.vercel.app/images/ogcitania.png';
+const expectedImageURL = 'https://citania.vercel.app/images/ogcitania.jpg';
 
 try {
     const indexPath = path.join(__dirname, 'index.html');

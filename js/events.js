@@ -71,6 +71,18 @@ function bindCardActions(DOM, state) {
  * @param {object} state - O estado global da aplicação.
  */
 export function initEventListeners(DOM, state) {
+  // Variável para rastrear o input de fração ativo
+  let activeFractionInput = null;
+
+  /**
+   * Reset do estado de frações para quando se muda de exercício
+   */
+  window.resetFractionState = function() {
+    activeFractionInput = null;
+    // Limpar atributos data-active de qualquer input remanescente
+    const allInputs = document.querySelectorAll('.fraction-missing-input, .inline-missing-input');
+    allInputs.forEach(input => input.removeAttribute('data-active'));
+  };
   bindCardActions(DOM, state);
 
   DOM.themeToggleButton?.addEventListener("click", toggleTheme);
@@ -142,7 +154,40 @@ export function initEventListeners(DOM, state) {
     const value = key.dataset.value;
     // O exercício 'addSub' pode ter um input inline
     const inlineInput = document.getElementById("inline-missing-input");
-    const targetInput = inlineInput || DOM.answerInput;
+    // Inputs de frações equivalentes ou simplificação
+    const fractionInputs = document.querySelectorAll('.fraction-missing-input');
+    
+    // Determina qual input usar com nova lógica melhorada
+    let targetInput = DOM.answerInput;
+    
+    if (fractionInputs.length > 0) {
+      // 1. Tentar usar o input marcado como ativo
+      let activeInput = document.querySelector('.fraction-missing-input[data-active="true"]');
+      
+      // 2. Se não houver ativo, procurar o que tem foco
+      if (!activeInput) {
+        activeInput = document.querySelector('.fraction-missing-input:focus');
+      }
+      
+      // 3. Se ainda não houver, usar o último que foi tocado/clicado
+      if (!activeInput) {
+        activeInput = activeFractionInput && document.contains(activeFractionInput) 
+                     ? activeFractionInput 
+                     : fractionInputs[0];
+      }
+      
+      if (activeInput) {
+        targetInput = activeInput;
+        // Marcar como ativo e desmarcar outros
+        fractionInputs.forEach(input => input.removeAttribute('data-active'));
+        activeInput.setAttribute('data-active', 'true');
+        activeFractionInput = activeInput;
+      }
+    } else if (inlineInput) {
+      // Para inputs inline normais, aplicar também o sistema de marcação ativa
+      targetInput = inlineInput;
+      inlineInput.setAttribute('data-active', 'true');
+    }
 
     if (value === "delete") {
       targetInput.value = targetInput.value.slice(0, -1);
@@ -155,8 +200,21 @@ export function initEventListeners(DOM, state) {
     }
 
     // Se o input inline existir, sincroniza o seu valor com o input principal (oculto)
-    if (inlineInput) {
+    if (inlineInput && targetInput === inlineInput) {
       DOM.answerInput.value = inlineInput.value;
+    }
+    // Se for um input de fração, mantém o foco nele e atualiza o rastreamento
+    if (targetInput.classList.contains('fraction-missing-input')) {
+      activeFractionInput = targetInput;
+      targetInput.focus();
+      // Garantir que está marcado como ativo
+      fractionInputs.forEach(input => input.removeAttribute('data-active'));
+      targetInput.setAttribute('data-active', 'true');
+    }
+    // Se for um input inline normal, também mantém o foco
+    if (targetInput.classList.contains('inline-missing-input')) {
+      targetInput.focus();
+      targetInput.setAttribute('data-active', 'true');
     }
   });
 
@@ -169,4 +227,39 @@ export function initEventListeners(DOM, state) {
     if (DOM.customKeyboard) DOM.customKeyboard.classList.remove("hidden");
     safeFocus(targetInput);
   });
+
+  // Função para rastrear inputs de frações ativos
+  function trackActiveFractionInput() {
+    // Adicionar listeners a todos os inputs de fração e inline quando são criados
+    const observer = new MutationObserver(() => {
+      const fractionInputs = document.querySelectorAll('.fraction-missing-input');
+      const inlineInputs = document.querySelectorAll('.inline-missing-input');
+      
+      [...fractionInputs, ...inlineInputs].forEach(input => {
+        // Remover listeners existentes para evitar duplicação
+        input.removeEventListener('focus', handleFractionFocus);
+        input.removeEventListener('click', handleFractionFocus);
+        input.removeEventListener('touchstart', handleFractionFocus);
+        
+        // Adicionar novos listeners
+        input.addEventListener('focus', handleFractionFocus);
+        input.addEventListener('click', handleFractionFocus);
+        input.addEventListener('touchstart', handleFractionFocus);
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  function handleFractionFocus(event) {
+    const input = event.target;
+    // Marcar este input como ativo e desmarcar outros
+    const allFractionInputs = document.querySelectorAll('.fraction-missing-input');
+    allFractionInputs.forEach(inp => inp.removeAttribute('data-active'));
+    input.setAttribute('data-active', 'true');
+    activeFractionInput = input;
+  }
+
+  // Iniciar o rastreamento
+  trackActiveFractionInput();
 }

@@ -7,6 +7,8 @@
  * - Gestão da progressão de níveis e rondas.
  */
 import { generateAddSub } from "./modules/arithmetic/progression.js";
+import { generateMulDiv, checkMulDivAnswer } from "./modules/arithmetic/mulDiv.js";
+import { generateFractions, checkFractionAnswer } from "./modules/arithmetic/fractions.js";
 import { generateFractionToDecimal } from "./modules/arithmetic/fractionToDecimal.js";
 import { generateGcd } from "./modules/arithmetic/gcd.js";
 import { generateLcm } from "./modules/arithmetic/lcm.js";
@@ -16,6 +18,7 @@ import { generatePrimeFactorization } from "./modules/arithmetic/primeFactorizat
 import { sounds } from "./services/sounds.js";
 import { loadProgressForType, saveProgressForType } from "./progress.js";
 import { safeFocus, preventMobileKeyboard } from "./utils/mobile-utils.js";
+import { updateFractionVisual } from "./utils/fraction-visual.js";
 import {
   adicionarPontos,
   awardBadge,
@@ -38,6 +41,14 @@ export const exercises = {
   addSub: {
     generate: generateAddSub,
     check: (userAnswer, correctAnswer) => parseInt(userAnswer.trim(), 10) === correctAnswer,
+  },
+  mulDiv: {
+    generate: generateMulDiv,
+    check: checkMulDivAnswer,
+  },
+  fractions: {
+    generate: generateFractions,
+    check: checkFractionAnswer,
   },
   fractionToDecimal: {
     generate: generateFractionToDecimal,
@@ -79,6 +90,30 @@ export const exercises = {
 // Estado do exercício corrente
 export let currentExercise = {};
 
+/**
+ * Limpa elementos visuais anteriores da área de exercícios
+ * @param {HTMLElement} exerciseArea - Container da área de exercícios
+ */
+function clearExerciseVisuals(exerciseArea) {
+  // Remover containers de frações
+  const fractionContainers = exerciseArea.querySelectorAll('.fraction-container, .fraction-equivalent-with-input, .fraction-operation');
+  fractionContainers.forEach(container => container.remove());
+  
+  // Remover apenas inputs inline que NÃO estão dentro da pergunta
+  const questionEl = exerciseArea.querySelector('.question');
+  const inlineInputs = exerciseArea.querySelectorAll('.inline-missing-input');
+  inlineInputs.forEach(input => {
+    // Só remover se não estiver dentro da pergunta
+    if (!questionEl || !questionEl.contains(input)) {
+      input.remove();
+    }
+  });
+  
+  // Limpar atributos data-active de inputs de frações remanescentes
+  const fractionInputs = exerciseArea.querySelectorAll('.fraction-missing-input');
+  fractionInputs.forEach(input => input.removeAttribute('data-active'));
+}
+
 export function startExercise(type, DOM, state) {
   if (!exercises[type]) {
     console.error("Tipo de exercício inválido:", type);
@@ -92,6 +127,14 @@ export function startExercise(type, DOM, state) {
   state.score.correct = 0;
   state.score.incorrect = 0;
   state.roundProgress = 0;
+
+  // Limpar estado visual anterior
+  clearExerciseVisuals(DOM.exerciseArea);
+  
+  // Resetar estado de frações se a função existir
+  if (typeof window.resetFractionState === 'function') {
+    window.resetFractionState();
+  }
 
   // Configurar prevenção de teclado móvel no input principal
   preventMobileKeyboard(DOM.answerInput);
@@ -110,13 +153,23 @@ export function generateNewExercise(DOM, state) {
   currentExercise.answer = problem.answer;
   currentExercise.explanation = problem.explanation;
   currentExercise.checkType = problem.checkType;
+  currentExercise.visualData = problem.visualData; // Guardar dados visuais para frações
+  currentExercise.hasInlineInput = problem.hasInlineInput; // Nova propriedade para input inline
   const isMissingTerm = problem.isMissingTerm || currentExercise.type === 'addSub';
+
+  // Limpar qualquer conteúdo visual anterior da área de exercícios ANTES de inserir o novo
+  clearExerciseVisuals(DOM.exerciseArea);
+  
+  // Resetar estado de frações se a função existir
+  if (typeof window.resetFractionState === 'function') {
+    window.resetFractionState();
+  }
 
   DOM.questionEl.innerHTML = problem.question;
   DOM.answerInput.value = "";
   
   // Limpar também input inline se existir
-  const inlineInput = document.getElementById("inline-missing-input");
+  const inlineInput = document.querySelector(".inline-missing-input");
   if (inlineInput) {
     inlineInput.value = "";
   }
@@ -125,20 +178,58 @@ export function generateNewExercise(DOM, state) {
   DOM.feedbackEl.className = "hidden";
   state.answered = false;
 
-  // Lógica específica para o tipo de exercício 'addSub' com input inline
-  if (isMissingTerm) {
+  // Adicionar representação visual para exercícios de frações
+  if (currentExercise.type === 'fractions' && currentExercise.visualData) {
+    updateFractionVisual(DOM.exerciseArea, currentExercise.visualData);
+  }
+
+  // Lógica para exercícios com input inline (addSub e frações equivalentes)
+  if (isMissingTerm || currentExercise.hasInlineInput) {
     DOM.answerInput.classList.add("hidden"); // Esconde o input principal
-    const inlineInput = document.getElementById("inline-missing-input");
-    if (inlineInput) {
-      preventMobileKeyboard(inlineInput);
-      safeFocus(inlineInput);
-      // Para este tipo de exercício, o teclado deve estar sempre visível
-      DOM.customKeyboard.classList.remove("hidden");
+    
+    // Para frações equivalentes, o input já está integrado na visualização
+    if (currentExercise.hasInlineInput) {
+      // Procurar inputs inline na visualização de frações
+      const fractionInputs = DOM.exerciseArea.querySelectorAll('.fraction-missing-input');
+      if (fractionInputs.length > 0) {
+        // Focar no primeiro input (numerador ou único input)
+        const firstInput = fractionInputs[0];
+        preventMobileKeyboard(firstInput);
+        safeFocus(firstInput);
+        
+        // Mostrar teclado personalizado para inputs de frações
+        DOM.customKeyboard.classList.remove("hidden");
+        
+        // Adicionar eventos para todos os inputs de frações
+        fractionInputs.forEach(input => {
+          // Adicionar evento para mostrar teclado quando tocar no input
+          input.addEventListener('focus', () => {
+            DOM.customKeyboard.classList.remove("hidden");
+          });
+          
+          // Prevenir que o teclado nativo apareça em dispositivos móveis
+          input.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            input.focus();
+            DOM.customKeyboard.classList.remove("hidden");
+          });
+        });
+      }
+    } else {
+      // Lógica original para addSub
+      const inlineInput = document.querySelector(".inline-missing-input");
+      if (inlineInput) {
+        preventMobileKeyboard(inlineInput);
+        safeFocus(inlineInput);
+        // Para este tipo de exercício, o teclado deve estar sempre visível
+        DOM.customKeyboard.classList.remove("hidden");
+      }
     }
   } else {
     DOM.answerInput.classList.remove("hidden"); // Mostra o input principal para outros exercícios
     preventMobileKeyboard(DOM.answerInput);
     safeFocus(DOM.answerInput);
+    DOM.customKeyboard.classList.add("hidden");
   }
 
   DOM.checkButton.style.display = "block";
@@ -150,9 +241,31 @@ export function checkAnswer(DOM, state) {
 
   currentExercise.attempts = (currentExercise.attempts || 0) + 1;
   
-  // Verificar se existe input inline (para exercícios como addSub)
-  const inlineInput = document.getElementById("inline-missing-input");
-  const userAnswer = inlineInput ? inlineInput.value : DOM.answerInput.value;
+  // Verificar se existe input inline (para exercícios como addSub ou frações equivalentes)
+  const inlineInput = document.querySelector(".inline-missing-input");
+  const fractionInputs = DOM.exerciseArea.querySelectorAll('.fraction-missing-input');
+  
+  let userAnswer = '';
+  if (currentExercise.hasInlineInput && fractionInputs.length > 0) {
+    if (fractionInputs.length === 1) {
+      // Para frações equivalentes, usar o input integrado na visualização
+      userAnswer = fractionInputs[0].value;
+    } else if (fractionInputs.length === 2) {
+      // Para exercícios de simplificação, concatenar numerador/denominador
+      const numeratorInput = DOM.exerciseArea.querySelector('.fraction-missing-input[data-part="numerator"]');
+      const denominatorInput = DOM.exerciseArea.querySelector('.fraction-missing-input[data-part="denominator"]');
+      
+      if (numeratorInput && denominatorInput && numeratorInput.value && denominatorInput.value) {
+        userAnswer = `${numeratorInput.value}/${denominatorInput.value}`;
+      }
+    }
+  } else if (inlineInput) {
+    // Para exercícios addSub, usar o input inline tradicional
+    userAnswer = inlineInput.value;
+  } else {
+    // Para outros exercícios, usar o input principal
+    userAnswer = DOM.answerInput.value;
+  }
   
   if (!userAnswer.trim()) {
     DOM.feedbackEl.innerHTML = "⚠️ Por favor, escreve uma resposta.";

@@ -17,9 +17,12 @@ export function generatePrimeFactorization(level) {
   } while (isPrime(number));
 
   const factors = getPrimeFactors(number);
+  const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
+  
   return {
-    question: `Decompõe o número <span class="term-box">${number}</span> em fatores primos. (ex: 2 x 2 x 3)`,
+    question: `<span class="term-box">${number}</span> <span class="equals">=</span> ${inputHtml} <br><small>(ex: 2 x 2 x 3)</small>`,
     answer: factors,
     explanation: `Para decompor ${number}, dividimos sucessivamente por números primos: ${factors.join(" x ")}.`,
+    hasInlineInput: true,
   };
 }

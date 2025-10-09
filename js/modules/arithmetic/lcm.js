@@ -2,6 +2,9 @@
 import { getRandomInt } from "../utils/rand.js";
 import { lcm as calculateLcm } from "../utils/math.js";
 
+// Exportar a função lcm para uso em outros módulos
+export { calculateLcm as lcm };
+
 export function generateLcm(level) {
   // Níveis: 1 - números pequenos, 2 - até 20, 3 - até 50, 4 - até 100, 5+ - até 200
   let min = 2, max = 10;
@@ -14,9 +17,12 @@ export function generateLcm(level) {
   const num2 = getRandomInt(min, max);
   const answer = calculateLcm(num1, num2);
 
+  const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
+
   return {
-    question: `Qual é o Mínimo Múltiplo Comum (MMC) entre <span class="term-box">${num1}</span> e <span class="term-box">${num2}</span>?`,
+    question: `<span class="label">MMC(</span><span class="term-box">${num1}</span><span class="comma">, </span><span class="term-box">${num2}</span><span class="label">) = </span>${inputHtml}`,
     answer,
     explanation: `O MMC é o menor número que é múltiplo de ${num1} e de ${num2}. A resposta é ${answer}. Uma forma de calcular é (num1 * num2) / MDC(num1, num2).`,
+    hasInlineInput: true,
   };
 }

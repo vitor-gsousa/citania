@@ -12,9 +12,12 @@ export function generatePowerDivision(level) {
   const exp2 = getRandomInt(expMin, exp1 - 1);
   const finalExp = exp1 - exp2;
 
+  const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
+
   return {
-    question: `Qual é o resultado de <strong><span class="term-box">${base}<sup>${exp1}</sup></span> &divide; <span class="term-box">${base}<sup>${exp2}</sup></span></strong>? <br><small>(responda na forma de potência, ex: 2^5)</small>`,
+    question: `<span class="term-box">${base}<sup>${exp1}</sup></span> <span class="op op-divide">÷</span> <span class="term-box">${base}<sup>${exp2}</sup></span> <span class="equals">=</span> ${inputHtml} <br><small>(ex: 2^5)</small>`,
     answer: `${base}^${finalExp}`,
     explanation: `Para dividir potências com a mesma base, mantém-se a base (${base}) e subtraem-se os expoentes (${exp1} - ${exp2} = ${finalExp}).`,
+    hasInlineInput: true,
   };
 }

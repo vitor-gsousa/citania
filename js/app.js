@@ -13,6 +13,10 @@ import { applyTheme } from "./theme.js";
 import { initEventListeners } from "./events.js";
 import normalizeIcons from "./utils/icon-utils.js";
 
+// Import templates e configuração
+import { initializeTemplates } from "./templates/template-manager.js";
+import { EXERCISE_TYPES } from "./config/exercise-types.js";
+
 // Elementos do DOM
 const DOM = {
   menuContainer: document.getElementById("menu-container"),
@@ -261,6 +265,17 @@ function ensureFocusNotInside(el) {
 
 // --- Inicialização da Aplicação ---
 
+/**
+ * Atualiza as referências DOM após os templates serem carregados
+ * Necessário porque os elements são criados dinamicamente
+ */
+function updateDOMReferences() {
+  // Atualizar referência dos cards que agora foram criados dinamicamente
+  DOM.exerciseCards = document.querySelectorAll(".card");
+  
+  console.log(`Referências DOM atualizadas: ${DOM.exerciseCards.length} cards encontrados`);
+}
+
 async function initApp() {
   console.log("Iniciando aplicação...");
   
@@ -276,6 +291,13 @@ async function initApp() {
     renderGamificationBar(DOM);
     mostrarNarrativa(state.level);
     
+    // 3. Inicializar templates dinâmicos
+    console.log("Inicializando templates...");
+    initializeTemplates();
+    
+    // 4. Atualizar referências DOM após templates carregados
+    updateDOMReferences();
+    
     console.log("Gamificação carregada com sucesso");
   } catch (error) {
     console.error("Erro na inicialização da gamificação:", error);
@@ -286,16 +308,16 @@ async function initApp() {
     }
   }
 
-  // 3. Inicializar sons
+  // 5. Inicializar sons
   initSounds();
 
-  // 4. Configurar event listeners dos cards/menus
+  // 6. Configurar event listeners dos cards/menus
   initEventListeners(DOM, state);
 
-  // 5. Inicializar funcionalidade de instalação PWA
+  // 7. Inicializar funcionalidade de instalação PWA
   initPWAInstall();
 
-  // 6. Registar Service Worker (após o load para não bloquear o render inicial)
+  // 8. Registar Service Worker (após o load para não bloquear o render inicial)
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker

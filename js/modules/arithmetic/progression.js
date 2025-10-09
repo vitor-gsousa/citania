@@ -113,25 +113,25 @@ export function generateAddSub(level = 1) {
   if (isMissingTerm) {
     // Escolher aleatoriamente qual termo ocultar: 0=a, 1=b, 2=result
     const missing = getRandomInt(0, 2);
-    const inputHtml = `<input type="text" id="inline-missing-input" class="inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" style="width: 3em; text-align: center; font-size: 1em;" />`;
+    const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
     if (missing === 0) {
       // [input] op b = result
-      question = `<span class="term-box">${inputHtml}</span> <span class="op op-${op === "+" ? "add" : "sub"}">${op}</span> <span class="term-box">${b}</span> <span class="equals">=</span> <span class="term-box">${result}</span>`;
+      question = `${inputHtml} <span class="op op-${op === "+" ? "add" : "sub"}">${op}</span> <span class="term-box">${b}</span> <span class="equals">=</span> <span class="term-box">${result}</span>`;
       answer = a;
     } else if (missing === 1) {
       // a op [input] = result
-      question = `<span class="term-box">${a}</span> <span class="op op-${op === "+" ? "add" : "sub"}">${op}</span> <span class="term-box">${inputHtml}</span> <span class="equals">=</span> <span class="term-box">${result}</span>`;
+      question = `<span class="term-box">${a}</span> <span class="op op-${op === "+" ? "add" : "sub"}">${op}</span> ${inputHtml} <span class="equals">=</span> <span class="term-box">${result}</span>`;
       answer = b;
     } else {
       // a op b = [input]
-      question = `<span class="term-box">${a}</span> <span class="op op-${op === "+" ? "add" : "sub"}">${op}</span> <span class="term-box">${b}</span> <span class="equals">=</span> <span class="term-box">${inputHtml}</span>`;
+      question = `<span class="term-box">${a}</span> <span class="op op-${op === "+" ? "add" : "sub"}">${op}</span> <span class="term-box">${b}</span> <span class="equals">=</span> ${inputHtml}`;
       answer = result;
     }
     explanation = `Preenche o campo em falta para que a expressão fique correta.`;
   } else {
     // Exercício normal: sempre o resultado em falta
-    const inputHtml = `<input type="text" id="inline-missing-input" class="inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" style="width: 3em; text-align: center; font-size: 1em;" />`;
-    question = `<span class="term-box">${a}</span> <span class="op op-${op === "+" ? "add" : "sub"}">${op}</span> <span class="term-box">${b}</span> <span class="equals">=</span> <span class="term-box">${inputHtml}</span>`;
+    const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
+    question = `<span class="term-box">${a}</span> <span class="op op-${op === "+" ? "add" : "sub"}">${op}</span> <span class="term-box">${b}</span> <span class="equals">=</span> ${inputHtml}`;
     answer = result;
     explanation = buildExplanation(a, b, op, result);
   }
@@ -142,6 +142,7 @@ export function generateAddSub(level = 1) {
     explanation,
     checkType: "number",
     isMissingTerm,
+    hasInlineInput: true,
   };
 }
 

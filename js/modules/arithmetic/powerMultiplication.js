@@ -12,11 +12,13 @@ export function generatePowerMultiplication(level) {
     const exp1 = getRandomInt(expMin, expMax);
     const exp2 = getRandomInt(expMin, expMax);
     const finalExp = exp1 + exp2;
+    const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
     return {
-      question: `Qual é o resultado de <strong><span class="term-box">${base}<sup>${exp1}</sup></span> &times; <span class="term-box">${base}<sup>${exp2}</sup></span></strong>? <br><small>(responda na forma de potência, ex: 2^5)</small>`,
+      question: `<span class="term-box">${base}<sup>${exp1}</sup></span> <span class="op op-multiply">×</span> <span class="term-box">${base}<sup>${exp2}</sup></span> <span class="equals">=</span> ${inputHtml} <br><small>(ex: 2^5)</small>`,
       answer: `${base}^${finalExp}`,
       explanation: `Para multiplicar potências com a mesma base, mantém-se a base (${base}) e somam-se os expoentes (${exp1} + ${exp2} = ${finalExp}).`,
       checkType: "string",
+      hasInlineInput: true,
     };
   } else {
     let base1 = getRandomInt(baseMin, baseMax);
@@ -25,11 +27,13 @@ export function generatePowerMultiplication(level) {
     const exp1 = getRandomInt(expMin, expMax);
     const exp2 = getRandomInt(expMin, expMax);
     const result = Math.pow(base1, exp1) * Math.pow(base2, exp2);
+    const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
     return {
-      question: `Qual é o resultado de <strong><span class="term-box">${base1}<sup>${exp1}</sup></span> &times; <span class="term-box">${base2}<sup>${exp2}</sup></span></strong>?`,
+      question: `<span class="term-box">${base1}<sup>${exp1}</sup></span> <span class="op op-multiply">×</span> <span class="term-box">${base2}<sup>${exp2}</sup></span> <span class="equals">=</span> ${inputHtml}`,
       answer: result,
-      explanation: `Como as bases são diferentes (${base1} e ${base2}), não podemos somar os expoentes. Calculamos o valor de cada potência e depois multiplicamos: ${base1 ** exp1} &times; ${base2 ** exp2} = ${result}.`,
+      explanation: `Como as bases são diferentes (${base1} e ${base2}), não podemos somar os expoentes. Calculamos o valor de cada potência e depois multiplicamos: ${base1 ** exp1} × ${base2 ** exp2} = ${result}.`,
       checkType: "number",
+      hasInlineInput: true,
     };
   }
 }
