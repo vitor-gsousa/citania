@@ -107,6 +107,13 @@ export function generateNewExercise(DOM, state) {
 
   DOM.questionEl.innerHTML = problem.question;
   DOM.answerInput.value = "";
+  
+  // Limpar também input inline se existir
+  const inlineInput = document.getElementById("inline-missing-input");
+  if (inlineInput) {
+    inlineInput.value = "";
+  }
+  
   DOM.feedbackEl.textContent = "";
   DOM.feedbackEl.className = "hidden";
   state.answered = false;
@@ -133,7 +140,11 @@ export function checkAnswer(DOM, state) {
   if (state.answered) return;
 
   currentExercise.attempts = (currentExercise.attempts || 0) + 1;
-  const userAnswer = DOM.answerInput.value;
+  
+  // Verificar se existe input inline (para exercícios como addSub)
+  const inlineInput = document.getElementById("inline-missing-input");
+  const userAnswer = inlineInput ? inlineInput.value : DOM.answerInput.value;
+  
   if (!userAnswer.trim()) {
     DOM.feedbackEl.innerHTML = "⚠️ Por favor, escreve uma resposta.";
     DOM.feedbackEl.className = "incorrect";
@@ -168,6 +179,9 @@ export function checkAnswer(DOM, state) {
     state.level++;
     saveProgressForType(currentExercise.type, state.level);
     state.roundProgress = 0;
+    
+    // Level up completo: som + confetti + UI
+    sounds.levelup.play();
     triggerConfetti();
     showLevelUpUI(DOM, state);
   }
@@ -190,6 +204,11 @@ export function startNewRound(DOM, state) {
   state.roundProgress = 0;
   DOM.summaryArea.classList.add("hidden");
   DOM.exerciseArea.classList.remove("hidden");
+  
+  // Garantir que o nível está atualizado na interface
+  updateProgressBar(DOM, state);
+  updateScoreDisplay(DOM, state);
+  
   mostrarNarrativa(DOM, state.level);
   renderGamificationBar(DOM);
   generateNewExercise(DOM, state);

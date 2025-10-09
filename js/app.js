@@ -8,6 +8,7 @@ import {
   renderGamificationBar,
   mostrarNarrativa,
 } from "./features/gamification.js";
+import { initPWAInstall } from "./features/pwa-install.js";
 import { migrateOldProgress } from "./progress.js";
 import { applyTheme } from "./theme.js";
 import { initEventListeners } from "./events.js";
@@ -320,7 +321,10 @@ async function initApp() {
   // 4. Configurar event listeners dos cards/menus
   initEventListeners(DOM, state);
 
-  // 5. Registar Service Worker (após o load para não bloquear o render inicial)
+  // 5. Inicializar funcionalidade de instalação PWA
+  initPWAInstall(DOM);
+
+  // 6. Registar Service Worker (após o load para não bloquear o render inicial)
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker

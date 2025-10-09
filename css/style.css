@@ -147,6 +147,81 @@ main {
     background-color: var(--score-bg-color);
 }
 
+/* Botão de Instalação PWA */
+#pwa-install-button {
+    position: absolute;
+    top: 1rem;
+    left: 4rem; /* Ao lado do botão de tema */
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover-color) 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    transition: all var(--transition-fast) var(--easing-standard);
+    z-index: 5;
+    box-shadow: 0 2px 8px rgba(67, 56, 202, 0.3);
+}
+
+#pwa-install-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(67, 56, 202, 0.4);
+}
+
+#pwa-install-button:active {
+    transform: translateY(0);
+}
+
+#pwa-install-button .material-symbols-outlined {
+    font-size: 1rem;
+}
+
+#pwa-install-button.hidden {
+    display: none;
+}
+
+/* Notificação de instalação bem-sucedida */
+.install-success-notification {
+    position: fixed;
+    top: 4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+    z-index: 1000;
+    animation: slideInFromTop 0.5s ease-out;
+}
+
+.install-success-notification .notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.install-success-notification .material-symbols-outlined {
+    font-size: 1.25rem;
+}
+
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
 #back-to-menu {
     background-color: var(--secondary-color);
     padding: 0.5rem 1rem;
@@ -500,6 +575,21 @@ main {
         flex-shrink: 0; /* não reduz */
         width: 40px;
         height: 40px;
+    }
+
+    /* botão de instalação PWA responsivo */
+    #pwa-install-button {
+        position: static; /* Remove posicionamento absoluto em mobile */
+        margin-right: 0.5rem;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+        border-radius: 16px;
+        order: 1; /* Aparece antes da barra de gamificação */
+        flex-shrink: 0;
+    }
+
+    #pwa-install-button span:last-child {
+        display: none; /* Esconde o texto "Instalar App" em móveis pequenos */
     }
 
     /* botão utilizador com largura flexível mas com mínimo */

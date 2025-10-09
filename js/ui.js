@@ -39,6 +39,13 @@ export function exitExercise(DOM, state) {
   DOM.checkButton.style.display = "block";
   DOM.nextButton.style.display = "none";
   DOM.answerInput.value = "";
+  
+  // Limpar também input inline se existir
+  const inlineInput = document.getElementById("inline-missing-input");
+  if (inlineInput) {
+    inlineInput.value = "";
+  }
+  
   DOM.feedbackEl.textContent = "";
   DOM.feedbackEl.className = "hidden";
 
@@ -76,6 +83,11 @@ export function showLevelUpUI(DOM, state) {
   DOM.summaryCorrect.textContent = state.score.correct;
   DOM.summaryTotal.textContent = state.score.correct + state.score.incorrect;
   DOM.nextLevelButton.querySelector("span").textContent = state.level;
+  
+  // Atualizar também o contador de nível atual na interface
+  if (DOM.currentLevelEl) {
+    DOM.currentLevelEl.textContent = state.level;
+  }
 
   DOM.exerciseArea.classList.add("hidden");
   DOM.summaryArea.classList.remove("hidden");

@@ -1,4 +1,4 @@
-const CACHE_NAME = "citania-matematica-v2";
+const CACHE_NAME = "citania-matematica-v4";
 const urlsToCache = [
   "/",
   "/index.html",
@@ -27,6 +27,15 @@ const urlsToCache = [
   // Áudio
   "/audio/correct.mp3",
   "/audio/incorrect.mp3",
+  "/audio/levelup.mp3",
+  // Ícones PWA
+  "/images/icons/favicon.ico",
+  "/images/icons/icon-192x192.png",
+  "/images/icons/icon-256x256.png",
+  "/images/icons/icon-384x384.png",
+  "/images/icons/icon-512x512.png",
+  // Open Graph
+  "/images/ogcitania.png",
   // Recursos de terceiros (CDNs)
   "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js",
   "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
