@@ -168,6 +168,12 @@ export function checkAnswer(DOM, state) {
     state.score.correct++;
     state.streak++;
     adicionarPontos(DOM, 10);
+
+    // Lógica para atribuir medalhas
+    if (currentExercise.attempts === 1) awardBadge(DOM, BADGES.firstTry);
+    if (state.streak >= 5) awardBadge(DOM, BADGES.streak5);
+    if (gamification.pontos >= 50) awardBadge(DOM, BADGES.explorer);
+
   } else {
     sounds.incorrect.play();
     DOM.feedbackEl.innerHTML = `❌ Quase! A resposta certa é <strong>${correctAnswerFormatted}</strong>.`;
@@ -186,6 +192,9 @@ export function checkAnswer(DOM, state) {
     saveProgressForType(currentExercise.type, state.level);
     state.roundProgress = 0;
     
+    // Atribuir medalha de estudioso ao subir de nível
+    if (state.level >= 3) awardBadge(DOM, BADGES.scholar);
+
     // Level up completo: som + confetti + UI
     sounds.levelup.play();
     triggerConfetti();
@@ -215,7 +224,7 @@ export function startNewRound(DOM, state) {
   updateProgressBar(DOM, state);
   updateScoreDisplay(DOM, state);
   
-  mostrarNarrativa(DOM, state.level);
+  mostrarNarrativa(state.level);
   renderGamificationBar(DOM);
   generateNewExercise(DOM, state);
 }

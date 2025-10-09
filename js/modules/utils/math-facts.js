@@ -133,7 +133,6 @@ function calculateReadingTime(text) {
  * @returns {number} ID do intervalo para poder parar depois
  */
 export function startFactRotation(updateCallback, levelBased = false, level = 1) {
-  let currentFactIndex = 0;
   let timeoutId;
   
   function rotateFact() {

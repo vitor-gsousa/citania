@@ -279,7 +279,7 @@ function updateMathFactDisplay() {
 }
 
 // Função de compatibilidade - substitui mostrarNarrativa
-export function mostrarNarrativa(DOM, level) {
+export function mostrarNarrativa(level) {
   generateNewMathFact(level);
 }
 

@@ -9,9 +9,8 @@ let installButton = null;
 
 /**
  * Inicializa a funcionalidade de instalação da PWA
- * @param {Object} DOM - Referências aos elementos do DOM
  */
-export function initPWAInstall(DOM) {
+export function initPWAInstall() {
   // Criar botão de instalação (será mostrado quando apropriado)
   createInstallButton();
   
@@ -30,7 +29,7 @@ export function initPWAInstall(DOM) {
   });
 
   // Event listener para quando a app é instalada
-  window.addEventListener('appinstalled', (e) => {
+  window.addEventListener('appinstalled', () => {
     console.log('✅ PWA foi instalada com sucesso');
     
     // Esconder o botão de instalação

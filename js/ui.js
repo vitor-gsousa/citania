@@ -4,8 +4,6 @@
  * Inclui mostrar/esconder secções, atualizar barras de progresso, feedback, etc.
  */
 
-const ANIMATION_DURATION_MS = 320;
-
 /**
  * Mostra a área de exercício e esconde o menu.
  * @param {object} DOM - Referências aos elementos do DOM.
@@ -115,26 +113,4 @@ export async function triggerConfetti() {
   } catch (e) {
     console.warn("triggerConfetti failed:", e);
   }
-}
-
-/**
- * Mostra uma secção de sub-tópicos e esconde o menu principal.
- * @param {string} sectionId - O ID da secção a mostrar.
- */
-export function showSection(sectionId) {
-  const themesList = document.getElementById("themes");
-  const section = document.getElementById(sectionId);
-  if (themesList) themesList.classList.add("hidden");
-  if (section) section.classList.remove("hidden");
-}
-
-/**
- * Mostra o menu principal de temas e esconde as secções de sub-tópicos.
- */
-export function showThemes() {
-  const themesList = document.getElementById("themes");
-  const sections = document.querySelectorAll(".theme-section");
-
-  sections.forEach(s => s.classList.add("hidden"));
-  if (themesList) themesList.classList.remove("hidden");
 }

@@ -1,10 +1,9 @@
 // js/app.js
 
 // Import utilitários ESM
-import { initSounds, sounds } from "./services/sounds.js";
+import { initSounds } from "./services/sounds.js";
 import {
   loadGamification,
-  saveGamification,
   renderGamificationBar,
   mostrarNarrativa,
 } from "./features/gamification.js";
@@ -73,7 +72,7 @@ const ANIMATION_DURATION_MS = 320;
 // --- Lógica dos Exercícios ---
 
 // Mostra a secção identificada por id e esconde o menu principal
-async function showSection(sectionId) {
+export async function showSection(sectionId) {
   // Mostrar a secção pedida e esconder apenas a grid de temas (#themes)
   const themesList = document.getElementById("themes");
   const section = document.getElementById(sectionId);
@@ -91,9 +90,8 @@ async function showSection(sectionId) {
   if (themesList) {
     console.debug("showSection: hiding themesList", themesList);
     ensureFocusNotInside(themesList);
+    themesList.inert = true; // Usar inert para desativar interação e acessibilidade
     await animateHide(themesList);
-    themesList.classList.add("hidden");
-    themesList.setAttribute("aria-hidden", "true"); // Esconder também para leitores de ecrã
   }
   
   // esconder todas as outras sections
@@ -101,14 +99,13 @@ async function showSection(sectionId) {
   sections.forEach((s) => {
     if (s !== section) {
       console.debug("showSection: marking aria-hidden on section", s.id || s);
-      ensureFocusNotInside(s);
-      s.setAttribute("aria-hidden", "true");
+      s.inert = true; // Usar inert
     }
   });
   
   // Mostrar a secção alvo e animar entrada
   section.classList.remove("hidden");
-  section.setAttribute("aria-hidden", "false");
+  section.inert = false; // Reativar a secção alvo
   await animateShow(section);
   
   // Remover preservação de altura após transição
@@ -126,13 +123,22 @@ async function showSection(sectionId) {
 }
 
 // Regressa ao menu de temas
-async function showThemes() {
+export async function showThemes() {
   // Pré-carregar a lista de temas para calcular layout
   const themesList = document.getElementById("themes");
+  const firstThemeCard = themesList?.querySelector('.card[role="button"]');
   const mainElement = document.querySelector('main');
   
-  // Preservar altura atual do main durante a transição
-  if (mainElement) { // NOSONAR
+  // 1. Mover o foco para um elemento seguro ANTES de esconder qualquer coisa.
+  // Isto é crucial para resolver o aviso de acessibilidade.
+  if (firstThemeCard) {
+    firstThemeCard.focus({ preventScroll: true });
+  } else {
+    document.body.focus();
+  }
+
+  // 2. Preservar altura atual do main durante a transição
+  if (mainElement) {
     const currentHeight = mainElement.offsetHeight;
     mainElement.style.setProperty('--preserved-height', `${currentHeight}px`);
     mainElement.classList.add('transitioning');
@@ -143,21 +149,19 @@ async function showThemes() {
   await Promise.all(
     sections.map(async (s) => {
       console.debug("showThemes: animating hide for section", s.id || s);
-      ensureFocusNotInside(s);
-      await animateHide(s);
-      s.classList.add("hidden");
-      s.setAttribute("aria-hidden", "true");
+      s.inert = true; // Marcar como inerte imediatamente
+      await animateHide(s, true); // Passar true para garantir a remoção do foco
     }),
   );
   
   if (themesList) {
     console.debug("showThemes: showing themesList", themesList); // NOSONAR
     themesList.classList.remove("hidden");
-    themesList.setAttribute("aria-hidden", "false");
+    themesList.inert = false; // Reativar a lista de temas
     await animateShow(themesList);
   }
   
-  // Remover preservação de altura após transição
+  // 4. Remover preservação de altura após transição
   if (mainElement) {
     setTimeout(() => { // NOSONAR
       mainElement.classList.remove('transitioning');
@@ -171,12 +175,12 @@ async function showThemes() {
 }
 
 // A função `waitForLayout` foi removida, pois para animações de opacidade e transformação,
-// o browser geralmente lida bem com o layout sem a necessidade de forçar um cálculo explícito.
+// o browser geralmente lida bem com o layout sem a necessidade de forçar um cálculo explícito. // NOSONAR
 
 // Helpers de animação: aplicam classes temporárias para forçar transições
-function animateShow(el) {
+function animateShow(el, setFocus = false) {
   return new Promise((resolve) => {
-    if (!el) return resolve();
+    if (!el) { return resolve(); }
     // Respeitar preferências do utilizador
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { // NOSONAR
       el.classList.remove("hidden");
@@ -184,7 +188,7 @@ function animateShow(el) {
     }
 
     // 1. Definir o estado inicial da animação (invisível e deslocado)
-    el.classList.add("animating-in");
+    el.classList.add("animating-in"); // Define opacity: 0, transform: translateY(...)
     // 2. Tornar o elemento visível (display: block)
     el.classList.remove("hidden");
 
@@ -193,7 +197,8 @@ function animateShow(el) {
 
     // 4. No próximo frame, remover a classe 'animating-in' para que o elemento transite para o seu estado final (visível)
     requestAnimationFrame(() => {
-      el.classList.remove("animating-in");
+      el.classList.remove("animating-in"); // NOSONAR
+      if (setFocus) el.focus({ preventScroll: true });
     });
 
     // 5. Concluir: Após a duração total da animação, resolvemos a promessa.
@@ -203,10 +208,12 @@ function animateShow(el) {
   });
 }
 
-function animateHide(el) {
+function animateHide(el, ensureNoFocus = false) {
   return new Promise((resolve) => {
-    if (!el) return resolve();
+    if (!el) { return resolve(); }
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { // NOSONAR
+      // Mesmo com movimento reduzido, garantir que o foco é removido
+      if (ensureNoFocus) ensureFocusNotInside(el);
       el.classList.add("hidden");
       return resolve();
     }
@@ -214,10 +221,13 @@ function animateHide(el) {
     // 1. Iniciar animação: Adicionar a classe que o fará transitar para o estado invisível.
     el.classList.add("animating-out");
 
+    // Garantir que o foco é removido no início da animação
+    if (ensureNoFocus) ensureFocusNotInside(el);
+
     // 2. Concluir: Após a animação, escondemos o elemento com display:none e limpamos a classe.
     setTimeout(() => {
-      el.classList.add("hidden"); // Adiciona display:none
-      el.classList.remove("animating-out"); // Limpa a classe de animação
+      el.classList.add("hidden");
+      el.classList.remove("animating-out"); // NOSONAR
       resolve();
     }, ANIMATION_DURATION_MS);
   });
@@ -249,45 +259,6 @@ function ensureFocusNotInside(el) {
   }
 }
 
-// Mostrar UI de Level Up: reproduz som e atualiza resumo
-function showLevelUpUI() {
-  // Reproduzir som levelup (se carregado)
-  try {
-    if (
-      typeof sounds !== "undefined" &&
-      sounds.levelup &&
-      typeof sounds.levelup.play === "function"
-    ) {
-      sounds.levelup.play().catch(() => {}); // ignora Promise rejection por autoplay
-    }
-  } catch (e) {
-    console.warn("Erro a reproduzir levelup sound:", e);
-  }
-
-  // Atualizar resumo das respostas (assume existence de elementos #summary-correct, #summary-total)
-  const summaryCorrectEl =
-    DOM.summaryCorrect ||
-    document.querySelector("#summary-area #summary-correct");
-  const summaryTotalEl =
-    DOM.summaryTotal || document.querySelector("#summary-area #summary-total");
-
-  const correct =
-    state && state.score && Number.isFinite(state.score.correct)
-      ? state.score.correct
-      : 0;
-  const incorrect =
-    state && state.score && Number.isFinite(state.score.incorrect)
-      ? state.score.incorrect
-      : 0;
-
-  if (summaryCorrectEl) summaryCorrectEl.textContent = String(correct);
-  if (summaryTotalEl) summaryTotalEl.textContent = String(correct + incorrect);
-
-  // mostra o painel de summary se existir
-  const summaryPanel = DOM.summaryArea;
-  if (summaryPanel) summaryPanel.classList.add("open");
-}
-
 // --- Inicialização da Aplicação ---
 
 async function initApp() {
@@ -303,7 +274,7 @@ async function initApp() {
     migrateOldProgress();
     await loadGamification();
     renderGamificationBar(DOM);
-    mostrarNarrativa(DOM, state.level);
+    mostrarNarrativa(state.level);
     
     console.log("Gamificação carregada com sucesso");
   } catch (error) {
@@ -322,7 +293,7 @@ async function initApp() {
   initEventListeners(DOM, state);
 
   // 5. Inicializar funcionalidade de instalação PWA
-  initPWAInstall(DOM);
+  initPWAInstall();
 
   // 6. Registar Service Worker (após o load para não bloquear o render inicial)
   if ("serviceWorker" in navigator) {

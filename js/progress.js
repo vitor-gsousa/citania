@@ -1,12 +1,11 @@
 // js/progress.js
 /*
  * Este módulo lida com a persistência do progresso do utilizador,
- * como níveis por tipo de exercício e pontuações mais altas.
+ * como níveis por tipo de exercício.
  */
 import { safeGetItem, safeSetItem } from "./utils/storage.js";
 
 const PROGRESS_KEY = "citania_progress_v1";
-const HIGH_SCORES_KEY = "matematicaDivertidaHighScores";
 
 /**
  * Guarda o nível atual para um tipo de exercício.

@@ -4,7 +4,7 @@
  * Segue o padrão de delegação de eventos sempre que possível para otimizar a performance.
  */
 import { toggleTheme } from "./theme.js";
-import { showExerciseArea, exitExercise, showSection, showThemes } from "./ui.js";
+import { exitExercise } from "./ui.js";
 import { startExercise, checkAnswer, nextExercise, startNewRound, exercises } from "./exercise.js";
 import { safeFocus } from "./utils/mobile-utils.js";
 import {
@@ -17,6 +17,7 @@ import {
   saveGamification,
 } from "./features/gamification.js";
 import { safeSetItem } from "./utils/storage.js";
+import { showSection, showThemes } from "./app.js"; // Importar de app.js
 
 let keyboardPointerDown = false;
 
