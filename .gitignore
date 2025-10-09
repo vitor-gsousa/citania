@@ -1,27 +1,21 @@
-# Node modules
+# Ficheiros de dependências e builds
 node_modules/
+dist/
+build/
+
+# Logs
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Development files (keep for development)
-/tools/
-/.github/
-/.vscode/
-*.gitignore
-AGENTS.md
+# Ficheiros de ambiente
+.env
+.env.local
 
-# Logs
-*.log
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# IDE files
-.vscode/
-.idea/
-
-# Temporary files
-*.tmp
-*.temp
+# Ficheiros de documentação temporária ou notas de desenvolvimento na raiz.
+# Mantém o README.md, mas ignora outros.
+/*.md
+!README.md
+!LICENCE.md
