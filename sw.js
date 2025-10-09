@@ -1,4 +1,4 @@
-const CACHE_NAME = "citania-matematica-v4";
+const CACHE_NAME = "citania-matematica-v5";
 const urlsToCache = [
   "/",
   "/index.html",
@@ -24,6 +24,7 @@ const urlsToCache = [
   "/js/services/sounds.js",
   "/js/utils/icon-utils.js",
   "/js/utils/storage.js",
+  "/js/utils/mobile-utils.js",
   // Áudio
   "/audio/correct.mp3",
   "/audio/incorrect.mp3",

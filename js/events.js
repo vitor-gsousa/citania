@@ -6,6 +6,7 @@
 import { toggleTheme } from "./theme.js";
 import { showExerciseArea, exitExercise, showSection, showThemes } from "./ui.js";
 import { startExercise, checkAnswer, nextExercise, startNewRound, exercises } from "./exercise.js";
+import { safeFocus } from "./utils/mobile-utils.js";
 import {
   showAchievementsPanel,
   generateNewMathFact,
@@ -165,6 +166,6 @@ export function initEventListeners(DOM, state) {
     const inlineInput = document.getElementById("inline-missing-input");
     const targetInput = inlineInput || DOM.answerInput;
     if (DOM.customKeyboard) DOM.customKeyboard.classList.remove("hidden");
-    targetInput.focus();
+    safeFocus(targetInput);
   });
 }

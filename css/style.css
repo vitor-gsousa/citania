@@ -1125,6 +1125,41 @@ main {
     caret-color: transparent;
 }
 
+/* Estilos para inputs readonly (prevenção teclado móvel) */
+#answer-input[readonly],
+.inline-missing-input[readonly] {
+    cursor: pointer;
+    background-color: var(--card-bg-color) !important;
+    opacity: 1 !important;
+}
+
+/* Prevenir seleção de texto em inputs readonly em mobile */
+@media (max-width: 768px) {
+    #answer-input[readonly],
+    .inline-missing-input[readonly] {
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+    }
+}
+
+/* Estilo específico para input inline */
+.inline-missing-input {
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    background-color: var(--card-bg-color);
+    color: var(--text-color);
+    font-weight: bold;
+    text-align: center;
+    outline: none;
+    transition: all var(--transition-fast) var(--easing-standard);
+}
+
+.inline-missing-input:focus {
+    border-color: var(--primary-hover-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
 /* Icon system: inline SVGs usam currentColor */
 .card-icon {
     display: inline-block;

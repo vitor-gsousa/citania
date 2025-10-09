@@ -15,6 +15,7 @@ import { generatePowerMultiplication } from "./modules/arithmetic/powerMultiplic
 import { generatePrimeFactorization } from "./modules/arithmetic/primeFactorization.js";
 import { sounds } from "./services/sounds.js";
 import { loadProgressForType, saveProgressForType } from "./progress.js";
+import { safeFocus, preventMobileKeyboard } from "./utils/mobile-utils.js";
 import {
   adicionarPontos,
   awardBadge,
@@ -89,6 +90,9 @@ export function startExercise(type, DOM, state) {
   state.score.incorrect = 0;
   state.roundProgress = 0;
 
+  // Configurar prevenção de teclado móvel no input principal
+  preventMobileKeyboard(DOM.answerInput);
+
   showExerciseArea(DOM);
   updateProgressBar(DOM, state);
   updateScoreDisplay(DOM, state);
@@ -123,13 +127,15 @@ export function generateNewExercise(DOM, state) {
     DOM.answerInput.classList.add("hidden"); // Esconde o input principal
     const inlineInput = document.getElementById("inline-missing-input");
     if (inlineInput) {
-      inlineInput.focus();
+      preventMobileKeyboard(inlineInput);
+      safeFocus(inlineInput);
       // Para este tipo de exercício, o teclado deve estar sempre visível
       DOM.customKeyboard.classList.remove("hidden");
     }
   } else {
     DOM.answerInput.classList.remove("hidden"); // Mostra o input principal para outros exercícios
-    DOM.answerInput.focus();
+    preventMobileKeyboard(DOM.answerInput);
+    safeFocus(DOM.answerInput);
   }
 
   DOM.checkButton.style.display = "block";
