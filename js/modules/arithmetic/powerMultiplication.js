@@ -13,7 +13,7 @@ export function generatePowerMultiplication(level) {
     const exp2 = getRandomInt(expMin, expMax);
     const finalExp = exp1 + exp2;
     return {
-      question: `Qual é o resultado de <strong><span class="term-box">${base}</span><sup><span class="term-box">${exp1}</span></sup> &times; <span class="term-box">${base}</span><sup><span class="term-box">${exp2}</span></sup></strong>? <br><small>(responda na forma de potência, ex: 2^5)</small>`,
+      question: `Qual é o resultado de <strong><span class="term-box">${base}<sup>${exp1}</sup></span> &times; <span class="term-box">${base}<sup>${exp2}</sup></span></strong>? <br><small>(responda na forma de potência, ex: 2^5)</small>`,
       answer: `${base}^${finalExp}`,
       explanation: `Para multiplicar potências com a mesma base, mantém-se a base (${base}) e somam-se os expoentes (${exp1} + ${exp2} = ${finalExp}).`,
       checkType: "string",
@@ -26,7 +26,7 @@ export function generatePowerMultiplication(level) {
     const exp2 = getRandomInt(expMin, expMax);
     const result = Math.pow(base1, exp1) * Math.pow(base2, exp2);
     return {
-      question: `Qual é o resultado de <strong><span class="term-box">${base1}</span><sup><span class="term-box">${exp1}</span></sup> &times; <span class="term-box">${base2}</span><sup><span class="term-box">${exp2}</span></sup></strong>?`,
+      question: `Qual é o resultado de <strong><span class="term-box">${base1}<sup>${exp1}</sup></span> &times; <span class="term-box">${base2}<sup>${exp2}</sup></span></strong>?`,
       answer: result,
       explanation: `Como as bases são diferentes (${base1} e ${base2}), não podemos somar os expoentes. Calculamos o valor de cada potência e depois multiplicamos: ${base1 ** exp1} &times; ${base2 ** exp2} = ${result}.`,
       checkType: "number",
