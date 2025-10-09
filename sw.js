@@ -1,4 +1,4 @@
-const CACHE_NAME = "citania-matematica-v5";
+const CACHE_NAME = "citania-matematica-v11";
 const urlsToCache = [
   "/",
   "/index.html",
@@ -12,6 +12,8 @@ const urlsToCache = [
   "/js/ui.js",
   "/js/features/gamification.js",
   "/js/modules/arithmetic/progression.js",
+  "/js/modules/arithmetic/mulDiv.js",
+  "/js/modules/arithmetic/fractions.js",
   "/js/modules/arithmetic/fractionToDecimal.js",
   "/js/modules/arithmetic/gcd.js",
   "/js/modules/arithmetic/lcm.js",
@@ -25,6 +27,12 @@ const urlsToCache = [
   "/js/utils/icon-utils.js",
   "/js/utils/storage.js",
   "/js/utils/mobile-utils.js",
+  "/js/utils/fraction-visual.js",
+  // Templates e configuração
+  "/js/templates/template-manager.js",
+  "/js/templates/exercise-card.js",
+  "/js/templates/theme-section.js",
+  "/js/config/exercise-types.js",
   // Áudio
   "/audio/correct.mp3",
   "/audio/incorrect.mp3",
@@ -36,7 +44,7 @@ const urlsToCache = [
   "/images/icons/icon-384x384.png",
   "/images/icons/icon-512x512.png",
   // Open Graph
-  "/images/ogcitania.png",
+  "/images/ogcitania.jpg",
   // Recursos de terceiros (CDNs)
   "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js",
   "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
