@@ -16,6 +16,7 @@ yarn-error.log*
 
 # Ficheiros de documentação temporária ou notas de desenvolvimento na raiz.
 # Mantém o README.md, mas ignora outros.
+*.md
 /*.md
 !README.md
 !LICENCE.md
