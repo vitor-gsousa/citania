@@ -3,6 +3,7 @@
  * Este módulo é responsável por todas as manipulações diretas do DOM e atualizações da UI.
  * Inclui mostrar/esconder secções, atualizar barras de progresso, feedback, etc.
  */
+import { showThemes } from "./app.js";
 
 /**
  * Mostra a área de exercício e esconde o menu.
@@ -27,11 +28,7 @@ export function showExerciseArea(DOM) {
  */
 export function exitExercise(DOM, state) {
   state.roundProgress = 0;
-  updateProgressBar(DOM, state);
-
-  DOM.exerciseArea.classList.add("hidden");
-  DOM.summaryArea.classList.add("hidden");
-  DOM.menuContainer.classList.remove("hidden");
+  showThemes(); // Chama a função correta para voltar ao menu de temas
 
   // Restaura estado dos controlos
   DOM.checkButton.style.display = "block";

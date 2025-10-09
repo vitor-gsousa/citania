@@ -128,6 +128,9 @@ export async function showThemes() {
   const themesList = document.getElementById("themes");
   const firstThemeCard = themesList?.querySelector('.card[role="button"]');
   const mainElement = document.querySelector('main');
+  // Áreas que podem precisar de ser escondidas
+  const exerciseArea = document.getElementById("exercise-area");
+  const summaryArea = document.getElementById("summary-area");
   
   // 1. Mover o foco para um elemento seguro ANTES de esconder qualquer coisa.
   // Isto é crucial para resolver o aviso de acessibilidade.
@@ -144,16 +147,32 @@ export async function showThemes() {
     mainElement.classList.add('transitioning');
   }
   
-  // esconder todas as sections com animação e só adicionar .hidden depois
-  const sections = Array.from(document.querySelectorAll(".theme-section"));
+  // 3. Esconder todas as secções de sub-temas, a área de exercício e o sumário.
+  const elementsToHide = [
+    ...Array.from(document.querySelectorAll(".theme-section")),
+    exerciseArea,
+    summaryArea
+  ].filter(Boolean); // Filtra nulos se algum elemento não existir
+
   await Promise.all(
-    sections.map(async (s) => {
-      console.debug("showThemes: animating hide for section", s.id || s);
-      s.inert = true; // Marcar como inerte imediatamente
-      await animateHide(s, true); // Passar true para garantir a remoção do foco
-    }),
+    elementsToHide.map(async (el) => {
+      // Apenas animar se não estiver já escondido
+      if (!el.classList.contains('hidden')) {
+        console.debug("showThemes: hiding element", el.id || el);
+        el.inert = true; // Marcar como inerte imediatamente
+        await animateHide(el, true); // Passar true para garantir a remoção do foco
+      } else {
+        el.inert = true; // Garantir que está inerte mesmo que já esteja escondido
+      }
+    })
   );
   
+  // CORREÇÃO CRÍTICA: Garantir que o contentor principal do menu está visível.
+  const menuContainer = document.getElementById("menu-container");
+  if (menuContainer) {
+    menuContainer.classList.remove("hidden");
+  }
+
   if (themesList) {
     console.debug("showThemes: showing themesList", themesList); // NOSONAR
     themesList.classList.remove("hidden");
