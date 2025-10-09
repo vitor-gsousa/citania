@@ -7,7 +7,7 @@ echo "🚀 Preparando deployment da Citânia para o Vercel..."
 
 # Verificar se os ficheiros essenciais existem
 echo "📁 Verificando ficheiros essenciais..."
-essential_files=("index.html" "manifest.json" "sw.js" "css/style.css" "js/app.js" "vercel.json")
+essential_files=("index.html" "manifest.json" "sw.js" "css/style.css" "js/app.js")
 for file in "${essential_files[@]}"; do
     if [ -f "$file" ]; then
         echo "✓ $file"
