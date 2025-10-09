@@ -41,7 +41,10 @@ export const exercises = {
   },
   fractionToDecimal: {
     generate: generateFractionToDecimal,
-    check: (userAnswer, correctAnswer) => parseFloat(userAnswer.replace(",", ".").trim()).toFixed(2) === correctAnswer,
+    check: (userAnswer, correctAnswer) => {
+      const userValue = parseFloat(userAnswer.replace(",", ".").trim());
+      return Math.abs(userValue - correctAnswer) < 0.0001; // Tolerância para precisão de floating point
+    },
   },
   primeFactorization: {
     generate: generatePrimeFactorization,
