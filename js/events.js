@@ -4,6 +4,7 @@
  * Segue o padrão de delegação de eventos sempre que possível para otimizar a performance.
  */
 import { toggleTheme } from "./theme.js";
+import { exitExercise } from "./ui.js";
 import { startExercise, checkAnswer, nextExercise, startNewRound, exercises } from "./exercise.js";
 import { safeFocus } from "./utils/mobile-utils.js";
 import {
@@ -72,9 +73,9 @@ function bindCardActions(DOM, state) {
 export function initEventListeners(DOM, state) {
   bindCardActions(DOM, state);
 
-  DOM.themeToggleButton?.addEventListener("click", () => toggleTheme());
+  DOM.themeToggleButton?.addEventListener("click", toggleTheme);
 
-  DOM.backButton?.addEventListener("click", () => showThemes());
+  DOM.backButton?.addEventListener("click", () => exitExercise(DOM, state));
   DOM.checkButton?.addEventListener("click", () => checkAnswer(DOM, state));
   DOM.nextButton?.addEventListener("click", () => nextExercise(DOM, state));
   DOM.nextLevelButton?.addEventListener("click", () => startNewRound(DOM, state));
