@@ -9,7 +9,8 @@
     "serve": "npx http-server -p 3000",
     "test:pwa": "npx lighthouse http://localhost:8000 --view",
     "validate": "npm run validate:manifest",
-    "validate:manifest": "node -e \"const fs = require('fs'); const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8')); console.log('✓ Manifest válido:', manifest.name);\""
+    "validate:manifest": "node -e \"const fs = require('fs'); const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8')); console.log('✓ Manifest válido:', manifest.name);\"",
+    "lint:css": "stylelint 'css/**/*.css' --allow-empty-input"
   },
   "repository": {
     "type": "git",
@@ -26,5 +27,9 @@
   ],
   "author": "Vitor Sousa",
   "license": "MIT",
-  "homepage": "https://citania.vercel.app"
+  "homepage": "https://citania.vercel.app",
+  "devDependencies": {
+    "stylelint": "^16.25.0",
+    "stylelint-config-standard": "^39.0.1"
+  }
 }

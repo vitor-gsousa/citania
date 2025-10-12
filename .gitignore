@@ -13,6 +13,9 @@ yarn-error.log*
 # Ficheiros de ambiente
 .env
 .env.local
+.stylelintrc.json
+.eslintrc.json
+package-lock.json
 
 # Ficheiros de documentação temporária ou notas de desenvolvimento na raiz.
 # Mantém o README.md, mas ignora outros.

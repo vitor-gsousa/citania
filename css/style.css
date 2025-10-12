@@ -11,9 +11,11 @@
     --progress-bar-bg: #d1d5db;      /* Melhorado: mais contrastante */
     --correct-color: #047857;        /* Melhorado: mais escuro (4.55:1) */
     --incorrect-color: #b91c1c;      /* Melhorado: mais escuro (5.48:1) */
+
     /* Cores dos cartões (ajustáveis por tema) - opção 3: gradiente azul suave + texto escuro */
     --card-bg: linear-gradient(135deg, #e6f0ff 0%, #cfe0ff 100%);
     --card-text: #0b3a66; /* tom azul-escuro para bom contraste contra o fundo claro */
+
     /* Transitions */
     --transition-fast: 180ms;
     --transition-medium: 320ms;
@@ -64,9 +66,11 @@ main {
     width: 90%;
     max-width: 960px; /* antes: 800px */
     border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgb(0 0 0 / 10%);
+
     /* Altura mínima para evitar ajustes abruptos durante transições */
     min-height: 400px;
+
     /* Transição suave para mudanças de altura */
     transition: min-height var(--transition-medium) var(--easing-standard);
 }
@@ -83,6 +87,7 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+
     /* Usar cores específicas do tema para garantir contraste adequado */
     background: var(--card-bg, linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover-color) 100%));
     color: var(--card-text, #fff);
@@ -94,27 +99,27 @@ main {
     text-align: center;
     min-height: 150px;
     border: 2px solid transparent;
-    box-shadow: 0 4px 12px rgba(67, 56, 202, 0.15);
+    box-shadow: 0 4px 12px rgb(67 56 202 / 15%);
 }
 
 .card-text {
     font-size: 0.95rem;
     line-height: 1.3;
     font-weight: 600;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 1px 2px rgb(0 0 0 / 20%);
 }
 
 .card-emoji {
     font-size: 2.5rem;
     margin-top: 0.5rem;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 2px 4px rgb(0 0 0 / 20%));
 }
 
 .card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 10px 30px rgba(67, 56, 202, 0.22);
+    box-shadow: 0 10px 30px rgb(67 56 202 / 22%);
     filter: brightness(1.04);
-    border-color: rgba(255, 255, 255, 0.12);
+    border-color: rgb(255 255 255 / 12%);
 }
 
 .card:active {
@@ -122,7 +127,7 @@ main {
 }
 
 .card:focus {
-    outline: 3px solid #ffffff;
+    outline: 3px solid #fff;
     outline-offset: 3px;
 }
 
@@ -165,12 +170,12 @@ main {
     gap: 0.375rem;
     transition: all var(--transition-fast) var(--easing-standard);
     z-index: 5;
-    box-shadow: 0 2px 8px rgba(67, 56, 202, 0.3);
+    box-shadow: 0 2px 8px rgb(67 56 202 / 30%);
 }
 
 #pwa-install-button:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(67, 56, 202, 0.4);
+    box-shadow: 0 4px 12px rgb(67 56 202 / 40%);
 }
 
 #pwa-install-button:active {
@@ -195,9 +200,9 @@ main {
     color: white;
     padding: 1rem 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 8px 24px rgb(16 185 129 / 30%);
     z-index: 1000;
-    animation: slideInFromTop 0.5s ease-out;
+    animation: slide-in-from-top 0.5s ease-out;
 }
 
 .install-success-notification .notification-content {
@@ -211,23 +216,19 @@ main {
     font-size: 1.25rem;
 }
 
-@keyframes slideInFromTop {
+@keyframes slide-in-from-top {
     from {
         opacity: 0;
         transform: translateX(-50%) translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateX(-50%) translateY(0);
     }
 }
 
-#back-to-menu {
-    background-color: var(--secondary-color);
-    padding: 0.5rem 1rem;
-    margin-bottom: 1rem;
-    display: inline-block;
-}
+/* merged #back-to-menu defined later with full styling */
 
 #score-container {
     position: absolute;
@@ -241,7 +242,7 @@ main {
     border-radius: 8px;
     font-size: 0.9rem;
     font-weight: 500;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgb(0 0 0 / 5%);
     z-index: 5;
 }
 
@@ -252,15 +253,17 @@ main {
 #correct-count { 
     color: var(--correct-color); 
     font-weight: bold; 
+
     /* Garantir contraste mínimo em todos os fundos */
-    text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+    text-shadow: 0 0 2px rgb(255 255 255 / 80%);
 }
 
 #incorrect-count { 
     color: var(--incorrect-color); 
     font-weight: bold; 
+
     /* Garantir contraste mínimo em todos os fundos */
-    text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+    text-shadow: 0 0 2px rgb(255 255 255 / 80%);
 }
 
 /* Melhorar contraste do feedback */
@@ -272,33 +275,33 @@ main {
 }
 
 #feedback.correct {
-    background-color: rgba(5, 150, 105, 0.1);
+    background-color: rgb(5 150 105 / 10%);
     color: var(--correct-color);
     border: 2px solid var(--correct-color);
 }
 
 #feedback.incorrect {
-    background-color: rgba(220, 38, 38, 0.1);
+    background-color: rgb(220 38 38 / 10%);
     color: var(--incorrect-color);
     border: 2px solid var(--incorrect-color);
 }
 
 /* Dark mode: ajustar sombras para melhor contraste */
 .dark-mode #correct-count {
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 0 2px rgb(0 0 0 / 80%);
 }
 
 .dark-mode #incorrect-count {
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 0 2px rgb(0 0 0 / 80%);
 }
 
 .dark-mode #feedback.correct {
-    background-color: rgba(16, 185, 129, 0.15);
+    background-color: rgb(16 185 129 / 15%);
     border-color: var(--correct-color);
 }
 
 .dark-mode #feedback.incorrect {
-    background-color: rgba(248, 113, 113, 0.15);
+    background-color: rgb(248 113 113 / 15%);
     border-color: var(--incorrect-color);
 }
 
@@ -328,12 +331,12 @@ main {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+    border: 2px solid rgb(255 255 255 / 20%);
 }
 
 #current-level {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgb(255 255 255 / 20%);
     padding: 0.2rem 0.6rem;
     border-radius: 12px;
     font-weight: 700;
@@ -376,7 +379,9 @@ main {
     min-height: 1.5rem;
 }
 
-.hidden { display: none !important; }
+.hidden {
+    display: none !important;
+}
 
 /* Botões modernos (flat, acessíveis) */
 button {
@@ -389,18 +394,21 @@ button {
     font-weight: 600;
     cursor: pointer;
     transition: transform .04s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
     min-height: 44px; /* Mínimo para acessibilidade touch */
 }
+
 button:hover {
-    box-shadow: 0 4px 14px rgba(0,0,0,.12);
+    box-shadow: 0 4px 14px rgb(0 0 0 / 12%);
     border-color: var(--primary-color);
     transform: translateY(-1px);
 }
+
 button:active { 
     transform: translateY(1px); 
-    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
 }
+
 button:disabled { 
     opacity: .6; 
     cursor: not-allowed; 
@@ -454,24 +462,27 @@ input::placeholder {
 
 .btn.primary, #check-button, #next-button, #next-level-button {
     background: var(--primary-color);
-    color: #ffffff;
+    color: #fff;
     border-color: var(--primary-color);
     font-weight: 700;
 }
+
 .btn.primary:hover, #check-button:hover, #next-button:hover, #next-level-button:hover {
     background: var(--primary-hover-color);
     border-color: var(--primary-hover-color);
-    box-shadow: 0 6px 18px rgba(67, 56, 202, .25);
+    box-shadow: 0 6px 18px rgb(67 56 202 / 25%);
 }
+
 #back-to-menu {
     background: var(--secondary-color);
     color: var(--text-color);  /* Texto escuro para contraste com fundo claro */
     border-color: var(--secondary-color);
     font-weight: 600;
 }
+
 #back-to-menu:hover {
     background: var(--text-color);
-    color: #ffffff;  /* Branco no hover para contraste */
+    color: #fff;  /* Branco no hover para contraste */
     border-color: var(--text-color);
 }
 
@@ -483,18 +494,7 @@ input::placeholder {
 }
 
 /* Layout base: header em cima, main abaixo (evita header ao lado do main) */
-body {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;       /* header e main ocupam a largura total */
-    justify-content: flex-start;
-    min-height: 100vh;
-}
-main {
-    margin: 1rem auto;          /* centra horizontalmente */
-    width: 90%;
-    max-width: 960px; /* antes: 800px */
-}
+/* base `body` already defined earlier; duplicate removed */
 
 /* Header sticky com contentor alinhado ao main */
 .app-header {
@@ -503,8 +503,9 @@ main {
     z-index: 1000;
     background: var(--main-bg-color);
     border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 4px 14px rgba(0,0,0,.06);
+    box-shadow: 0 4px 14px rgb(0 0 0 / 6%);
 }
+
 .header-inner {
     max-width: 960px;           /* igual ao main */
     margin: 0 auto;
@@ -532,16 +533,14 @@ main {
     background: transparent;    /* herda do header */
     border: 0;
     box-shadow: none;
-    -webkit-backdrop-filter: none;
     backdrop-filter: none;
-
     display: flex;
     align-items: center;
     gap: .75rem;
 }
 
 /* Ajustes responsivos do header */
-@media (max-width: 768px) {
+@media (width <= 768px) {
     .header-inner {
         max-width: 100% !important;
         width: 100%;
@@ -641,7 +640,7 @@ main {
 }
 
 /* Para ecrãs muito pequenos */
-@media (max-width: 480px) {
+@media (width <= 480px) {
     .header-inner {
         padding: .4rem .5rem; /* menos padding */
         gap: .4rem;
@@ -666,7 +665,7 @@ main {
 }
 
 /* --- Media Queries para Responsividade --- */
-@media (max-width: 768px) {
+@media (width <= 768px) {
     body {
         align-items: flex-start;
     }
@@ -698,7 +697,7 @@ main {
         font-size: 1.1rem;
         z-index: 100;
         background-color: var(--main-bg-color);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
     }
     
     #score-container {
@@ -729,7 +728,7 @@ main {
         font-size: 1rem;
         z-index: 90;
         background-color: var(--secondary-color);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
     }
 
     /* Ajusta o padding do main quando o botão voltar está visível */
@@ -808,7 +807,7 @@ main {
         max-width: 100%;
         font-size: 1.05rem;
         padding: 0.875rem;
-        margin: 0 0 0.75rem 0;
+        margin: 0 0 0.75rem;
     }
 
     /* Botões de ação - mesma largura e alinhamento */
@@ -843,7 +842,7 @@ main {
     }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
     main {
         padding: 0.75rem;
         padding-top: 6rem;
@@ -970,7 +969,7 @@ main {
 }
 
 /* Landscape mobile - ajustes especiais */
-@media (max-height: 500px) and (orientation: landscape) {
+@media (height <= 500px) and (orientation: landscape) {
     main {
         padding-top: 4.5rem;
     }
@@ -1006,7 +1005,7 @@ main {
         padding-right: max(0px, env(safe-area-inset-right));
     }
     
-    @media (max-width: 768px) {
+    @media (width <= 768px) {
         #theme-toggle,
         #score-container {
             top: max(0.75rem, env(safe-area-inset-top));
@@ -1027,24 +1026,12 @@ main {
     margin: 0.75rem auto 0; /* auto nas laterais centra */
 }
 
-/* Aumentar largura útil em desktop */
-main {
-    /* primeira definição */
-    max-width: 960px; /* antes: 800px */
-}
-/* mais abaixo tens outra definição */
-main {
-    margin: 1rem auto;
-    width: 90%;
-    max-width: 960px; /* antes: 800px */
-}
-
 /* No mobile, deixar o botão voltar no fluxo normal (sem fixed) */
-@media (max-width: 768px) {
+@media (width <= 768px) {
     #back-to-menu {
         position: static;
         width: 100%;
-        margin: 0.5rem 0 0.25rem 0;
+        margin: 0.5rem 0 0.25rem;
         box-shadow: none;
         top: auto;
         left: auto;
@@ -1097,7 +1084,7 @@ main {
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
 }
 
 .key:hover {
@@ -1107,7 +1094,7 @@ main {
 
 .key:active {
     transform: translateY(1px);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
 }
 
 .delete {
@@ -1134,11 +1121,10 @@ main {
 }
 
 /* Prevenir seleção de texto em inputs readonly em mobile */
-@media (max-width: 768px) {
+@media (width <= 768px) {
     #answer-input[readonly],
     .inline-missing-input[readonly] {
-        user-select: none;
-        -webkit-user-select: none;
+    user-select: none;
         -webkit-touch-callout: none;
     }
 }
@@ -1155,33 +1141,7 @@ main {
     transition: all var(--transition-fast) var(--easing-standard);
 }
 
-.inline-missing-input:focus {
-    border-color: var(--primary-hover-color);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
-/* Icon system: inline SVGs usam currentColor */
-.card-icon {
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: .6rem;
-    /* herda a cor do texto do cartão */
-    color: inherit;
-    transition: transform .12s ease, color .12s ease;
-}
-.card:hover .card-icon { transform: translateY(-3px); }
-
-/* Animações para transições entre a grid de temas e as secções */
-/* Estado base dos elementos que serão animados */
-main.transitioning {
-    min-height: var(--preserved-height, 400px);
-}
-
-/* Os elementos que podem ser animados têm uma transição por defeito. */
-#themes, .theme-section, #exercise-area {
-    transition: opacity var(--transition-medium) var(--easing-standard), 
-                transform var(--transition-medium) var(--easing-standard);
-}
+/* inline-missing-input canonical definition kept above; duplicate removed */
 
 /* Estado inicial para a animação de entrada (fade in e slide up) */
 .animating-in {
@@ -1215,10 +1175,10 @@ main.transitioning {
     width: auto;
     height: auto;
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+    text-rendering: optimizelegibility;
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
     .material-symbols-outlined.card-icon {
         font-size: clamp(28px, 9vw, 40px); /* slightly smaller caps on very small screens */
     }
@@ -1235,13 +1195,6 @@ img.card-icon {
 /* CORREÇÃO: garantir contraste dentro dos cartões */
 .card .card-icon {
     /* herda a cor do texto do cartão (o .card define color: white) */
-    color: inherit;
-    /* opcional: garantir que o SVG usa fill=currentColor */
-    /* se necessário, remove fills embutidos nos SVGs e usa fill="currentColor" */
-}
-
-/* Garantir que ícones inline respeitam a cor do cartão e contrastam corretamente */
-.card .card-icon { 
     color: inherit;           /* herda a cor do texto do cartão */
     display: inline-block;
     vertical-align: middle;
@@ -1252,11 +1205,8 @@ img.card-icon {
 .card .card-icon path,
 .card .card-icon rect,
 .card .card-icon circle {
-    fill: currentColor;
+    fill: currentcolor;
 }
-
-/* Opcional: escolher cor do ícone dentro do cartão caso necessário */
-.card { color: #fff; } /* já deves ter isto; ajusta conforme tema */
 
 /* Badges strip e lottie placeholder */
 .badges-strip {
@@ -1268,20 +1218,69 @@ img.card-icon {
     padding: .15rem 0;
     min-width: 0;
 }
+
 .badge {
     display: inline-grid;
     place-items: center;
-    width: 28px; height: 28px;
+    min-width: 28px;
+    height: 28px;
     border-radius: 6px;
     background: transparent;
     border: 1px solid var(--border-color);
     font-size: 14px;
     padding: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-.badge.big { padding: .25rem .5rem; border-radius: 8px; }
+.badge.big {
+    padding: .25rem .5rem;
+    border-radius: 8px;
+    width: auto;
+    min-width: 0;
+}
+
+/* Correções específicas para a secção de Medalhas no resumo */
+.panel.medals {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+    min-height: 48px; /* garante alguma presença visual mesmo sem badges */
+}
+
+.panel.medals .ach-badges {
+    display: flex; /* reforçar layout flex */
+    flex-wrap: wrap;
+    gap: .5rem;
+    align-items: center;
+}
+
+.panel.medals .ach-badge {
+    display: inline-flex; /* garantir alinhamento vertical consistente */
+    align-items: center;
+    gap: .5rem;
+    padding: .35rem .5rem; /* ligeiramente menor para melhor encaixe */
+}
+
+.panel.medals .ach-badge .label,
+.panel.medals .ach-badge span {
+    font-size: 0.95rem;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 12rem; /* evita que textos longos parti el layout */
+}
+
+/* word-break normal already acceptable; duplicate removed */
+
+/* Garantir badges com bom alinhamento de texto e ícone (defined earlier) */
 
 /* Utility hidden for elements moved from navbar */
-.visually-hidden { display: none !important; }
+.visually-hidden {
+    display: none !important;
+}
 
 /* Achievements panel (sliding from right on desktop, bottom on mobile) */
 .achievements-panel {
@@ -1292,7 +1291,7 @@ img.card-icon {
     width: 320px;
     max-width: 90vw;
     background: var(--main-bg-color);
-    box-shadow: -8px 0 24px rgba(0,0,0,0.12);
+    box-shadow: -8px 0 24px rgb(0 0 0 / 12%);
     transform: translateX(100%);
     transition: transform 320ms cubic-bezier(.2,.9,.2,1);
     z-index: 1200;
@@ -1301,12 +1300,42 @@ img.card-icon {
     box-sizing: border-box; /* garante que padding não provoca overflow horizontal */
 }
 .achievements-panel.open { transform: translateX(0%); }
-.achievements-panel .ach-header { display:flex; align-items:center; justify-content:space-between; gap: .5rem; }
-.achievements-panel h3 { margin: 0 0 .5rem 0; }
-.achievements-panel .ach-body { margin-top: .75rem; }
-.ach-badges { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.5rem; }
-.ach-badge { display:flex; align-items:center; gap:.5rem; background:var(--score-bg-color); padding:.4rem .5rem; border-radius:8px; }
-.ach-badge .badge { width:36px; height:36px; font-size:18px; }
+.achievements-panel .ach-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+}
+
+.achievements-panel h3 {
+    margin: 0 0 .5rem;
+}
+
+.achievements-panel .ach-body {
+    margin-top: .75rem;
+}
+
+.ach-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-top: .5rem;
+}
+
+.ach-badge {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    background: var(--score-bg-color);
+    padding: .4rem .5rem;
+    border-radius: 8px;
+}
+
+.ach-badge .badge {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+}
 
 /* Compact buttons for achievements (prevenir width:100% em mobile) */
 .ach-btn,
@@ -1323,7 +1352,7 @@ img.card-icon {
 }
 
 /* Telas médias - layout híbrido */
-@media (min-width: 481px) and (max-width: 767px) {
+@media (width >= 481px) and (width <= 767px) {
     #progress-section {
         flex-direction: row;
         gap: 1rem;
@@ -1346,8 +1375,8 @@ img.card-icon {
     }
 }
 
-@media (max-width: 768px) {
-    .achievements-panel { bottom: 0; right: 0; left: 0; top: auto; height: 50vh; width: 100vw; max-width: none; transform: translateY(100%); padding-left: max(0.75rem, env(safe-area-inset-left)); padding-right: max(0.75rem, env(safe-area-inset-right)); }
+@media (width <= 768px) {
+    .achievements-panel { inset: auto 0 0; height: 50vh; width: 100vw; max-width: none; transform: translateY(100%); padding-left: max(0.75rem, env(safe-area-inset-left)); padding-right: max(0.75rem, env(safe-area-inset-right)); }
     .achievements-panel.open { transform: translateY(0%); }
 }
 
@@ -1359,49 +1388,26 @@ img.card-icon {
 }
 
 /* Animação CSS fallback para badge ganha */
-.badge-earned { animation: badgePulse 900ms ease; }
-@keyframes badgePulse {
+.badge-earned {
+    animation: badge-pulse 900ms ease;
+}
+
+@keyframes badge-pulse {
     0% { transform: scale(.9); opacity: .9; }
     50% { transform: scale(1.12); opacity: 1; }
     100% { transform: scale(1); opacity: 1; }
 }
 
 /* Garantir visibilidade dos ícones nos cartões */
-.card {
-    color: var(--card-text); /* usar a variável do tema para garantir contraste correto */
-}
 
-.card-icon {
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: .6rem;
-    /* herda a cor do texto do cartão */
-    color: inherit;
-    transition: transform .12s ease, color .12s ease;
-}
-.card:hover .card-icon { transform: translateY(-3px); }
-
-/* Garantir que iconografia herda a cor do elemento pai */
-.card-icon {
-    color: inherit; /* garante que currentColor tem valor */
-    width: 1.6rem;
-    height: 1.6rem;
-    display: inline-block;
-    vertical-align: middle;
-}
+/* Removed duplicate .card-icon definition; canonical block earlier remains */
 
 /* Forçar todos os shapes dentro do svg a usar currentColor por defeito.
    Usa !important para sobrepor fills/strokes inline que não sejam desejados. */
 .card-icon * {
-    fill: currentColor !important;
-    stroke: currentColor !important;
+    fill: currentcolor !important;
+    stroke: currentcolor !important;
     stroke-width: 1 !important;
-}
-
-/* Acentuar pointer e acessibilidade dos cards */
-.card {
-    cursor: pointer;
-    color: inherit; /* permite que icones usem a mesma cor do texto do cartão */
 }
 
 /* Curiosidade Matemática - Melhorada com altura dinâmica */
@@ -1413,11 +1419,12 @@ img.card-icon {
     margin: 1.5rem 0;
     font-size: 1rem;
     line-height: 1.6;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgb(102 126 234 / 30%);
     border-left: 4px solid #4facfe;
     transition: transform var(--transition-fast) var(--easing-standard), 
                 min-height var(--transition-medium) var(--easing-standard);
     position: relative;
+
     /* Adicionar padding para os controlos */
     padding-right: 4rem;
     
@@ -1428,7 +1435,7 @@ img.card-icon {
     
     /* Smooth scrollbar styling */
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    scrollbar-color: rgb(255 255 255 / 30%) transparent;
 }
 
 /* Webkit scrollbar styling */
@@ -1437,22 +1444,22 @@ img.card-icon {
 }
 
 .curiosidade-matematica::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgb(255 255 255 / 10%);
     border-radius: 3px;
 }
 
 .curiosidade-matematica::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgb(255 255 255 / 30%);
     border-radius: 3px;
 }
 
 .curiosidade-matematica::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgb(255 255 255 / 50%);
 }
 
 .curiosidade-matematica:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 6px 16px rgb(102 126 234 / 40%);
 }
 
 .curiosidade-controls {
@@ -1465,7 +1472,7 @@ img.card-icon {
 
 .nova-curiosidade-btn,
 .toggle-rotacao-btn {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgb(255 255 255 / 20%);
     border: none;
     border-radius: 50%;
     width: 2rem;
@@ -1479,17 +1486,17 @@ img.card-icon {
 }
 
 .nova-curiosidade-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgb(255 255 255 / 30%);
     transform: rotate(180deg);
 }
 
 .toggle-rotacao-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgb(255 255 255 / 30%);
     transform: scale(1.1);
 }
 
 .toggle-rotacao-btn.paused {
-    background: rgba(255, 255, 255, 0.4);
+    background: rgb(255 255 255 / 40%);
 }
 
 .curiosidade-icon {
@@ -1506,30 +1513,30 @@ img.card-icon {
 .dark-mode .curiosidade-matematica {
     background: linear-gradient(135deg, #4338ca 0%, #5b21b6 100%);
     border-left-color: #6366f1;
-    box-shadow: 0 4px 12px rgba(67, 56, 202, 0.4);
+    box-shadow: 0 4px 12px rgb(67 56 202 / 40%);
     
     /* Dark mode scrollbar */
-    scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
+    scrollbar-color: rgb(255 255 255 / 40%) transparent;
 }
 
 .dark-mode .curiosidade-matematica:hover {
-    box-shadow: 0 6px 16px rgba(67, 56, 202, 0.5);
+    box-shadow: 0 6px 16px rgb(67 56 202 / 50%);
 }
 
 .dark-mode .curiosidade-matematica::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgb(255 255 255 / 5%);
 }
 
 .dark-mode .curiosidade-matematica::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.4);
+    background: rgb(255 255 255 / 40%);
 }
 
 .dark-mode .curiosidade-matematica::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.6);
+    background: rgb(255 255 255 / 60%);
 }
 
 /* Responsividade móvel para curiosidade */
-@media (max-width: 768px) {
+@media (width <= 768px) {
     .curiosidade-matematica {
         margin: 1rem 0;
         padding: 1rem;
@@ -1553,7 +1560,7 @@ img.card-icon {
     }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
     .curiosidade-matematica {
         padding: 0.8rem;
         padding-right: 3rem;
@@ -1592,7 +1599,7 @@ img.card-icon {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgb(0 0 0 / 60%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1609,13 +1616,13 @@ img.card-icon {
 .narrative-popup-content {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    padding: 2rem 1.5rem 1.5rem;
     border-radius: 12px;
     max-width: 500px;
     width: 100%;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    border: 1px solid rgb(255 255 255 / 10%);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 20%);
     transform: scale(0.95);
     transition: transform var(--transition-medium) var(--easing-standard);
 }
@@ -1646,6 +1653,7 @@ img.card-icon {
     font-size: 1.5rem;
     cursor: pointer;
     color: white;
+
     /* Remover sombra herdada de botões globais */
     box-shadow: none;
 }
@@ -1669,15 +1677,29 @@ img.card-icon {
 }
 
 /* Destaque de operações aritméticas (adição/subtração) acessível */
-.op { font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 6px; display: inline-block; }
-.op-add { background: #e0fce4; color: #065f46; /* contraste ~6:1 */ }
-.op-sub { background: #fde2e1; color: #7f1d1d; /* contraste ~6:1 */ }
-.dark-mode .op-add { background: #064e3b; color: #d1fae5; }
-.dark-mode .op-sub { background: #7f1d1d; color: #fee2e2; }
+.op-add {
+    background: #e0fce4;
+    color: #065f46; /* contraste ~6:1 */
+}
+
+.op-sub {
+    background: #fde2e1;
+    color: #7f1d1d; /* contraste ~6:1 */
+}
+
+.dark-mode .op-add {
+    background: #064e3b;
+    color: #d1fae5;
+}
+
+.dark-mode .op-sub {
+    background: #7f1d1d;
+    color: #fee2e2;
+}
 
 .dark-mode .narrative-popup-content {
     background: linear-gradient(135deg, #4338ca 0%, #5b21b6 100%);
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: rgb(255 255 255 / 20%);
 }
 
 /* Term boxes para exercícios com termo em falta */
@@ -1695,62 +1717,44 @@ img.card-icon {
     min-width: 2.5rem;
     min-height: 2.5rem;
     vertical-align: middle;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
     transition: all 0.2s ease;
 }
 
 .term-box:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 8px rgb(0 0 0 / 15%);
 }
 
-.inline-missing-input {
-    border: 2px dashed var(--primary-color);
-    background: var(--main-bg-color);
-    border-radius: 4px;
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--text-color);
-    padding: 0.25rem 0.5rem;
-    min-width: 3rem;
-    max-width: 8rem;
-    outline: none;
-    transition: all var(--transition-fast) var(--easing-standard);
-}
-
-.inline-missing-input:focus {
-    border-color: var(--primary-hover-color);
-    box-shadow: 0 0 0 3px rgba(var(--primary-color), 0.2);
-    background-color: var(--score-bg-color);
-    position: relative;
-}
+/* Removed duplicate inline-missing-input definition; canonical kept earlier */
 
 /* Input ativo para inputs inline (quando usando teclado personalizado) */
 .inline-missing-input[data-active="true"] {
     border-color: var(--primary-hover-color);
-    box-shadow: 0 0 0 2px rgba(var(--primary-color), 0.4);
+    box-shadow: 0 0 0 2px rgb(var(--primary-color), 0.4);
     background-color: var(--score-bg-color);
 }
 
 /* Remover botões de incremento/decremento dos inputs inline também */
 .inline-missing-input::-webkit-outer-spin-button,
 .inline-missing-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
+    appearance: none;
     margin: 0;
 }
 
 .inline-missing-input[type="number"] {
-    -moz-appearance: textfield;
     appearance: textfield;
 }
 
 /* Elementos específicos para layouts inline melhorados */
 .op {
     font-size: 1.2em;
-    font-weight: bold;
+    font-weight: 700;
     color: var(--primary-color);
     margin: 0 0.5rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 6px;
+    display: inline-block;
 }
 
 .op-multiply, .op-divide, .op-add, .op-sub {
@@ -1783,7 +1787,7 @@ img.card-icon {
 }
 
 /* Ajustes para mobile: normalizar tamanho do input inline */
-@media (max-width: 768px) {
+@media (width <= 768px) {
     .inline-missing-input {
         font-size: 1.1rem;
         min-width: 2.5rem;
@@ -1951,7 +1955,7 @@ img.card-icon {
     border: 2px dashed var(--correct-color);
     border-radius: 8px;
     padding: 1rem;
-    background-color: rgba(var(--correct-color), 0.05);
+    background-color: rgb(var(--correct-color), 0.05);
 }
 
 /* Interface especial para exercícios de equivalência com input inline */
@@ -1982,7 +1986,7 @@ img.card-icon {
     font-size: 0.9rem;
     font-weight: 500;
     color: var(--secondary-color);
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 0.5rem;
     text-align: center;
 }
 
@@ -1995,16 +1999,13 @@ img.card-icon {
 .fraction-simplify-animation::after {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: linear-gradient(45deg, transparent 40%, var(--correct-color) 45%, var(--correct-color) 55%, transparent 60%);
     opacity: 0;
-    animation: simplifyStrike 2s ease-in-out;
+    animation: simplify-strike 2s ease-in-out;
 }
 
-@keyframes simplifyStrike {
+@keyframes simplify-strike {
     0%, 100% { opacity: 0; }
     50% { opacity: 0.6; }
 }
@@ -2015,7 +2016,7 @@ img.card-icon {
     background: var(--main-bg-color);
     border-radius: 4px;
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--text-color);
     padding: 0.25rem 0.5rem;
@@ -2027,7 +2028,7 @@ img.card-icon {
 
 .fraction-missing-input:focus {
     border-color: var(--primary-hover-color);
-    box-shadow: 0 0 0 3px rgba(var(--primary-color), 0.2);
+    box-shadow: 0 0 0 3px rgb(var(--primary-color), 0.2);
     background-color: var(--score-bg-color);
     position: relative;
 }
@@ -2035,7 +2036,7 @@ img.card-icon {
 /* Input ativo (quando usando teclado personalizado) */
 .fraction-missing-input[data-active="true"] {
     border-color: var(--primary-hover-color);
-    box-shadow: 0 0 0 2px rgba(var(--primary-color), 0.4);
+    box-shadow: 0 0 0 2px rgb(var(--primary-color), 0.4);
     background-color: var(--score-bg-color);
 }
 
@@ -2054,10 +2055,10 @@ img.card-icon {
     white-space: nowrap;
     z-index: 1000;
     opacity: 0;
-    animation: fadeInOut 2s ease-in-out;
+    animation: fade-in-out 2s ease-in-out;
 }
 
-@keyframes fadeInOut {
+@keyframes fade-in-out {
     0% { opacity: 0; transform: translateX(-50%) translateY(5px); }
     20%, 80% { opacity: 1; transform: translateX(-50%) translateY(0); }
     100% { opacity: 0; transform: translateX(-50%) translateY(-5px); }
@@ -2071,13 +2072,13 @@ img.card-icon {
 /* Remover botões de incremento/decremento (spinners) dos inputs numéricos */
 .fraction-missing-input::-webkit-outer-spin-button,
 .fraction-missing-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
+    appearance: none;
     margin: 0;
 }
 
 /* Para Firefox */
 .fraction-missing-input[type="number"] {
-    -moz-appearance: textfield;
+    appearance: textfield;
     appearance: textfield;
 }
 
@@ -2113,7 +2114,7 @@ img.card-icon {
 }
 
 /* Adaptações responsivas para frações */
-@media (max-width: 768px) {
+@media (width <= 768px) {
     .fraction-notation {
         font-size: 1.2rem;
     }
@@ -2135,9 +2136,9 @@ img.card-icon {
     .fraction-operation-inline {
         gap: 0.8rem;
         margin: 0.8rem 0;
+
         /* Manter layout horizontal em vez de vertical */
-        flex-direction: row;
-        flex-wrap: nowrap;
+        flex-flow: row nowrap;
     }
     
     .fraction-operator, .fraction-equals {
@@ -2176,7 +2177,7 @@ img.card-icon {
     }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
     .fraction-container {
         gap: 0.8rem;
         padding: 0.4rem;
@@ -2184,19 +2185,19 @@ img.card-icon {
     
     .fraction-operation {
         gap: 0.4rem;
+
         /* Layout horizontal para simplicação */
-        flex-direction: row;
+        flex-flow: row nowrap;
         align-items: center;
         justify-content: center;
-        flex-wrap: nowrap;
     }
     
     .fraction-operation-inline {
         gap: 0.5rem;
         margin: 0.6rem 0;
+
         /* Layout horizontal compacto */
-        flex-direction: row;
-        flex-wrap: nowrap;
+        flex-flow: row nowrap;
         justify-content: center;
     }
     
@@ -2273,4 +2274,87 @@ img.card-icon {
         font-size: 1rem;
         border-radius: 6px;
     }
+}
+
+/* ==============================
+    Utility classes (spacing, text, flex)
+    Small, safe set of helpers to reduce duplication
+    ============================== */
+.u-p-0 {
+    padding: 0 !important;
+}
+
+.u-p-1 {
+    padding: .25rem !important;
+}
+
+.u-p-2 {
+    padding: .5rem !important;
+}
+
+.u-p-3 {
+    padding: 1rem !important;
+}
+
+.u-m-0 {
+    margin: 0 !important;
+}
+
+.u-m-1 {
+    margin: .25rem !important;
+}
+
+.u-m-2 {
+    margin: .5rem !important;
+}
+
+.u-m-3 {
+    margin: 1rem !important;
+}
+
+.u-gap-1 {
+    gap: .25rem !important;
+}
+
+.u-gap-2 {
+    gap: .5rem !important;
+}
+
+.u-gap-3 {
+    gap: 1rem !important;
+}
+
+.u-flex {
+    display: flex !important;
+}
+
+.u-inline-flex {
+    display: inline-flex !important;
+}
+
+.u-center {
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.text-sm {
+    font-size: .875rem !important;
+}
+
+.text-base {
+    font-size: 1rem !important;
+}
+
+.text-lg {
+    font-size: 1.2rem !important;
+}
+
+.text-bold {
+    font-weight: 700 !important;
+}
+
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
