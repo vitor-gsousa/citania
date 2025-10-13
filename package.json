@@ -4,6 +4,7 @@
   "description": "Citânia - Uma aplicação PWA gamificada para aprendizagem de matemática, inspirada no Castro de Citânia de Sanfins",
   "main": "index.html",
   "scripts": {
+    "build:css": "pwsh ./build-css.ps1",
     "dev": "npx http-server -p 8000 -c-1 --cors",
     "start": "npx http-server -p 8080 -c-1 --cors",
     "serve": "npx http-server -p 3000",

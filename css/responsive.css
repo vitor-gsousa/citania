@@ -1,0 +1,350 @@
+/* Media queries centralizados aqui (extratos principais do CSS original) */
+
+@media (width <= 768px) {
+    body {
+        align-items: flex-start;
+    }
+
+    main {
+        padding: 1rem;
+        margin: 0.5rem;
+        width: calc(100% - 1rem);
+        min-height: calc(100vh - 1rem);
+        padding-top: 6rem; /* Espaço para header fixo */
+    }
+
+    h1 {
+        font-size: 1.4rem;
+        margin: 1rem 0;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    /* Header fixo no mobile */
+    #theme-toggle {
+        position: fixed;
+        top: 0.75rem;
+        left: 0.75rem;
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
+        z-index: 100;
+        background-color: var(--main-bg-color);
+        box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
+    }
+    
+    #score-container {
+        position: fixed;
+        top: 0.75rem;
+        right: 0.75rem;
+        left: auto;
+        font-size: 0.75rem;
+        padding: 0.5rem 0.75rem;
+        max-width: calc(100% - 6rem);
+        z-index: 100;
+    }
+
+    #score-container span {
+        margin: 0 0.25rem;
+        font-size: 0.75rem;
+    }
+
+    .card-container {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .card {
+        min-height: 120px;
+        padding: 1rem;
+    }
+
+    .card-text {
+        font-size: 0.9rem;
+    }
+
+    .card-emoji {
+        font-size: 2rem;
+    }
+
+    #exercise-area {
+        display: flex;
+        flex-direction: column;
+        padding-top: 4rem; /* Espaço adicional para o botão voltar */
+    }
+
+    #progress-section {
+        flex-direction: row; /* Manter lado a lado em mobile */
+        gap: 0.75rem;
+        margin: 1rem auto 0;
+        max-width: calc(100vw - 2rem);
+        order: -1; /* Colocar no topo em tablets também */
+        align-items: center; /* Alinhar verticalmente */
+    }
+
+    #level-badge {
+        font-size: 0.75rem; /* Mais compacto para mobile */
+        padding: 0.3rem 0.6rem;
+        flex-shrink: 0; /* Evitar que encolha */
+        align-self: center; /* Centralizar o badge em tablet */
+    }
+
+    #current-level {
+        padding: 0.1rem 0.4rem;
+        min-width: 1.2rem;
+        font-size: 0.8rem; /* Mais compacto */
+    }
+
+    .custom-keyboard {
+        margin-top: 0.75rem;
+        max-width: 280px; /* Mais compacto */
+        padding: 0 0.5rem;
+        box-sizing: border-box;
+    }
+
+    .exercise-container {
+        margin: 1.5rem 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #question {
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        padding: 0;
+    }
+
+    input {
+        width: 100%;
+        max-width: 100%;
+        font-size: 1.05rem;
+        padding: 0.875rem;
+        margin: 0 0 0.75rem;
+    }
+
+    /* Botões de ação - mesma largura e alinhamento */
+    button {
+        width: 100%;
+        margin: 0.5rem 0;
+        padding: 0.875rem;
+        font-size: 1rem;
+        min-height: 48px;
+    }
+
+    #check-button,
+    #next-button {
+        width: 100%;
+        max-width: 100%;
+        margin: 0.5rem 0;
+    }
+
+    #next-level-button {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    #feedback {
+        font-size: 1rem;
+        padding: 0;
+        margin: 1rem 0;
+    }
+
+    #summary-area {
+        padding: 1rem 0;
+    }
+
+    /* Painel de conquistas */
+    .achievements-panel { 
+        inset: auto 0 0; 
+        height: 50vh; 
+        width: 100vw; 
+        max-width: none; 
+        transform: translateY(100%); 
+        padding-left: max(0.75rem, env(safe-area-inset-left)); 
+        padding-right: max(0.75rem, env(safe-area-inset-right)); 
+    }
+    .achievements-panel.open { transform: translateY(0%); }
+
+    /* No mobile, deixar o botão voltar no fluxo normal (sem fixed) */
+    #back-to-menu {
+        position: static;
+        width: 100%;
+        margin: 0.5rem 0 0.25rem;
+        box-shadow: none;
+        top: auto;
+        left: auto;
+        right: auto;
+    }
+
+    /* reduzir o padding-top agora que o botão não é fixed */
+    #exercise-area {
+        padding-top: 0;
+    }
+
+    /* Ajustes para o teclado personalizado em mobile */
+    .keyboard-row {
+        gap: 0.3rem; /* Menos espaço entre teclas */
+        margin-bottom: 0.3rem;
+    }
+
+    .key {
+        height: 44px; /* Altura de toque acessível */
+        min-width: 40px;
+        font-size: 1.1rem;
+    }
+}
+
+/* Regras para <=480px */
+@media (width <= 480px) {
+    main {
+        padding: 0.75rem;
+        padding-top: 6rem;
+    }
+
+    h1 {
+        font-size: 1.2rem;
+    }
+
+    #question {
+        font-size: 1rem;
+    }
+
+    #progress-section {
+        margin: 0.5rem auto;
+        max-width: 100%;
+        order: -1;
+        display: flex !important;
+        visibility: visible !important;
+        flex-direction: row; /* Manter lado a lado */
+        gap: 0.5rem; /* Gap menor para telas pequenas */
+        align-items: center;
+    }
+
+    #level-badge {
+        font-size: 0.7rem; /* Ainda mais compacto */
+        padding: 0.25rem 0.5rem;
+        flex-shrink: 0; /* Evitar que encolha */
+    }
+
+    #current-level {
+        padding: 0.08rem 0.35rem;
+        min-width: 1.1rem;
+        font-size: 0.75rem; /* Mais compacto */
+    }
+
+    #progress-bar-container {
+        height: 14px; /* Altura ligeiramente maior para melhor proporção */
+        width: 100%;
+        flex: 1; /* Ocupar espaço restante */
+    }
+
+    #progress-bar {
+        height: 14px;
+    }
+
+    #exercise-area {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #theme-toggle {
+        top: 0.5rem;
+        left: 0.5rem;
+        width: 40px;
+        height: 40px;
+    }
+
+    #score-container {
+        top: 0.5rem;
+        right: 0.5rem;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.15rem;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.7rem;
+    }
+
+    .card {
+        min-height: 100px;
+    }
+
+    .card-emoji {
+        font-size: 1.75rem;
+    }
+
+    input {
+        font-size: 1rem;
+        padding: 0.75rem;
+    }
+
+    button {
+        padding: 0.75rem;
+        font-size: 0.95rem;
+        min-height: 44px;
+    }
+
+    /* Esconder a curiosidade no layout principal em mobile */
+    .curiosidade-matematica {
+        display: none;
+    }
+}
+
+/* Landscape mobile */
+@media (height <= 500px) and (orientation: landscape) {
+    main {
+        padding-top: 4.5rem;
+    }
+
+    #back-to-menu {
+        top: 3.5rem;
+        padding: 0.5rem;
+    }
+
+    #exercise-area {
+        padding-top: 2.5rem;
+    }
+}
+
+/* Safe-area support for notches */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+    @media (width <= 768px) {
+        #theme-toggle,
+        #score-container {
+            top: max(0.75rem, env(safe-area-inset-top));
+        }
+    }
+}
+
+/* Desktop styles - para telas maiores que 768px */
+@media (width >= 769px) {
+    .exercise-container {
+        max-width: 400px; /* Limitar largura máxima do container */
+        margin: 2rem auto; /* Centralizar o container */
+    }
+
+    #check-button,
+    #next-button {
+        width: 100%; /* Manter 100% dentro do container limitado */
+        max-width: 300px; /* Largura máxima para parecer mais centrado */
+        margin: 0.75rem auto; /* Centralizar verticalmente e adicionar mais espaço */
+    }
+
+    #question {
+        text-align: center; /* Centralizar o texto da pergunta */
+        margin-bottom: 2rem;
+    }
+
+    input {
+        max-width: 350px; /* Limitar largura do input também */
+        margin: 0 auto 1rem; /* Centralizar */
+    }
+}

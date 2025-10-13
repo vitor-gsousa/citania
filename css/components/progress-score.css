@@ -1,0 +1,48 @@
+#score-container {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    background-color: var(--score-bg-color);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgb(0 0 0 / 5%);
+    z-index: 5;
+}
+#score-container span { white-space: nowrap; }
+#correct-count { color: var(--correct-color); font-weight: bold; text-shadow: 0 0 2px rgb(255 255 255 / 80%); }
+#incorrect-count { color: var(--incorrect-color); font-weight: bold; text-shadow: 0 0 2px rgb(255 255 255 / 80%); }
+
+#feedback { font-weight: 600; padding: 1rem; border-radius: 8px; margin: 1rem 0; }
+#feedback.correct { background-color: rgb(5 150 105 / 10%); color: var(--correct-color); border: 2px solid var(--correct-color); }
+#feedback.incorrect { background-color: rgb(220 38 38 / 10%); color: var(--incorrect-color); border: 2px solid var(--incorrect-color); }
+
+.dark-mode #correct-count { text-shadow: 0 0 2px rgb(0 0 0 / 80%); }
+.dark-mode #incorrect-count { text-shadow: 0 0 2px rgb(0 0 0 / 80%); }
+.dark-mode #feedback.correct { background-color: rgb(16 185 129 / 15%); border-color: var(--correct-color); }
+.dark-mode #feedback.incorrect { background-color: rgb(248 113 113 / 15%); border-color: var(--incorrect-color); }
+
+#progress-section {
+    width: 100%;
+    max-width: 600px;
+    margin: 1.5rem auto 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    z-index: 10;
+}
+
+#level-badge { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.3rem; box-shadow: 0 2px 8px rgb(0 0 0 / 15%); border: 2px solid rgb(255 255 255 / 20%); }
+#current-level { background: rgb(255 255 255 / 20%); padding: 0.2rem 0.6rem; border-radius: 12px; font-weight: 700; min-width: 1.5rem; text-align: center; }
+
+#progress-bar-container { flex: 1; background-color: var(--progress-bar-bg); border-radius: 10px; overflow: hidden; }
+#progress-bar { height: 15px; width: 0%; background-color: var(--correct-color); border-radius: 10px; transition: width 0.5s ease-in-out; }
+
+#summary-area { padding: 2rem 1rem; }
+#summary-area h2 { color: var(--primary-color); margin-top: 0; }
+#summary-record-message { color: var(--primary-hover-color); font-weight: bold; font-size: 1.2rem; min-height: 1.5rem; }

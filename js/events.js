@@ -193,6 +193,45 @@ export function initEventListeners(DOM, state) {
       targetInput.value = targetInput.value.slice(0, -1);
     } else if (value === "clear") {
       targetInput.value = "";
+    } else if (value === "tab") {
+      // Navegar para o próximo campo editável
+      const allInputs = document.querySelectorAll('.fraction-missing-input, .inline-missing-input');
+
+      if (allInputs.length > 1) {
+        // Encontrar o input atualmente ativo/focado
+        let currentInput = document.querySelector('.fraction-missing-input[data-active="true"]') ||
+                          document.querySelector('.fraction-missing-input:focus') ||
+                          document.querySelector('.inline-missing-input[data-active="true"]') ||
+                          document.querySelector('.inline-missing-input:focus');
+
+        // Se não encontrou nenhum ativo/focado, usar o primeiro
+        if (!currentInput) {
+          currentInput = allInputs[0];
+        }
+
+        const currentIndex = Array.from(allInputs).indexOf(currentInput);
+        const nextIndex = (currentIndex + 1) % allInputs.length;
+        const nextInput = allInputs[nextIndex];
+
+        // Desmarcar todos os inputs ativos
+        document.querySelectorAll('.fraction-missing-input[data-active="true"], .inline-missing-input[data-active="true"]').forEach(input => {
+          input.removeAttribute('data-active');
+        });
+
+        // Marcar próximo input como ativo
+        nextInput.setAttribute('data-active', 'true');
+
+        // Dar foco no próximo input imediatamente
+        nextInput.focus();
+
+        // Atualizar targetInput para o próximo input para evitar conflitos de foco
+        targetInput = nextInput;
+
+        // Atualizar variável global se for fração
+        if (nextInput.classList.contains('fraction-missing-input')) {
+          activeFractionInput = nextInput;
+        }
+      }
     } else if (value === "enter") {
       checkAnswer(DOM, state);
     } else {

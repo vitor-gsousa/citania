@@ -5,7 +5,7 @@ Write-Host "🚀 Preparando deployment da Citânia para o Vercel..." -Foreground
 
 # Verificar se os ficheiros essenciais existem
 Write-Host "📁 Verificando ficheiros essenciais..." -ForegroundColor Yellow
-$essentialFiles = @("index.html", "manifest.json", "sw.js", "css/style.css", "js/app.js")
+$essentialFiles = @("index.html", "manifest.json", "sw.js", "css/main.css", "js/app.js")
 $allFilesExist = $true
 
 foreach ($file in $essentialFiles) {

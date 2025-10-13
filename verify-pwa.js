@@ -132,7 +132,7 @@ console.log();
 // 5. Verificar estilos CSS
 console.log('🎨 Verificando estilos PWA...');
 try {
-    const cssPath = path.join(__dirname, 'css', 'style.css');
+    const cssPath = path.join(__dirname, 'css', 'main.css');
     if (fs.existsSync(cssPath)) {
         const cssContent = fs.readFileSync(cssPath, 'utf8');
         

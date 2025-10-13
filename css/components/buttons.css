@@ -1,0 +1,50 @@
+/* Botões modernos (flat, acessíveis) */
+button {
+    appearance: none;
+    border: 2px solid var(--border-color);
+    background: var(--main-bg-color);
+    color: var(--text-color);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform .04s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+    min-height: 44px;
+}
+
+button:hover { box-shadow: 0 4px 14px rgb(0 0 0 / 12%); border-color: var(--primary-color); transform: translateY(-1px); }
+button:active { transform: translateY(1px); box-shadow: 0 1px 2px rgb(0 0 0 / 10%); }
+button:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+button:focus { outline: 3px solid var(--primary-color); outline-offset: 2px; }
+button:focus:not(:focus-visible) { outline: none; }
+button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 2px; }
+
+.btn.primary, #check-button, #next-button, #next-level-button {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+    font-weight: 700;
+}
+.btn.primary:hover, #check-button:hover, #next-button:hover, #next-level-button:hover {
+    background: var(--primary-hover-color);
+    border-color: var(--primary-hover-color);
+    box-shadow: 0 6px 18px rgb(67 56 202 / 25%);
+}
+
+#back-to-menu {
+    background: var(--secondary-color);
+    color: var(--text-color);
+    border-color: var(--secondary-color);
+    font-weight: 600;
+}
+#back-to-menu:hover {
+    background: var(--text-color);
+    color: #fff;
+    border-color: var(--text-color);
+}
+.btn.secondary {
+    background: var(--secondary-color);
+    color: var(--text-color) !important;
+    border-color: var(--secondary-color);
+}

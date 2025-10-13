@@ -1,0 +1,84 @@
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card-bg, linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover-color) 100%));
+    color: var(--card-text, #fff);
+    padding: 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform var(--transition-medium) var(--easing-standard), box-shadow var(--transition-medium) var(--easing-standard), filter var(--transition-medium) var(--easing-standard);
+    text-align: center;
+    min-height: 150px;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 12px rgb(67 56 202 / 15%);
+}
+
+.card-text { font-size: 0.95rem; line-height: 1.3; font-weight: 600; text-shadow: 0 1px 2px rgb(0 0 0 / 20%); }
+.card-emoji { font-size: 2.5rem; margin-top: 0.5rem; filter: drop-shadow(0 2px 4px rgb(0 0 0 / 20%)); }
+
+.card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgb(67 56 202 / 22%); filter: brightness(1.04); border-color: rgb(255 255 255 / 12%); }
+.card:active { transform: translateY(-2px); }
+.card:focus { outline: 3px solid #fff; outline-offset: 3px; }
+
+/* Material Symbols card icons */
+.material-symbols-outlined.card-icon {
+    /* Use clamp to scale between mobile and desktop nicely */
+    font-family: 'Material Symbols Outlined', sans-serif;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+    font-size: clamp(32px, 6.5vw, 64px); /* min 32px on small screens, scales with viewport, max 64px on large screens */
+    line-height: 1;
+    display: inline-block;
+    vertical-align: middle;
+    width: auto;
+    height: auto;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizelegibility;
+}
+
+@media (width <= 480px) {
+    .material-symbols-outlined.card-icon {
+        font-size: clamp(28px, 9vw, 40px); /* slightly smaller caps on very small screens */
+    }
+}
+
+/* Imagens SVG externas usadas como ícones devem herdar a cor do texto e ter 75px */
+img.card-icon {
+    width: 75px;
+    height: 75px;
+    vertical-align: middle;
+    color: inherit; /* tenta garantir que currentColor no SVG resolve corretamente */
+}
+
+/* CORREÇÃO: garantir contraste dentro dos cartões */
+.card .card-icon {
+    /* herda a cor do texto do cartão (o .card define color: white) */
+    color: inherit;           /* herda a cor do texto do cartão */
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* As formas dentro do SVG que usam 'currentColor' seguirão .card color */
+.card .card-icon [fill="currentColor"],
+.card .card-icon path,
+.card .card-icon rect,
+.card .card-icon circle {
+    fill: currentcolor;
+}
+
+/* Forçar todos os shapes dentro do svg a usar currentColor por defeito.
+   Usa !important para sobrepor fills/strokes inline que não sejam desejados. */
+.card-icon * {
+    fill: currentcolor !important;
+    stroke: currentcolor !important;
+    stroke-width: 1 !important;
+}

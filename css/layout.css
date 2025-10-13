@@ -1,0 +1,122 @@
+main {
+    position: relative;
+    text-align: center;
+    background-color: var(--main-bg-color);
+    padding: 2rem;
+    margin: 1rem auto;
+    width: 90%;
+    max-width: 960px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgb(0 0 0 / 10%);
+    min-height: 400px;
+    transition: min-height var(--transition-medium) var(--easing-standard);
+}
+
+/* Header / topbar */
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--main-bg-color);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 4px 14px rgb(0 0 0 / 6%);
+}
+
+.header-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: .5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    justify-content: space-between;
+}
+
+/* theme button dentro do header */
+.app-header #theme-toggle { position: static; width: 40px; height: 40px; border-radius: 50%; margin: 0; }
+
+/* gamification bar (navbar group) */
+.app-header .gamification-bar {
+    position: static;
+    top: auto;
+    z-index: auto;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+
+/* Ajustes responsivos do header */
+@media (width <= 768px) {
+    .header-inner {
+        max-width: 100% !important;
+        width: 100%;
+        margin: 0;
+        padding: .5rem .75rem; /* aumentar padding lateral */
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    /* header sem padding extra que limite a barra */
+    .app-header {
+        padding: 0;
+        width: 100%; /* garante largura total */
+    }
+
+    /* gamification bar ocupa toda a largura disponível */
+    .gamification-bar {
+        width: 100%;
+        flex: 1; /* expande para ocupar espaço restante */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .5rem;
+        min-width: 0; /* permite shrinking dos elementos filhos */
+    }
+
+    /* botão tema com largura fixa */
+    #theme-toggle {
+        flex-shrink: 0; /* não reduz */
+        width: 40px;
+        height: 40px;
+    }
+
+    /* botão utilizador com largura flexível mas com mínimo */
+    .user-btn {
+        flex-shrink: 1;
+        min-width: 60px; /* mínimo para manter legível */
+        max-width: 120px; /* máximo para não dominar */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* pontos e badges ocupam espaço restante */
+    .points-badges {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end; /* alinha à direita */
+        gap: .5rem;
+        min-width: 0;
+    }
+}
+
+/* Para ecrãs muito pequenos */
+@media (width <= 480px) {
+    .header-inner {
+        padding: .4rem .5rem; /* menos padding */
+        gap: .4rem;
+    }
+
+    .user-btn {
+        font-size: 0.85rem;
+        padding: .3rem .5rem;
+        max-width: 100px;
+    }
+}

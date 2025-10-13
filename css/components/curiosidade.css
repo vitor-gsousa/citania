@@ -1,0 +1,181 @@
+/* Curiosidade Matemática - Melhorada com altura dinâmica */
+.curiosidade-matematica {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.2rem;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    box-shadow: 0 4px 12px rgb(102 126 234 / 30%);
+    border-left: 4px solid #4facfe;
+    transition: transform var(--transition-fast) var(--easing-standard),
+                min-height var(--transition-medium) var(--easing-standard);
+    position: relative;
+
+    /* Adicionar padding para os controlos */
+    padding-right: 4rem;
+
+    /* Altura dinâmica - previne layout shift */
+    min-height: 5.6rem; /* Altura fixa para ~2 linhas (padding + 2 * line-height) para evitar layout shift */
+    max-height: 8rem;
+    overflow-y: auto;
+
+    /* Smooth scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: rgb(255 255 255 / 30%) transparent;
+}
+
+/* Webkit scrollbar styling */
+.curiosidade-matematica::-webkit-scrollbar {
+    width: 6px;
+}
+
+.curiosidade-matematica::-webkit-scrollbar-track {
+    background: rgb(255 255 255 / 10%);
+    border-radius: 3px;
+}
+
+.curiosidade-matematica::-webkit-scrollbar-thumb {
+    background: rgb(255 255 255 / 30%);
+    border-radius: 3px;
+}
+
+.curiosidade-matematica::-webkit-scrollbar-thumb:hover {
+    background: rgb(255 255 255 / 50%);
+}
+
+.curiosidade-matematica:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgb(102 126 234 / 40%);
+}
+
+.curiosidade-controls {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.nova-curiosidade-btn,
+.toggle-rotacao-btn {
+    background: rgb(255 255 255 / 20%);
+    border: none;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all var(--transition-fast) var(--easing-standard);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nova-curiosidade-btn:hover {
+    background: rgb(255 255 255 / 30%);
+    transform: rotate(180deg);
+}
+
+.toggle-rotacao-btn:hover {
+    background: rgb(255 255 255 / 30%);
+    transform: scale(1.1);
+}
+
+.toggle-rotacao-btn.paused {
+    background: rgb(255 255 255 / 40%);
+}
+
+.curiosidade-icon {
+    font-size: 1.2em;
+    margin-right: 0.5rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.dark-mode .curiosidade-matematica {
+    background: linear-gradient(135deg, #4338ca 0%, #5b21b6 100%);
+    border-left-color: #6366f1;
+    box-shadow: 0 4px 12px rgb(67 56 202 / 40%);
+
+    /* Dark mode scrollbar */
+    scrollbar-color: rgb(255 255 255 / 40%) transparent;
+}
+
+.dark-mode .curiosidade-matematica:hover {
+    box-shadow: 0 6px 16px rgb(67 56 202 / 50%);
+}
+
+.dark-mode .curiosidade-matematica::-webkit-scrollbar-track {
+    background: rgb(255 255 255 / 5%);
+}
+
+.dark-mode .curiosidade-matematica::-webkit-scrollbar-thumb {
+    background: rgb(255 255 255 / 40%);
+}
+
+.dark-mode .curiosidade-matematica::-webkit-scrollbar-thumb:hover {
+    background: rgb(255 255 255 / 60%);
+}
+
+/* Responsividade móvel para curiosidade */
+@media (width <= 768px) {
+    .curiosidade-matematica {
+        margin: 1rem 0;
+        padding: 1rem;
+        padding-right: 3.5rem;
+        font-size: 0.9rem;
+        min-height: 5.2rem; /* padding (1*2) + line-height (1.6 * 0.9 * 2) */
+        max-height: 7rem;
+    }
+
+    .curiosidade-controls {
+        top: 0.6rem;
+        right: 0.6rem;
+        gap: 0.4rem;
+    }
+
+    .nova-curiosidade-btn,
+    .toggle-rotacao-btn {
+        width: 1.8rem;
+        height: 1.8rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (width <= 480px) {
+    .curiosidade-matematica {
+        padding: 0.8rem;
+        padding-right: 3rem;
+        font-size: 0.85rem;
+        min-height: 4.5rem; /* padding (0.8*2) + line-height (1.6 * 0.85 * 2) */
+        max-height: 6rem;
+    }
+
+    /* Esconder a curiosidade no layout principal em mobile */
+    .curiosidade-matematica {
+        display: none;
+    }
+}
+
+/* Otimizações de acessibilidade para redução de movimento */
+@media (prefers-reduced-motion: reduce) {
+    .curiosidade-matematica {
+        transition: height 0.1s ease;
+    }
+
+    .curiosidade-matematica::-webkit-scrollbar-thumb {
+        transition: none;
+    }
+}
+
+/* Estado de foco melhorado para teclado */
+.curiosidade-matematica:focus-within {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}

@@ -5,6 +5,8 @@
  * Cria representações visuais em HTML/CSS para exercícios de frações
  */
 
+import { preventMobileKeyboard } from './mobile-utils.js';
+
 /**
  * Cria representação visual de uma fração
  * @param {Object} fraction - Objeto com numerador e denominador {num, den}
@@ -59,10 +61,13 @@ function createFractionNotation(fraction, options = {}) {
     input.className = 'fraction-missing-input';
     input.placeholder = options.inputPlaceholder || '?';
     input.setAttribute('aria-label', 'Numerador em falta');
+    input.setAttribute('inputmode', 'numeric');
+    input.setAttribute('autocomplete', 'off');
     // Para simplificação, adicionar atributo para identificar o tipo
     if (options.missing === 'both') {
       input.setAttribute('data-part', 'numerator');
     }
+    preventMobileKeyboard(input);
     numerator.appendChild(input);
   } else {
     numerator.textContent = fraction.num;
@@ -83,10 +88,13 @@ function createFractionNotation(fraction, options = {}) {
     input.className = 'fraction-missing-input';
     input.placeholder = options.inputPlaceholder || '?';
     input.setAttribute('aria-label', 'Denominador em falta');
+    input.setAttribute('inputmode', 'numeric');
+    input.setAttribute('autocomplete', 'off');
     // Para simplificação, adicionar atributo para identificar o tipo
     if (options.missing === 'both') {
       input.setAttribute('data-part', 'denominator');
     }
+    preventMobileKeyboard(input);
     denominator.appendChild(input);
   } else {
     denominator.textContent = fraction.den;

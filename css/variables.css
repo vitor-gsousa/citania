@@ -1,0 +1,37 @@
+:root {
+    --bg-color: #f0f4f8;
+    --main-bg-color: white;
+    --text-color: #1f2937;
+    --primary-color: #4338ca;
+    --primary-hover-color: #3730a3;
+    --secondary-color: #9ca3af;
+    --border-color: #d1d5db;
+    --score-bg-color: #e0e7ff;
+    --progress-bar-bg: #d1d5db;
+    --correct-color: #047857;
+    --incorrect-color: #b91c1c;
+
+    --card-bg: linear-gradient(135deg, #e6f0ff 0%, #cfe0ff 100%);
+    --card-text: #0b3a66;
+
+    --transition-fast: 180ms;
+    --transition-medium: 320ms;
+    --transition-slow: 480ms;
+    --easing-standard: cubic-bezier(.2,.9,.2,1);
+}
+
+.dark-mode {
+    --bg-color: #0f172a;
+    --main-bg-color: #1e293b;
+    --text-color: #f1f5f9;
+    --primary-color: #6366f1;
+    --primary-hover-color: #818cf8;
+    --secondary-color: #64748b;
+    --border-color: #475569;
+    --score-bg-color: #334155;
+    --progress-bar-bg: #475569;
+    --correct-color: #34d399;
+    --incorrect-color: #fca5a5;
+    --card-bg: var(--primary-color);
+    --card-text: #0f172a;
+}

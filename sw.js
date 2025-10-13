@@ -2,7 +2,7 @@ const CACHE_NAME = "citania-matematica-v11";
 const urlsToCache = [
   "/",
   "/index.html",
-  "/css/style.css",
+  "/css/main.css",
   "/js/app.js",
   // Módulos JS para garantir funcionamento offline completo
   "/js/events.js",

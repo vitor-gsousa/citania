@@ -73,19 +73,33 @@ A aplicação oferece 6 tipos diferentes de exercícios matemáticos:
 
 ```
 citania/
-├── index.html          # Página principal
-├── manifest.json       # Configuração PWA
-├── sw.js              # Service Worker para PWA
-├── favicon.ico        # Ícone do site
+├── index.html                 # Página principal
+├── manifest.json              # Configuração PWA
+├── sw.js                      # Service Worker para PWA
+├── build-css.ps1              # Script para build do CSS
+├── favicon.ico                # Ícone do site
 ├── css/
-│   └── style.css      # Estilos da aplicação
+│   ├── main.css               # Bundle CSS concatenado (produção)
+│   ├── variables.css          # Variáveis CSS globais
+│   ├── base.css               # Estilos base e utilitários
+│   ├── layout.css             # Layout e estrutura
+│   ├── responsive.css         # Media queries responsivas
+│   └── components/
+│       ├── cards.css          # Estilos dos cards
+│       ├── buttons.css        # Estilos dos botões
+│       ├── progress-score.css # Barra de progresso e pontuação
+│       ├── keyboard.css       # Teclado personalizado
+│       ├── achievements.css   # Painel de conquistas
+│       ├── fractions.css      # Sistema de frações visuais
+│       ├── curiosidade.css    # Curiosidade matemática
+│       └── narrative.css      # Popup de narrativa
 ├── js/
-│   └── app.js         # Lógica principal da aplicação
+│   └── app.js                 # Lógica principal da aplicação
 ├── audio/
-│   ├── correct.mp3    # Som para resposta correta
-│   ├── incorrect.mp3  # Som para resposta incorreta
-│   └── levelup.mp3    # Som para subida de nível
-└── README.md          # Este ficheiro
+│   ├── correct.mp3            # Som para resposta correta
+│   ├── incorrect.mp3          # Som para resposta incorreta
+│   └── levelup.mp3            # Som para subida de nível
+└── README.md                  # Este ficheiro
 ```
 
 ## 🚀 Como Usar
@@ -98,10 +112,22 @@ citania/
    cd citania
    ```
 
-2. Abra o ficheiro `index.html` num navegador web moderno:
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+
+3. **Construa os estilos CSS** (se modificou arquivos CSS modulares):
+   ```bash
+   npm run build:css
+   # ou diretamente com PowerShell:
+   .\build-css.ps1
+   ```
+
+4. Abra o ficheiro `index.html` num navegador web moderno:
    - Pode usar um servidor local simples:
      ```bash
-     python -m http.server 8000
+     npm run dev  # servidor na porta 8000
      # ou
      npx http-server
      ```
