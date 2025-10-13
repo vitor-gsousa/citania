@@ -73,33 +73,80 @@ A aplicação oferece 6 tipos diferentes de exercícios matemáticos:
 
 ```
 citania/
-├── index.html                 # Página principal
-├── manifest.json              # Configuração PWA
-├── sw.js                      # Service Worker para PWA
-├── build-css.ps1              # Script para build do CSS
-├── favicon.ico                # Ícone do site
+├── index.html
+├── manifest.json
+├── sw.js
+├── package.json
+├── vercel.json
+├── deploy-check.ps1
+├── deploy-check.sh
+├── verify-pwa.js
+├── verify-opengraph.js
+├── README.md
 ├── css/
-│   ├── main.css               # Bundle CSS concatenado (produção)
-│   ├── variables.css          # Variáveis CSS globais
-│   ├── base.css               # Estilos base e utilitários
-│   ├── layout.css             # Layout e estrutura
-│   ├── responsive.css         # Media queries responsivas
+│   ├── main.css
+│   ├── variables.css
+│   ├── base.css
+│   ├── layout.css
+│   ├── responsive.css
 │   └── components/
-│       ├── cards.css          # Estilos dos cards
-│       ├── buttons.css        # Estilos dos botões
-│       ├── progress-score.css # Barra de progresso e pontuação
-│       ├── keyboard.css       # Teclado personalizado
-│       ├── achievements.css   # Painel de conquistas
-│       ├── fractions.css      # Sistema de frações visuais
-│       ├── curiosidade.css    # Curiosidade matemática
-│       └── narrative.css      # Popup de narrativa
+│       ├── buttons.css
+│       ├── cards.css
+│       ├── keyboard.css
+│       ├── progress-score.css
+│       ├── achievements.css
+│       ├── fractions.css
+│       ├── curiosidade.css
+│       └── narrative.css
 ├── js/
-│   └── app.js                 # Lógica principal da aplicação
+│   ├── app.js
+│   ├── events.js
+│   ├── exercise.js
+│   ├── progress.js
+│   ├── theme.js
+│   ├── ui.js
+│   ├── config/
+│   │   └── exercise-types.js
+│   ├── examples/
+│   │   ├── fraction-examples.js
+│   │   └── template-examples.js
+│   └── features/
+│       ├── gamification.js
+│       └── pwa-install.js
+├── modules/
+│   ├── arithmetic/
+│   │   ├── fractions.js
+│   │   ├── fractionToDecimal.js
+│   │   ├── gcd.js
+│   │   ├── lcm.js
+│   │   ├── mulDiv.js
+│   │   ├── powerDivision.js
+│   │   ├── powerMultiplication.js
+│   │   ├── primeFactorization.js
+│   │   └── progression.js
+│   └── utils/
+│       ├── math-facts.js
+│       ├── math.js
+│       └── rand.js
+├── services/
+│   └── sounds.js
+├── templates/
+│   ├── exercise-card.js
+│   ├── template-manager.js
+│   └── theme-section.js
+├── utils/
+│   ├── fraction-visual.js
+│   ├── icon-utils.js
+│   ├── mobile-utils.js
+│   └── storage.js
 ├── audio/
-│   ├── correct.mp3            # Som para resposta correta
-│   ├── incorrect.mp3          # Som para resposta incorreta
-│   └── levelup.mp3            # Som para subida de nível
-└── README.md                  # Este ficheiro
+│   ├── correct.mp3
+│   ├── incorrect.mp3
+│   └── levelup.mp3
+├── images/
+│   └── icons/
+└── vendor/
+   └── lottie.min.js
 ```
 
 ## 🚀 Como Usar
