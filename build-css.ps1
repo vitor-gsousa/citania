@@ -15,8 +15,8 @@ $cssFiles = @(
     "css/components/achievements.css",
     "css/components/fractions.css",
     "css/components/curiosidade.css",
-    "css/components/narrative.css",
-    "css/responsive.css"
+    "css/components/narrative.css"
+    # responsive.css será carregado separadamente para evitar duplicação
 )
 
 # Verificar se todos os arquivos existem
@@ -36,9 +36,9 @@ if (-not $allFilesExist) {
 # Criar o conteúdo do bundle
 $bundleContent = @"
 /* main.css is a production bundle that concatenates the modules in this order:
-   variables.css, base.css, layout.css, components/cards.css, components/buttons.css,
-   components/progress-score.css, components/keyboard.css, components/achievements.css,
-   components/fractions.css, components/curiosidade.css, components/narrative.css, responsive.css */
+    variables.css, base.css, layout.css, components/cards.css, components/buttons.css,
+    components/progress-score.css, components/keyboard.css, components/achievements.css,
+    components/fractions.css, components/curiosidade.css, components/narrative.css */
 "@
 
 foreach ($file in $cssFiles) {
