@@ -10,9 +10,9 @@ export function initSounds() {
   try {
     const base = "./audio";
     const files = {
-      correct: "correct.mp3",
-      incorrect: "incorrect.mp3",
-      levelup: "levelup.mp3",
+      correct: "correct.opus",
+      incorrect: "incorrect.opus",
+      levelup: "levelup.opus",
     };
 
     Object.keys(files).forEach((key) => {

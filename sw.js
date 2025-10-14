@@ -34,9 +34,9 @@ const urlsToCache = [
   "/js/templates/theme-section.js",
   "/js/config/exercise-types.js",
   // Áudio
-  "/audio/correct.mp3",
-  "/audio/incorrect.mp3",
-  "/audio/levelup.mp3",
+  "/audio/correct.opus",
+  "/audio/incorrect.opus",
+  "/audio/levelup.opus",
   // Ícones PWA
   "/images/icons/favicon.ico",
   "/images/icons/icon-192x192.png",
