@@ -1,4 +1,4 @@
-const CACHE_NAME = "citania-matematica-v11";
+const CACHE_NAME = "citania-matematica-v12";
 const urlsToCache = [
   "/",
   "/index.html",
@@ -60,6 +60,14 @@ self.addEventListener("install", (event) => {
   );
 });
 
+// Permite que o novo Service Worker force a ativação
+self.addEventListener('message', (event) => {
+  if (!event.data) return;
+  if (event.data === 'skip-waiting') {
+    self.skipWaiting();
+  }
+});
+
 // Interceta os pedidos e serve a partir do cache se disponível
 self.addEventListener("fetch", (event) => {
   const { request } = event;
@@ -115,4 +123,9 @@ self.addEventListener("activate", (event) => {
       );
     }),
   );
+});
+
+// Reivindica os clientes imediatamente após ativação para aplicar a nova versão
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.clients.claim());
 });

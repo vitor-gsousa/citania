@@ -119,7 +119,6 @@ export async function showSection(sectionId) {
       mainElement.style.removeProperty('--preserved-height');
     }, ANIMATION_DURATION_MS);
   }
-  
   // optional: scroll to top of main exercise area
   try {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -322,11 +321,89 @@ async function initApp() {
     window.addEventListener("load", () => {
       navigator.serviceWorker
         .register("/sw.js", { scope: "/" })
-        .then((reg) => console.log("Service Worker registado:", reg.scope))
+        .then((reg) => {
+          console.log("Service Worker registado:", reg.scope);
+
+          // Se houver um service worker em espera, avisa o utilizador
+          if (reg.waiting) {
+            promptUserToRefresh(reg);
+          }
+
+          // Quando um novo SW for instalado (statechange para 'installed')
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed') {
+                if (navigator.serviceWorker.controller) {
+                  // Nova versão disponível
+                  promptUserToRefresh(reg);
+                }
+              }
+            });
+          });
+
+          // Opcional: escuta mensagens vindas do SW
+          navigator.serviceWorker.addEventListener('message', (event) => {
+            console.log('Mensagem do SW:', event.data);
+          });
+        })
         .catch((err) =>
           console.log("Falha ao registar o Service Worker:", err),
         );
     });
+  }
+
+  // Mostra um prompt simples no canto inferior direito para o utilizador atualizar
+  function promptUserToRefresh(registration) {
+    try {
+      let container = document.getElementById('sw-update-notice');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'sw-update-notice';
+        container.className = 'sw-update-notice';
+
+        const text = document.createElement('span');
+        text.className = 'sw-text';
+        text.textContent = 'Nova versão disponível';
+        container.appendChild(text);
+
+        const actions = document.createElement('div');
+        actions.className = 'sw-actions';
+
+        const btn = document.createElement('button');
+        btn.className = 'btn primary btn--small';
+        btn.textContent = 'Atualizar';
+        btn.addEventListener('click', () => {
+          if (!registration || !registration.waiting) return;
+          registration.waiting.postMessage('skip-waiting');
+        });
+
+        const dismiss = document.createElement('button');
+        dismiss.className = 'btn dismiss btn--small';
+        dismiss.textContent = 'Depois';
+        dismiss.addEventListener('click', () => {
+          try {
+            if (container && container.parentNode) container.parentNode.removeChild(container);
+          } catch (e) {
+            /* ignore */
+          }
+        });
+
+        actions.appendChild(btn);
+        actions.appendChild(dismiss);
+        container.appendChild(actions);
+        document.body.appendChild(container);
+
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (container && container.parentNode) {
+            container.parentNode.removeChild(container);
+            window.location.reload();
+          }
+        });
+      }
+    } catch (e) {
+      console.error('Erro ao mostrar prompt de atualização', e);
+    }
   }
 
   console.log("App initialized successfully");

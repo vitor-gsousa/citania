@@ -1,0 +1,44 @@
+/* Estilos para o banner de atualização do Service Worker */
+.sw-update-notice {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    background: var(--card-bg, rgba(34,34,34,0.95));
+    color: var(--card-text, #fff);
+    padding: 12px 14px;
+    border-radius: 10px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-sans, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue');
+}
+
+.sw-update-notice .sw-text {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.sw-update-notice .sw-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.sw-update-notice .btn--small {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    min-height: auto;
+}
+
+.sw-update-notice .btn.dismiss {
+    background: transparent;
+    color: var(--text-color);
+    border-color: rgba(255,255,255,0.08);
+}
+
+@media (max-width: 600px) {
+    .sw-update-notice { right: 12px; left: 12px; bottom: 12px; }
+}
