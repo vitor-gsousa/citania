@@ -329,6 +329,12 @@ async function initApp() {
             promptUserToRefresh(reg);
           }
 
+          // Solicita imediatamente ao navegador uma verificação por uma nova versão do sw.js
+          // Isto ajuda a detetar atualizações sem a necessidade de um hard refresh
+          try {
+            reg.update().catch(() => {});
+          } catch (e) {}
+
           // Quando um novo SW for instalado (statechange para 'installed')
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -352,6 +358,36 @@ async function initApp() {
         );
     });
   }
+
+  // Função utilitária para verificar e aplicar atualizações do Service Worker
+  function checkForSWUpdate() {
+    try {
+      navigator.serviceWorker.getRegistration().then((r) => {
+        if (!r) return;
+        // Se já houver um SW em waiting, mostra o prompt
+        if (r.waiting) {
+          promptUserToRefresh(r);
+          return;
+        }
+        // Caso contrário, pede ao browser para verificar nova versão do script
+        r.update().catch(() => {});
+      }).catch(() => {});
+    } catch (e) {}
+  }
+
+  // Verifica quando a página fica visível (útil em mobile quando o utilizador abre a app)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') checkForSWUpdate();
+  });
+
+  // Também verifica quando a janela ganha foco (fallback)
+  window.addEventListener('focus', () => checkForSWUpdate());
+
+  // Verificação periódica (cada 30 minutos) - opcional mas útil para sessões longas
+  setInterval(() => checkForSWUpdate(), 30 * 60 * 1000);
+
+  // Checagem inicial ao iniciar a app
+  checkForSWUpdate();
 
   // Mostra um prompt simples no canto inferior direito para o utilizador atualizar
   function promptUserToRefresh(registration) {
