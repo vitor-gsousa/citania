@@ -53,23 +53,11 @@ export function preventMobileKeyboard(element) {
   if (!element) return;
   
   // Adicionar atributos para prevenir teclado móvel
-  element.setAttribute('inputmode', 'none');
-  element.setAttribute('autocomplete', 'off');
-  element.setAttribute('readonly', 'true');
-  
-  // Remover readonly quando há interação (para permitir seleção de texto)
-  element.addEventListener('focus', () => {
-    if (isMobileDevice()) {
-      setTimeout(() => {
-        element.removeAttribute('readonly');
-      }, 100);
-    }
-  });
-  
-  // Restaurar readonly quando perde focus
-  element.addEventListener('blur', () => {
-    if (isMobileDevice()) {
-      element.setAttribute('readonly', 'true');
-    }
-  });
+    element.setAttribute('inputmode', 'none');
+    element.setAttribute('autocomplete', 'off');
+    // Manter readonly para prevenir que o teclado nativo seja disparado.
+    // O teclado personalizado escreve diretamente no value do input.
+    element.setAttribute('readonly', 'true');
+    // Marcar para identificação futura (CSS/JS)
+    element.setAttribute('data-prevent-native-keyboard', 'true');
 }

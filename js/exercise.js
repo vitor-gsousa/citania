@@ -192,25 +192,30 @@ export function generateNewExercise(DOM, state) {
       // Procurar inputs inline na visualização de frações
       const fractionInputs = DOM.exerciseArea.querySelectorAll('.fraction-missing-input');
       if (fractionInputs.length > 0) {
-        // Focar no primeiro input (numerador ou único input)
+        // Preparar o primeiro input (numerador ou único input) sem forçar focus em mobile
         const firstInput = fractionInputs[0];
         preventMobileKeyboard(firstInput);
-        safeFocus(firstInput);
-        
-        // Mostrar teclado personalizado para inputs de frações
+        // Mostrar teclado personalizado, mas só focar em ambientes desktop ou quando forçado
+        if (!firstInput.hasAttribute('data-prevent-native-keyboard')) {
+          safeFocus(firstInput);
+        } else {
+          // Em mobile com teclado personalizado, evitar focus direto para impedir teclado nativo.
+          // Marcar como ativo para que o teclado personalizado escreva nele.
+          firstInput.setAttribute('data-active', 'true');
+        }
         DOM.customKeyboard.classList.remove("hidden");
-        
-        // Adicionar eventos para todos os inputs de frações
+
+        // Adicionar eventos para todos os inputs de frações (abrir teclado personalizado)
         fractionInputs.forEach(input => {
-          // Adicionar evento para mostrar teclado quando tocar no input
           input.addEventListener('focus', () => {
             DOM.customKeyboard.classList.remove("hidden");
           });
-          
-          // Prevenir que o teclado nativo apareça em dispositivos móveis
-          input.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            input.focus();
+          // Em vez de touchstart que pode provocar comportamento inconsistente, usar pointerdown para rastrear interação sem prevenir foco nativo aqui.
+          input.addEventListener('pointerdown', (e) => {
+            // Marcar como ativo para que o teclado personalizado direcione a entrada
+            fractionInputs.forEach(inp => inp.removeAttribute('data-active'));
+            input.setAttribute('data-active', 'true');
+            // Não chamar input.focus() diretamente em mobile para não abrir teclado nativo; o custom keyboard gerará os valores.
             DOM.customKeyboard.classList.remove("hidden");
           });
         });

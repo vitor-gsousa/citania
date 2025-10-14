@@ -222,7 +222,12 @@ export function initEventListeners(DOM, state) {
         nextInput.setAttribute('data-active', 'true');
 
         // Dar foco no próximo input imediatamente
-        nextInput.focus();
+        // Evitar abrir o teclado nativo em mobile se o input estiver marcado para prevenir
+        if (nextInput.hasAttribute && nextInput.hasAttribute('data-prevent-native-keyboard')) {
+          safeFocus(nextInput);
+        } else {
+          nextInput.focus();
+        }
 
         // Atualizar targetInput para o próximo input para evitar conflitos de foco
         targetInput = nextInput;
@@ -245,7 +250,12 @@ export function initEventListeners(DOM, state) {
     // Se for um input de fração, mantém o foco nele e atualiza o rastreamento
     if (targetInput.classList.contains('fraction-missing-input')) {
       activeFractionInput = targetInput;
-      targetInput.focus();
+      // Evitar foco nativo em mobile quando estiver prevenindo teclado
+      if (targetInput.hasAttribute && targetInput.hasAttribute('data-prevent-native-keyboard')) {
+        safeFocus(targetInput);
+      } else {
+        targetInput.focus();
+      }
       // Garantir que está marcado como ativo
       fractionInputs.forEach(input => input.removeAttribute('data-active'));
       targetInput.setAttribute('data-active', 'true');
@@ -276,14 +286,14 @@ export function initEventListeners(DOM, state) {
       
       [...fractionInputs, ...inlineInputs].forEach(input => {
         // Remover listeners existentes para evitar duplicação
-        input.removeEventListener('focus', handleFractionFocus);
-        input.removeEventListener('click', handleFractionFocus);
-        input.removeEventListener('touchstart', handleFractionFocus);
+  input.removeEventListener('focus', handleFractionFocus);
+  input.removeEventListener('click', handleFractionFocus);
+  input.removeEventListener('pointerdown', handleFractionFocus);
         
-        // Adicionar novos listeners
-        input.addEventListener('focus', handleFractionFocus);
-        input.addEventListener('click', handleFractionFocus);
-        input.addEventListener('touchstart', handleFractionFocus);
+  // Adicionar novos listeners
+  input.addEventListener('focus', handleFractionFocus);
+  input.addEventListener('click', handleFractionFocus);
+  input.addEventListener('pointerdown', handleFractionFocus);
       });
     });
 
