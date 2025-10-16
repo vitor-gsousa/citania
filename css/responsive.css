@@ -34,8 +34,8 @@
     }
 
     #theme-toggle {
-        width: 36px;
-        height: 36px;
+        width: 2.25rem;
+        height: 2.25rem;
         font-size: 1rem;
     }
 
@@ -50,7 +50,7 @@
     }
 
     .card {
-        min-height: 100px;
+        min-height: 6.25rem;
         padding: 0.75rem;
     }
 
@@ -62,7 +62,7 @@
     button {
         padding: 0.625rem;
         font-size: 0.875rem;
-        min-height: 40px;
+        min-height: 2.5rem;
     }
 
     .custom-keyboard {
@@ -71,8 +71,8 @@
     }
 
     .key {
-        min-width: 32px;
-        height: 36px;
+        min-width: 2rem;
+        height: 2.25rem;
         font-size: 0.9rem;
     }
 }
@@ -107,8 +107,8 @@
     #theme-toggle {
         position: sticky;
         top: max(0.75rem, env(safe-area-inset-top, 0.75rem));
-        width: 44px;
-        height: 44px;
+        width: 2.75rem;
+        height: 2.75rem;
         font-size: 1.1rem;
         z-index: 100;
         background-color: var(--main-bg-color);
@@ -145,7 +145,7 @@
     }
 
     .card {
-        min-height: 120px;
+        min-height: 7.5rem;
         padding: 1rem;
     }
 
@@ -287,8 +287,8 @@
     }
 
     .key {
-        height: 44px; /* Altura de toque acessível */
-        min-width: 40px;
+        height: 2.75rem; /* Altura de toque acessível */
+        min-width: 2.5rem;
         flex: 1 1 40px;
         font-size: 1.1rem;
     }
@@ -322,8 +322,8 @@
     #theme-toggle {
         position: sticky;
         top: max(0.75rem, env(safe-area-inset-top, 0.75rem));
-        width: 44px;
-        height: 44px;
+        width: 2.75rem;
+        height: 2.75rem;
         font-size: 1.1rem;
         z-index: 100;
         background-color: var(--main-bg-color);
@@ -360,7 +360,7 @@
     }
 
     .card {
-        min-height: 140px;
+        min-height: 8.75rem;
         padding: 1.25rem;
     }
 
@@ -406,8 +406,8 @@
 
     .custom-keyboard {
         margin-top: 0.75rem;
-        max-width: min(320px, 100%);
-        width: min(320px, 100%);
+        max-width: min(20rem, 100%);
+        width: min(20rem, 100%);
         padding: 0 0.5rem;
         box-sizing: border-box;
     }
@@ -439,7 +439,7 @@
         margin: 0.5rem 0;
         padding: 0.875rem;
         font-size: 1rem;
-        min-height: 48px;
+        min-height: 3rem;
     }
 
     #check-button,
@@ -497,8 +497,8 @@
     }
 
     .key {
-        height: 44px;
-        min-width: 40px;
+        height: 2.75rem;
+        min-width: 2.5rem;
         flex: 1 1 40px;
         font-size: 1.1rem;
     }
@@ -514,7 +514,7 @@
         padding: 1.5rem;
         margin: 1rem auto;
         width: 95%;
-        max-width: 900px;
+        max-width: 56.25rem;
     }
 
     h1 {
@@ -531,27 +531,27 @@
     }
 
     .card {
-        min-height: 140px;
+        min-height: 8.75rem;
         padding: 1.2rem;
     }
 
     #progress-section {
-        max-width: 700px;
+        max-width: 43.75rem;
     }
 
     .exercise-container {
-        max-width: 450px;
+        max-width: 28.125rem;
         margin: 2rem auto;
     }
 
     #check-button,
     #next-button {
-        max-width: 350px;
+        max-width: 21.875rem;
         margin: 0.75rem auto;
     }
 
     input {
-        max-width: 350px;
+        max-width: 21.875rem;
         margin: 0 auto 1rem;
     }
 
@@ -561,21 +561,21 @@
     }
 
     .custom-keyboard {
-        max-width: 350px;
+        max-width: 21.875rem;
     }
 }
 
 /* Desktops e ecrãs grandes (1025px+) */
 @media (min-width: 1025px) {
     .exercise-container {
-        max-width: 400px;
+        max-width: 25rem;
         margin: 2rem auto;
     }
 
     #check-button,
     #next-button {
         width: 100%;
-        max-width: 300px;
+        max-width: 18.75rem;
         margin: 0.75rem auto;
     }
 
@@ -585,7 +585,7 @@
     }
 
     input {
-        max-width: 350px;
+        max-width: 21.875rem;
         margin: 0 auto 1rem;
     }
 }

@@ -5,10 +5,10 @@ main {
     padding: 2rem;
     margin: 1rem auto;
     width: 90%;
-    max-width: 960px;
+    max-width: 60rem;
     border-radius: 15px;
     box-shadow: 0 4px 15px rgb(0 0 0 / 10%);
-    min-height: 400px;
+    min-height: 25rem;
     transition: min-height var(--transition-medium) var(--easing-standard);
 }
 
@@ -23,7 +23,7 @@ main {
 }
 
 .header-inner {
-    max-width: 960px;
+    max-width: 60rem;
     margin: 0 auto;
     padding: .5rem 1rem;
     display: flex;
@@ -33,7 +33,7 @@ main {
 }
 
 /* theme button dentro do header */
-.app-header #theme-toggle { position: static; width: 40px; height: 40px; border-radius: 50%; margin: 0; }
+.app-header #theme-toggle { position: static; width: 2.5rem; height: 2.5rem; border-radius: 50%; margin: 0; }
 
 /* gamification bar (navbar group) */
 .app-header .gamification-bar {
@@ -82,8 +82,8 @@ main {
     /* botão tema com largura fixa */
     #theme-toggle {
         flex-shrink: 0; /* não reduz */
-        width: 40px;
-        height: 40px;
+        width: 2.5rem;
+        height: 2.5rem;
     }
 
     /* botão utilizador com largura flexível mas com mínimo */

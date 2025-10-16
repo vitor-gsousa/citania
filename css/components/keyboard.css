@@ -1,11 +1,11 @@
-.custom-keyboard { margin-top: 1rem; width: 100%; max-width: 300px; margin-left: auto; margin-right: auto; }
+.custom-keyboard { margin-top: 1rem; width: 100%; max-width: 18.75rem; margin-left: auto; margin-right: auto; }
 
 .keyboard-row { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem; }
 
 .key {
     flex: 1;
-    min-width: 50px;
-    height: 50px;
+    min-width: 3.125rem;
+    height: 3.125rem;
     border: 1px solid var(--border-color);
     background: var(--main-bg-color);
     color: var(--text-color);

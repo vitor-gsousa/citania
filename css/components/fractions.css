@@ -62,8 +62,8 @@
     display: flex;
     border: 2px solid var(--primary-color);
     border-radius: 4px;
-    height: 40px;
-    min-width: 200px;
+    height: 2.5rem;
+    min-width: 12.5rem;
     overflow: hidden;
 }
 
@@ -101,8 +101,8 @@
 }
 
 .fraction-circle {
-    width: 120px;
-    height: 120px;
+    width: 7.5rem;
+    height: 7.5rem;
     border-radius: 50%;
     border: 3px solid var(--primary-color);
     position: relative;
@@ -401,13 +401,13 @@
     }
 
     .fraction-bar {
-        min-width: 150px;
-        height: 30px;
+        min-width: 9.375rem;
+        height: 1.875rem;
     }
 
     .fraction-circle {
-        width: 80px;
-        height: 80px;
+        width: 5rem;
+        height: 5rem;
     }
 
     .fraction-operation {
@@ -448,12 +448,12 @@
     /* Teclado personalizado otimizado para frações em tablets */
     .custom-keyboard {
         margin-top: 0.8rem;
-        max-width: 300px;
+        max-width: 18.75rem;
     }
 
     .key {
-        min-width: 45px;
-        height: 45px;
+        min-width: 2.8125rem;
+        height: 2.8125rem;
         font-size: 1.1rem;
     }
 }
@@ -483,13 +483,13 @@
     }
 
     .fraction-bar {
-        min-width: 100px;
-        height: 20px;
+        min-width: 6.25rem;
+        height: 1.25rem;
     }
 
     .fraction-circle {
-        width: 50px;
-        height: 50px;
+        width: 3.125rem;
+        height: 3.125rem;
     }
 
     .fraction-legend {
@@ -540,7 +540,7 @@
     /* Teclado personalizado otimizado para frações em móveis pequenos */
     .custom-keyboard {
         margin-top: 0.5rem;
-        max-width: 260px;
+        max-width: 16.25rem;
         padding: 0 0.3rem;
     }
 
@@ -550,8 +550,8 @@
     }
 
     .key {
-        min-width: 40px;
-        height: 40px;
+        min-width: 2.5rem;
+        height: 2.5rem;
         font-size: 1rem;
         border-radius: 6px;
     }

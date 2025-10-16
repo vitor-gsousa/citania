@@ -18,7 +18,7 @@
     font-weight: 600;
     transition: transform var(--transition-medium) var(--easing-standard), box-shadow var(--transition-medium) var(--easing-standard), filter var(--transition-medium) var(--easing-standard);
     text-align: center;
-    min-height: 150px;
+    min-height: 9.375rem;
     border: 2px solid transparent;
     box-shadow: 0 4px 12px rgb(67 56 202 / 15%);
 }
@@ -53,8 +53,8 @@
 
 /* Imagens SVG externas usadas como ícones devem herdar a cor do texto e ter 75px */
 img.card-icon {
-    width: 75px;
-    height: 75px;
+    width: 4.6875rem;
+    height: 4.6875rem;
     vertical-align: middle;
     color: inherit; /* tenta garantir que currentColor no SVG resolve corretamente */
 }
