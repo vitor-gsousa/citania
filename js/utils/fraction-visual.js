@@ -228,10 +228,15 @@ export function createFractionOperation(fraction1, fraction2, operator, result, 
     const resultVisual = createFractionVisual(result, options.visualType || 'notation', options.resultOptions);
     container.appendChild(resultVisual);
   } else {
-    // Placeholder para resposta
+    // Placeholder meramente visual – evita classes de input para não interferir com o teclado personalizado
     const placeholder = document.createElement('div');
-    placeholder.className = 'fraction-visual';
-    placeholder.innerHTML = '<span class="fraction-missing-input" placeholder="?/?"></span>';
+    placeholder.className = 'fraction-visual fraction-placeholder';
+
+    const placeholderSlot = document.createElement('span');
+    placeholderSlot.className = 'fraction-placeholder-slot';
+    placeholderSlot.textContent = '?/?';
+
+    placeholder.appendChild(placeholderSlot);
     container.appendChild(placeholder);
   }
   

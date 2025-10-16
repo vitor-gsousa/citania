@@ -1,4 +1,4 @@
-const CACHE_NAME = "citania-matematica-v13";
+const CACHE_NAME = "citania-matematica-v14";
 const urlsToCache = [
   "/",
   "/index.html",
