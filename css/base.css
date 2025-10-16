@@ -16,6 +16,7 @@ body {
     transition: background-color 0.3s, color 0.3s;
     word-wrap: break-word;           /* Quebra texto longo */
     overflow-wrap: break-word;       /* Suporte moderno */
+    position: relative;              /* Contexto de posicionamento para elementos absolute */
 }
 
 /* headings */

@@ -12,6 +12,9 @@
     font-weight: 500;
     box-shadow: 0 2px 5px rgb(0 0 0 / 5%);
     z-index: 5;
+    max-width: calc(100% - 2rem);  /* Previne overflow fora do viewport */
+    overflow: hidden;              /* Garante conteúdo contido */
+    text-overflow: ellipsis;       /* Trunca com elipsis se necessário */
 }
 #score-container span { white-space: nowrap; }
 #correct-count { color: var(--correct-color); font-weight: bold; text-shadow: 0 0 2px rgb(255 255 255 / 80%); }
