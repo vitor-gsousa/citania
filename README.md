@@ -10,7 +10,7 @@ Uma aplicação web interativa de aprendizagem de matemática, gamificada e insp
 Citânia é uma Progressive Web App (PWA) centrada em Curiosidades Matemáticas. A cada visita, apresentamos factos, padrões e pequenas histórias sobre matemática que despertam a curiosidade e convidam à descoberta. Em paralelo, oferecemos exercícios curtos e acessíveis para praticar conceitos fundamentais — com um toque de gamificação (pontos, medalhas e níveis) para motivar a progressão.
 
 ### 🎯 Objetivos
- 
+
 - Tornar o estudo de matemática mais envolvente e divertido
 - Utilizar gamificação para motivar a prática contínua
 - Proporcionar feedback imediato e explicações educativas
@@ -29,22 +29,22 @@ Citânia é uma Progressive Web App (PWA) centrada em Curiosidades Matemáticas.
 A aplicação oferece mais de 6 tipos de exercícios, organizados por áreas:
 
 - Área: Aritmética
-   - **➕➖ Adição e Subtração**
-   - **✖️➗ Multiplicação e Divisão**
-   - **🍰 Operações com Frações**
-   - **📊 Frações para Decimais**
-   - **🧩 Decomposição em Fatores Primos**
-   - **🔗 Máximo Divisor Comum (MDC)**
-   - **📈 Mínimo Múltiplo Comum (MMC)**
-   - **💥 Multiplicação de Potências**
-   - **✂️ Divisão de Potências**
+  - **➕➖ Adição e Subtração**
+  - **✖️➗ Multiplicação e Divisão**
+  - **🍰 Operações com Frações**
+  - **📊 Frações para Decimais**
+  - **🧩 Decomposição em Fatores Primos**
+  - **🔗 Máximo Divisor Comum (MDC)**
+  - **📈 Mínimo Múltiplo Comum (MMC)**
+  - **💥 Multiplicação de Potências**
+  - **✂️ Divisão de Potências**
 
 - Área: Geometria (em desenvolvimento)
-   - Área e Perímetro (brevemente)
-   - Triângulos (brevemente)
+  - Área e Perímetro (brevemente)
+  - Triângulos (brevemente)
 
 - Área: Álgebra (em desenvolvimento)
-   - Equações (brevemente)
+  - Equações (brevemente)
 
 - Área: Probabilidade (em desenvolvimento)
 
@@ -94,82 +94,88 @@ A aplicação oferece mais de 6 tipos de exercícios, organizados por áreas:
 
 ## 📂 Estrutura do Projeto
 
-```
-citania/
-├── index.html
-├── manifest.json
-├── sw.js
-├── package.json
-├── vercel.json
-├── deploy-check.ps1
-├── deploy-check.sh
-├── verify-pwa.js
-├── verify-opengraph.js
-├── README.md
-├── css/
-│   ├── main.css
-│   ├── variables.css
-│   ├── base.css
-│   ├── layout.css
-│   ├── responsive.css
-│   └── components/
-│       ├── buttons.css
-│       ├── cards.css
-│       ├── keyboard.css
-│       ├── progress-score.css
-│       ├── achievements.css
-│       ├── fractions.css
-│       ├── curiosidade.css
-│       └── narrative.css
-├── js/
-│   ├── app.js
-│   ├── events.js
-│   ├── exercise.js
-│   ├── progress.js
-│   ├── theme.js
-│   ├── ui.js
-│   ├── config/
-│   │   └── exercise-types.js
-│   ├── examples/
-│   │   ├── fraction-examples.js
-│   │   └── template-examples.js
-│   └── features/
-│       ├── gamification.js
-│       └── pwa-install.js
-├── modules/
-│   ├── arithmetic/
-│   │   ├── fractions.js
-│   │   ├── fractionToDecimal.js
-│   │   ├── gcd.js
-│   │   ├── lcm.js
-│   │   ├── mulDiv.js
-│   │   ├── powerDivision.js
-│   │   ├── powerMultiplication.js
-│   │   ├── primeFactorization.js
-│   │   └── progression.js
-│   └── utils/
-│       ├── math-facts.js
-│       ├── math.js
-│       └── rand.js
-├── services/
-│   └── sounds.js
-├── templates/
-│   ├── exercise-card.js
-│   ├── template-manager.js
-│   └── theme-section.js
-├── utils/
-│   ├── fraction-visual.js
-│   ├── icon-utils.js
-│   ├── mobile-utils.js
-│   └── storage.js
-├── audio/
-│   ├── correct.opus
-│   ├── incorrect.opus
-│   └── levelup.opus
-├── images/
-│   └── icons/
-└── vendor/
-   └── lottie.min.js
+```text
+📂citania/
+├── 📄index.html
+├── 📄manifest.json
+├── 📄sw.js
+├── 📄package.json
+├── 📄vercel.json
+├── 📄deploy-check.ps1
+├── 📄deploy-check.sh
+├── 📄verify-pwa.js
+├── 📄verify-opengraph.js
+├── 📄README.md
+├── 📂css/
+│   ├── 📄main.css
+│   ├── 📄variables.css
+│   ├── 📄base.css
+│   ├── 📄layout.css
+│   ├── 📄responsive.css
+│   └── 📂components/
+│       ├── 📄buttons.css
+│       ├── 📄cards.css
+│       ├── 📄keyboard.css
+│       ├── 📄progress-score.css
+│       ├── 📄achievements.css
+│       ├── 📄fractions.css
+│       ├── 📄curiosidade.css
+│       └── 📄narrative.css
+├── 📂js/
+│   ├── 📄app.js
+│   ├── 📄events.js
+│   ├── 📄exercise.js
+│   ├── 📄progress.js
+│   ├── 📄theme.js
+│   ├── 📄ui.js
+│   ├── 📂config/
+│   │   └── 📄exercise-types.js
+│   ├── 📂examples/
+│   │   ├── 📄fraction-examples.js
+│   │   └── 📄template-examples.js
+│   └── 📂features/
+│       ├── 📄gamification.js
+│       └── 📄pwa-install.js
+├── 📂modules/
+│   ├── 📂arithmetic/
+│   │   ├── 📄fractions.js
+│   │   ├── 📄fractionToDecimal.js
+│   │   ├── 📄gcd.js
+│   │   ├── 📄lcm.js
+│   │   ├── 📄mulDiv.js
+│   │   ├── 📄powerDivision.js
+│   │   ├── 📄powerMultiplication.js
+│   │   ├── 📄primeFactorization.js
+│   │   └── 📄progression.js
+│   └── 📂utils/
+│       ├── 📄math-facts.js
+│       ├── 📄math.js
+│       └── 📄rand.js
+├── 📂services/
+│   └── 📄sounds.js
+├── 📂templates/
+│   ├── 📄exercise-card.js
+│   ├── 📄template-manager.js
+│   └── 📄theme-section.js
+├── 📂utils/
+│   ├── 📄fraction-visual.js
+│   ├── 📄icon-utils.js
+│   ├── 📄mobile-utils.js
+│   └── 📄storage.js
+├── 📂audio/
+│   ├── 🔊correct.opus
+│   ├── 🔊incorrect.opus
+│   └── 🔊levelup.opus
+├── 📂images/
+│   ├── 🖼️ogcitania.jpg
+│   └── 📂icons/
+│       ├── 🖼️favicon.ico
+│       ├── 🖼️icon-192x192.png
+│       ├── 🖼️icon-256x256.png
+│       ├── 🖼️icon-384x384.png
+│       └── 🖼️icon-512x512.png
+└── 📂vendor/
+    └── 📄lottie.min.js
 ```
 
 ## 🚀 Como Usar
@@ -177,17 +183,20 @@ citania/
 ### Instalação Local
 
 1. Clone o repositório:
+
    ```bash
    git clone https://github.com/vitor-gsousa/citania.git
    cd citania
    ```
 
 2. Instale as dependências:
+
    ```bash
    npm install
    ```
 
 3. **Construa os estilos CSS** (se modificou arquivos CSS modulares):
+
    ```bash
    npm run build:css
    # ou diretamente com PowerShell:
@@ -196,11 +205,13 @@ citania/
 
 4. Abra o ficheiro `index.html` num navegador web moderno:
    - Pode usar um servidor local simples:
+
      ```bash
      npm run dev  # servidor na porta 8000
      # ou
      npx http-server
      ```
+
    - Aceda a `http://localhost:8000`
 
 #### Usar ícones localmente (opcional)
@@ -255,6 +266,7 @@ A aplicação usa esta rica herança cultural como tema para tornar a aprendizag
 ### Contribuições
 
 Contribuições são bem-vindas! Sinta-se à vontade para:
+
 - Reportar bugs ou sugerir melhorias através de issues
 - Fazer fork do projeto e submeter pull requests
 - Melhorar a documentação ou traduzir para outros idiomas
