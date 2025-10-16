@@ -7,27 +7,50 @@ Uma aplicação web interativa de aprendizagem de matemática, gamificada e insp
 
 ## 📖 Sobre o Projeto
 
-Citânia é uma Progressive Web App (PWA) que transforma a aprendizagem de matemática numa missão arqueológica divertida. Os utilizadores exploram conceitos matemáticos fundamentais enquanto descobrem os segredos da cidade antiga, ganhando pontos, medalhas e avançando de nível.
+Citânia é uma Progressive Web App (PWA) centrada em Curiosidades Matemáticas. A cada visita, apresentamos factos, padrões e pequenas histórias sobre matemática que despertam a curiosidade e convidam à descoberta. Em paralelo, oferecemos exercícios curtos e acessíveis para praticar conceitos fundamentais — com um toque de gamificação (pontos, medalhas e níveis) para motivar a progressão.
 
 ### 🎯 Objetivos
-
+ 
 - Tornar o estudo de matemática mais envolvente e divertido
 - Utilizar gamificação para motivar a prática contínua
 - Proporcionar feedback imediato e explicações educativas
-- Conectar a aprendizagem com o património cultural português
+- Despertar a curiosidade através de factos e padrões matemáticos curtos
 
 ## ✨ Funcionalidades
 
-### 🧮 Temas de Exercícios
+### 🧠 Curiosidade Matemática
 
-A aplicação oferece 6 tipos diferentes de exercícios matemáticos:
+- Apresentação rotativa de curiosidades (factos, padrões e histórias curtas)
+- Controles para gerar nova curiosidade e pausar/retomar a rotação
+- Ajustes responsivos e modo escuro para leitura confortável
 
-1. **📊 Frações para Decimais** - Converte frações em números decimais
-2. **🧩 Decomposição em Fatores Primos** - Decompõe números em fatores primos
-3. **🔗 Máximo Divisor Comum (MDC)** - Calcula o MDC entre dois números
-4. **📈 Mínimo Múltiplo Comum (MMC)** - Determina o MMC entre dois números
-5. **💥 Multiplicação de Potências** - Aplica regras de multiplicação de potências
-6. **✂️ Divisão de Potências** - Aplica regras de divisão de potências
+### 🧮 Temas de Exercícios (por Áreas)
+
+A aplicação oferece mais de 6 tipos de exercícios, organizados por áreas:
+
+- Área: Aritmética
+   - **➕➖ Adição e Subtração**
+   - **✖️➗ Multiplicação e Divisão**
+   - **🍰 Operações com Frações**
+   - **📊 Frações para Decimais**
+   - **🧩 Decomposição em Fatores Primos**
+   - **🔗 Máximo Divisor Comum (MDC)**
+   - **📈 Mínimo Múltiplo Comum (MMC)**
+   - **💥 Multiplicação de Potências**
+   - **✂️ Divisão de Potências**
+
+- Área: Geometria (em desenvolvimento)
+   - Área e Perímetro (brevemente)
+   - Triângulos (brevemente)
+
+- Área: Álgebra (em desenvolvimento)
+   - Equações (brevemente)
+
+- Área: Probabilidade (em desenvolvimento)
+
+- Área: Estatística (em desenvolvimento)
+
+- Área: Trigonometria (em desenvolvimento)
 
 ### 🎮 Sistema de Gamificação
 
@@ -39,7 +62,7 @@ A aplicação oferece 6 tipos diferentes de exercícios matemáticos:
   - 🎯 **À Primeira** - Acerta na primeira tentativa
   - 📚 **Estudioso** - Atinge o nível 3
 - **Níveis**: Sistema de progressão com dificuldade crescente
-- **Narrativa**: História imersiva baseada na Citânia de Sanfins
+- **Curiosidades**: Exploração de curiosidades matemáticas ao longo do uso
 - **Leaderboard**: Classifica os melhores jogadores
 - **Séries (Streaks)**: Mantém uma sequência de respostas corretas
 
@@ -191,13 +214,13 @@ pwsh ./tools/download-material-symbols.ps1
 
 Depois de descarregares a fonte, faz um hard-refresh (Ctrl+F5) no browser para garantir que a nova fonte é usada. O CSS da aplicação tenta carregar primeiro a cópia local e recorre ao serviço remoto como fallback.
 
-### Como Jogar
+### Como Usar
 
-1. **Escolhe um Tema**: No menu principal, seleciona um dos 6 tipos de exercícios
+1. **Escolhe uma Área**: No menu principal, seleciona uma área (ex.: Aritmética) e depois um tipo de exercício
 2. **Responde às Questões**: Completa 8 exercícios por ronda
 3. **Ganha Pontos e Medalhas**: Acerta para ganhar pontos e conquistar badges
 4. **Avança de Nível**: Após cada ronda, progride para níveis mais desafiantes
-5. **Descobre a História**: Acompanha a narrativa sobre a Citânia de Sanfins
+5. **Explora Curiosidades**: Consulta e gere novas curiosidades matemáticas
 
 ### Atalhos de Teclado
 
@@ -227,7 +250,7 @@ A aplicação usa esta rica herança cultural como tema para tornar a aprendizag
 - Sistema de conquistas mais elaborado
 - Exportação de progresso e estatísticas
 - Integração com plataformas educativas
-- Conteúdo adicional sobre a Citânia de Sanfins
+- Mais coleções de curiosidades matemáticas (por tópicos/níveis)
 
 ### Contribuições
 
@@ -249,5 +272,3 @@ Este projeto está disponível para uso educativo e de aprendizagem.
 ---
 
 **Feito com ❤️ para tornar a matemática mais divertida!**
-
-🏛️ *"Cada desafio matemático revela mais segredos da Citânia de Sanfins!"*
