@@ -131,11 +131,16 @@
         display: flex;
         gap: 0.25rem;
         flex-wrap: wrap;
+        overflow-x: auto;                    /* Scroll horizontal se necessário */
+        overflow-y: hidden;                  /* Sem scroll vertical */
+        -webkit-overflow-scrolling: touch;   /* Smooth scroll iOS */
     }
 
     #score-container span {
         margin: 0 0.25rem;
         font-size: 0.75rem;
+        white-space: nowrap;                 /* Mantém número junto */
+        word-break: keep-all;                /* Não quebra números */
     }
 
     .card-container {
@@ -174,13 +179,15 @@
         order: -1; /* Colocar no topo em tablets também */
         align-items: center; /* Alinhar verticalmente */
         flex-wrap: wrap;
+        min-width: 0;  /* Permite que filhos encolham */
     }
 
     #level-badge {
         font-size: 0.75rem; /* Mais compacto para mobile */
         padding: 0.3rem 0.6rem;
-        flex-shrink: 0; /* Evitar que encolha */
+        flex-shrink: 1;    /* Permite encolher se necessário */
         align-self: center; /* Centralizar o badge em tablet */
+        min-width: 0;      /* Permite texto quebrar */
     }
 
     #current-level {
@@ -209,6 +216,9 @@
         font-size: 1.1rem;
         margin-bottom: 1.5rem;
         padding: 0;
+        word-wrap: break-word;           /* Quebra texto longo */
+        overflow-wrap: break-word;       /* Suporte moderno */
+        word-break: break-word;          /* Fallback */
     }
 
     input {

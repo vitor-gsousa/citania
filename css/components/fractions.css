@@ -403,11 +403,15 @@
     .fraction-bar {
         min-width: 9.375rem;
         height: 1.875rem;
+        max-width: 100%;              /* Garante fit em mobile */
+        overflow-x: auto;             /* Scroll se necessário */
+        -webkit-overflow-scrolling: touch;
     }
 
     .fraction-circle {
         width: 5rem;
         height: 5rem;
+        max-width: 100%;              /* Responsive */
     }
 
     .fraction-operation {
@@ -485,11 +489,15 @@
     .fraction-bar {
         min-width: 6.25rem;
         height: 1.25rem;
+        max-width: 100%;              /* Garante fit em mobile muito pequeno */
+        overflow-x: auto;             /* Scroll se necessário */
+        -webkit-overflow-scrolling: touch;
     }
 
     .fraction-circle {
         width: 3.125rem;
         height: 3.125rem;
+        max-width: 100%;              /* Responsive em extra-small */
     }
 
     .fraction-legend {

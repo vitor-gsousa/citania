@@ -94,6 +94,7 @@ main {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        word-break: break-word;  /* Quebra como fallback */
     }
 
     /* pontos e badges ocupam espaço restante */

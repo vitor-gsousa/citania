@@ -20,6 +20,9 @@
     min-height: 5.6rem; /* Altura fixa para ~2 linhas (padding + 2 * line-height) para evitar layout shift */
     max-height: 8rem;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;  /* Smooth scroll iOS */
+    word-wrap: break-word;              /* Quebra texto longo */
+    overflow-wrap: break-word;          /* Suporte moderno */
 
     /* Smooth scrollbar styling */
     scrollbar-width: thin;

@@ -1,8 +1,10 @@
 .card-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(clamp(150px, 100%, 180px), 1fr));
     gap: 1rem;
     margin-top: 2rem;
+    overflow-x: auto;                /* Scroll horizontal em mobile se necessário */
+    -webkit-overflow-scrolling: touch;
 }
 
 .card {

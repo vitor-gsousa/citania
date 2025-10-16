@@ -14,12 +14,18 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
+    word-wrap: break-word;           /* Quebra texto longo */
+    overflow-wrap: break-word;       /* Suporte moderno */
 }
 
 /* headings */
 h1,h2,h3,h4,h5,h6 {
     color: var(--text-color);
     font-weight: 700;
+    word-wrap: break-word;           /* Quebra texto longo */
+    overflow-wrap: break-word;       /* Suporte moderno */
+    word-break: break-word;          /* Fallback */
+    hyphens: auto;                   /* Hífenes se suportado */
 }
 
 /* Garante herança de cor */

@@ -1,10 +1,26 @@
-.custom-keyboard { margin-top: 1rem; width: 100%; max-width: 18.75rem; margin-left: auto; margin-right: auto; }
+.custom-keyboard { 
+    margin-top: 1rem; 
+    width: 100%; 
+    max-width: 18.75rem; 
+    margin-left: auto; 
+    margin-right: auto; 
+    overflow-x: auto;                /* Scroll se necessário em mobile */
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
 
-.keyboard-row { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+.keyboard-row { 
+    display: flex; 
+    justify-content: center; 
+    gap: 0.5rem; 
+    margin-bottom: 0.5rem; 
+    min-width: min-content;           /* Garante que não encolhe demais */
+}
 
 .key {
     flex: 1;
     min-width: 3.125rem;
+    max-width: 4.5rem;                /* Evita que cresça demais */
     height: 3.125rem;
     border: 1px solid var(--border-color);
     background: var(--main-bg-color);
@@ -15,6 +31,8 @@
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+    overflow: hidden;                 /* Evita que texto saia */
+    text-overflow: ellipsis;          /* Trunca se necessário */
 }
 
 /* Mobile-specific keyboard adjustments kept in responsive.css */
