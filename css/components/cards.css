@@ -45,7 +45,7 @@
     text-rendering: optimizelegibility;
 }
 
-@media (width <= 480px) {
+@media (max-width: 480px) {
     .material-symbols-outlined.card-icon {
         font-size: clamp(28px, 9vw, 40px); /* slightly smaller caps on very small screens */
     }

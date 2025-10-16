@@ -50,7 +50,7 @@ main {
 }
 
 /* Ajustes responsivos do header */
-@media (width <= 768px) {
+@media (max-width: 768px) {
     .header-inner {
         max-width: 100% !important;
         width: 100%;
@@ -107,8 +107,22 @@ main {
     }
 }
 
+/* Tablets pequenos e phones grandes (481px a 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .header-inner {
+        padding: .5rem .75rem;
+        gap: .5rem;
+    }
+
+    .user-btn {
+        font-size: 0.9rem;
+        padding: .35rem .6rem;
+        max-width: 110px;
+    }
+}
+
 /* Para ecrãs muito pequenos */
-@media (width <= 480px) {
+@media (max-width: 480px) {
     .header-inner {
         padding: .4rem .5rem; /* menos padding */
         gap: .4rem;

@@ -124,7 +124,7 @@
 }
 
 /* Responsividade móvel para curiosidade */
-@media (width <= 768px) {
+@media (max-width: 768px) {
     .curiosidade-matematica {
         margin: 1rem 0;
         padding: 1rem;
@@ -148,7 +148,7 @@
     }
 }
 
-@media (width <= 480px) {
+@media (max-width: 480px) {
     .curiosidade-matematica {
         padding: 0.8rem;
         padding-right: 3rem;
