@@ -288,6 +288,7 @@ async function initApp() {
     migrateOldProgress();
     await loadGamification();
     renderGamificationBar(DOM);
+    setHeaderHeight(); // Definir altura do header após renderizar
     mostrarNarrativa(state.level);
     
     // 3. Inicializar templates dinâmicos
@@ -444,6 +445,21 @@ async function initApp() {
 
   console.log("App initialized successfully");
 }
+
+// Função para definir a altura do header dinamicamente
+function setHeaderHeight() {
+  const header = document.querySelector('.app-header');
+  if (header) {
+    const height = header.offsetHeight;
+    document.documentElement.style.setProperty('--header-height', height + 'px');
+  }
+}
+
+// Atualizar altura do header em resize e orientação change
+window.addEventListener('resize', setHeaderHeight);
+window.addEventListener('orientationchange', () => {
+  setTimeout(setHeaderHeight, 100); // Pequeno delay para garantir que o layout atualizou
+});
 
 // Ponto de entrada único da aplicação
 document.addEventListener("DOMContentLoaded", initApp);
