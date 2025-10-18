@@ -35,6 +35,7 @@ import {
   showLevelUpUI,
   updateScoreDisplay,
 } from "./ui.js";
+import { updatePageTitle } from "./app.js";
 
 // Mapa de exercícios disponíveis
 export const exercises = {
@@ -144,6 +145,9 @@ export function startExercise(type, DOM, state) {
   updateScoreDisplay(DOM, state);
   generateNewExercise(DOM, state);
   showNarrativePopup(DOM); // Mostra o popup da narrativa em mobile APÓS o exercício estar pronto
+
+  // Atualizar título da página
+  updatePageTitle();
 }
 
 export function generateNewExercise(DOM, state) {

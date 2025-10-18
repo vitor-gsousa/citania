@@ -62,10 +62,9 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
-/* headings */
-h1,h2,h3,h4,h5,h6 {
-    color: var(--text-color);
-    font-weight: 700;
+/* Botão voltar das seções de área */
+.theme-section .close-section {
+    margin: 1rem 0 0 0;
 }
 
 /* Garante herança de cor */

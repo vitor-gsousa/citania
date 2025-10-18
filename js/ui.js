@@ -3,6 +3,8 @@
  * Este módulo é responsável por todas as manipulações diretas do DOM e atualizações da UI.
  * Inclui mostrar/esconder secções, atualizar barras de progresso, feedback, etc.
  */
+import { currentExercise } from "./exercise.js";
+import { updatePageTitle } from "./app.js";
 
 /**
  * Mostra a área de exercício e esconde o menu.
@@ -32,6 +34,11 @@ export function exitExercise(DOM, state) {
   DOM.exerciseArea.classList.add("hidden");
   DOM.summaryArea.classList.add("hidden");
   DOM.menuContainer.classList.remove("hidden");
+
+  // Reset do estado do exercício
+  currentExercise.type = null;
+  currentExercise.attempts = 0;
+  updatePageTitle();
 
   // Restaura estado dos controlos
   DOM.checkButton.style.display = "block";

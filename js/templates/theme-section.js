@@ -26,7 +26,6 @@ export function createThemeSection(areaId, areaData) {
       class="theme-section hidden"
       aria-hidden="true"
     >
-      <h3>${title}</h3>
       ${backButtonHtml}
       <div class="card-container">
         ${exerciseCardsHtml}
@@ -66,7 +65,6 @@ export function createPlaceholderSection(areaId, title, message = "Em breve, nov
       class="theme-section hidden"
       aria-hidden="true"
     >
-      <h3>${title}</h3>
       ${backButtonHtml}
       <div class="card-container">
         <div class="placeholder-message">
@@ -94,7 +92,6 @@ export function createCustomThemeSection(areaId, title, exercises) {
       class="theme-section hidden"
       aria-hidden="true"
     >
-      <h3>${title}</h3>
       ${backButtonHtml}
       <div class="card-container">
         ${exerciseCardsHtml}

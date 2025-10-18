@@ -16,6 +16,8 @@ import normalizeIcons from "./utils/icon-utils.js";
 // Import templates e configuração
 import { initializeTemplates } from "./templates/template-manager.js";
 import { EXERCISE_TYPES } from "./config/exercise-types.js";
+import { getExercisesByArea, getExerciseInfo } from "./config/exercise-types.js";
+import { currentExercise } from "./exercise.js";
 
 // Elementos do DOM
 const DOM = {
@@ -68,12 +70,39 @@ const state = {
   explanationLimit: 5,
   exerciseStartTs: 0,
   streak: 0,
+  currentArea: null,
 };
 
 // Define a constante para a duração da animação, correspondente a var(--transition-medium)
 const ANIMATION_DURATION_MS = 320;
 
-// --- Lógica dos Exercícios ---
+// --- Funções de atualização de título ---
+
+/**
+ * Atualiza o título da página baseado no estado atual
+ */
+export function updatePageTitle() {
+  const pageTitleEl = document.getElementById('page-title');
+  if (!pageTitleEl) return;
+
+  if (!state.currentArea) {
+    // Estado inicial: apenas o título principal
+    pageTitleEl.innerHTML = '<h1>Citânia - Matemática Divertida</h1>';
+  } else if (!currentExercise.type) {
+    // Área selecionada: título principal em h2, nome da área em h1
+    const areaData = getExercisesByArea(state.currentArea);
+    if (areaData) {
+      pageTitleEl.innerHTML = '<h2>Citânia - Matemática Divertida</h2><h1>' + areaData.title + '</h1>';
+    }
+  } else {
+    // Exercício iniciado: nome da área em h2, nome do exercício em h1
+    const areaData = getExercisesByArea(state.currentArea);
+    const exerciseInfo = getExerciseInfo(currentExercise.type);
+    if (areaData && exerciseInfo) {
+      pageTitleEl.innerHTML = '<h2>' + areaData.title + '</h2><h1>' + exerciseInfo.text + '</h1>';
+    }
+  }
+}
 
 // Mostra a secção identificada por id e esconde o menu principal
 export async function showSection(sectionId) {
@@ -82,6 +111,10 @@ export async function showSection(sectionId) {
   const section = document.getElementById(sectionId);
   const mainElement = document.querySelector('main');
   if (!section) return;
+  
+  // Atualizar estado da área atual
+  state.currentArea = sectionId.replace('section-', '');
+  updatePageTitle();
   
   // Preservar altura atual do main durante a transição
   if (mainElement) {
@@ -131,6 +164,10 @@ export async function showThemes() {
   const themesList = document.getElementById("themes");
   const firstThemeCard = themesList?.querySelector('.card[role="button"]');
   const mainElement = document.querySelector('main');
+  
+  // Atualizar estado da área atual
+  state.currentArea = null;
+  updatePageTitle();
   
   // 1. Mover o foco para um elemento seguro ANTES de esconder qualquer coisa.
   // Isto é crucial para resolver o aviso de acessibilidade.
