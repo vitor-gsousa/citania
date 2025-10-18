@@ -1,4 +1,4 @@
-import { VERSION } from "./js/version.js";
+const VERSION = "1.0.20";
 const CACHE_NAME = `citania-matematica-v${VERSION.replace(/\./g, "")}`;
 const urlsToCache = [
   "/",

@@ -1,12 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 
-// Lê a versão do arquivo version.js
-const versionFile = path.join(__dirname, 'js', 'version.js');
-const versionContent = fs.readFileSync(versionFile, 'utf8');
-const versionMatch = versionContent.match(/export const VERSION = "([^"]+)"/);
+// Lê a versão do arquivo sw.js
+const swPath = path.join(__dirname, 'sw.js');
+const swContent = fs.readFileSync(swPath, 'utf8');
+const versionMatch = swContent.match(/const VERSION = "([^"]+)"/);
 if (!versionMatch) {
-  console.error('Versão não encontrada no version.js');
+  console.error('Versão não encontrada no sw.js');
   process.exit(1);
 }
 const version = versionMatch[1];
