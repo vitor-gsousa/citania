@@ -1,6 +1,6 @@
 {
   "name": "citania",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "Citânia - Uma aplicação PWA gamificada para aprendizagem de matemática, inspirada no Castro de Citânia de Sanfins",
   "main": "index.html",
   "scripts": {
