@@ -17,7 +17,7 @@
 
     /* === ANIMATIONS === */
     --transition-fast: 180ms;
-    --transition-medium: 320ms;
+    --transition-medium: 240ms;
     --transition-slow: 480ms;
     --easing-standard: cubic-bezier(.2,.9,.2,1);
 

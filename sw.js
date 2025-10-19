@@ -1,4 +1,4 @@
-const VERSION = "1.0.22";
+const VERSION = "1.0.23";
 const CACHE_NAME = `citania-matematica-v${VERSION.replace(/\./g, "")}`;
 const urlsToCache = [
   "/",

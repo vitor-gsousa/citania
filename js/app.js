@@ -74,7 +74,8 @@ const state = {
 };
 
 // Define a constante para a duração da animação, correspondente a var(--transition-medium)
-const ANIMATION_DURATION_MS = 320;
+// REDUZIDO para melhor responsividade - transições rápidas não prejudicam a UX
+const ANIMATION_DURATION_MS = 240;
 
 // --- Funções de atualização de título ---
 
@@ -123,7 +124,7 @@ export async function showSection(sectionId) {
     mainElement.classList.add('transitioning');
   }
   
-  // Agora esconder a lista de temas e animar a entrada da secção
+  // 1. Animar a saída da lista de temas PRIMEIRO
   if (themesList) {
     console.debug("showSection: hiding themesList", themesList);
     ensureFocusNotInside(themesList);
@@ -131,16 +132,17 @@ export async function showSection(sectionId) {
     await animateHide(themesList);
   }
   
-  // esconder todas as outras sections
+  // 2. esconder todas as outras sections (sem animar, apenas hidden)
   const sections = Array.from(document.querySelectorAll(".theme-section"));
   sections.forEach((s) => {
     if (s !== section) {
       console.debug("showSection: marking aria-hidden on section", s.id || s);
       s.inert = true; // Usar inert
+      s.classList.add("hidden");
     }
   });
   
-  // Mostrar a secção alvo e animar entrada
+  // 3. Mostrar a secção alvo e animar entrada
   section.classList.remove("hidden");
   section.inert = false; // Reativar a secção alvo
   await animateShow(section);
@@ -184,7 +186,7 @@ export async function showThemes() {
     mainElement.classList.add('transitioning');
   }
   
-  // esconder todas as sections com animação e só adicionar .hidden depois
+  // esconder todas as sections com animação AGUARDANDO para ter transição suave ao voltar
   const sections = Array.from(document.querySelectorAll(".theme-section"));
   await Promise.all(
     sections.map(async (s) => {

@@ -41,6 +41,41 @@ p, span, div {
 /* helpers */
 .hidden { display: none !important; }
 
+/* Animation classes para transições entre menus */
+.animating-in {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity var(--transition-medium) var(--easing-standard), 
+                transform var(--transition-medium) var(--easing-standard);
+}
+
+.animating-out {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity var(--transition-medium) var(--easing-standard), 
+                transform var(--transition-medium) var(--easing-standard);
+}
+
+/* Classe para main durante transição entre seções */
+main.transitioning {
+    height: var(--preserved-height, auto);
+    overflow: hidden;
+}
+
+/* Botão close-section sempre responsivo, mesmo durante transições */
+.close-section {
+    pointer-events: auto !important;
+    z-index: 100;
+    position: relative;
+}
+
+/* Botão back-to-menu sempre responsivo, mesmo durante transições */
+#back-to-menu {
+    pointer-events: auto !important;
+    z-index: 100;
+    position: relative;
+}
+
 /* placeholders */
 input::placeholder { color: #6b7280; opacity: 1; }
 .dark-mode input::placeholder { color: #9ca3af; }

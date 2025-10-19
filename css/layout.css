@@ -20,6 +20,7 @@ main {
     background: var(--main-bg-color);
     border-bottom: 1px solid var(--border-color);
     box-shadow: 0 4px 14px rgb(0 0 0 / 6%);
+    min-height: 2.75rem;  /* Evita layout shift */
 }
 
 .header-inner {
@@ -30,6 +31,19 @@ main {
     align-items: center;
     gap: .75rem;
     justify-content: space-between;
+}
+
+/* Estilos para points-pill */
+.points-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    padding: .25rem .5rem;
+    background: var(--score-bg-color);
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
 }
 
 /* theme button dentro do header */
@@ -67,17 +81,18 @@ main {
         max-width: 100% !important;
         width: 100%;
         margin: 0;
-        padding: .5rem .75rem; /* aumentar padding lateral */
+        padding: .35rem .5rem;  /* Reduzido de .5rem .75rem para economizar espaço em mobile */
         box-sizing: border-box;
         display: flex;
         align-items: center;
-        gap: .5rem;
+        gap: .35rem;  /* Reduzido de .5rem */
     }
 
     /* header sem padding extra que limite a barra */
     .app-header {
         padding: 0;
         width: 100%; /* garante largura total */
+        min-height: 2.5rem;  /* Mobile mais compacto que desktop */
     }
 
     /* gamification bar ocupa toda a largura disponível */
@@ -87,7 +102,7 @@ main {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: .5rem;
+        gap: .35rem;  /* Reduzido de .5rem */
         min-width: 0; /* permite shrinking dos elementos filhos */
     }
 
@@ -115,8 +130,14 @@ main {
         display: flex;
         align-items: center;
         justify-content: flex-end; /* alinha à direita */
-        gap: .5rem;
+        gap: .35rem;  /* Reduzido de .5rem */
         min-width: 0;
+    }
+    
+    /* Reduzir pontos-pill em mobile */
+    .points-pill {
+        padding: .2rem .4rem;
+        font-size: 0.8rem;
     }
 }
 
@@ -137,13 +158,18 @@ main {
 /* Para ecrãs muito pequenos */
 @media (max-width: 480px) {
     .header-inner {
-        padding: .4rem .5rem; /* menos padding */
-        gap: .4rem;
+        padding: .25rem .4rem; /* Reduzido ainda mais para ecrãs muito pequenos */
+        gap: .25rem;  /* Reduzido */
     }
 
     .user-btn {
         font-size: 0.85rem;
-        padding: .3rem .5rem;
+        padding: .2rem .35rem;  /* Reduzido de .3rem .5rem */
         max-width: 100px;
+    }
+    
+    .points-pill {
+        padding: .15rem .3rem;
+        font-size: 0.75rem;
     }
 }

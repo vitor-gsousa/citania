@@ -1,8 +1,10 @@
 .card-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(clamp(150px, 100%, 180px), 1fr));
+    grid-auto-rows: minmax(9.375rem, auto);  /* Reserva altura mínima dos cards antes da animação */
     gap: 1rem;
     margin-top: 2rem;
+    padding: 0.5rem;                 /* Espaço para hover effect não cortar cards */
     overflow-x: auto;                /* Scroll horizontal em mobile se necessário */
     -webkit-overflow-scrolling: touch;
 }

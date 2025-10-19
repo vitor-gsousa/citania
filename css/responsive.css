@@ -46,6 +46,7 @@
 
     .card-container {
         grid-template-columns: 1fr;
+        grid-auto-rows: minmax(6.25rem, auto);  /* Sincronizado com .card min-height em ecrãs muito pequenos */
         gap: 0.5rem;
     }
 
@@ -144,6 +145,7 @@
 
     .card-container {
         grid-template-columns: 1fr;
+        grid-auto-rows: minmax(7.5rem, auto);  /* Sincronizado com .card min-height em mobile */
         gap: 0.75rem;
         margin-top: 1rem;
     }
@@ -359,6 +361,7 @@
 
     .card-container {
         grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: minmax(8.75rem, auto);  /* Sincronizado com .card min-height em tablet */
         gap: 1rem;
         margin-top: 1.25rem;
     }
@@ -531,6 +534,7 @@
 
     .card-container {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-auto-rows: minmax(8.75rem, auto);  /* Sincronizado com .card min-height em desktop */
         gap: 1.2rem;
     }
 

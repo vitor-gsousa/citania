@@ -27,12 +27,16 @@ export function showExerciseArea(DOM) {
  * @param {object} DOM - Referências aos elementos do DOM.
  * @param {object} state - O estado global da aplicação.
  */
-export function exitExercise(DOM, state) {
+export async function exitExercise(DOM, state) {
   state.roundProgress = 0;
   updateProgressBar(DOM, state);
 
+  // Iniciar animações sem bloquear - deixar correr em paralelo
+  // Isto permite que o botão seja imediatamente responsivo
   DOM.exerciseArea.classList.add("hidden");
   DOM.summaryArea.classList.add("hidden");
+  
+  // Mostrar menu container imediatamente
   DOM.menuContainer.classList.remove("hidden");
 
   // Reset do estado do exercício
@@ -54,6 +58,7 @@ export function exitExercise(DOM, state) {
   DOM.feedbackEl.textContent = "";
   DOM.feedbackEl.className = "hidden";
 
+  // Scroll em background sem bloquear
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
