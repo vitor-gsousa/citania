@@ -12,6 +12,8 @@ import { migrateOldProgress } from "./progress.js";
 import { applyTheme } from "./theme.js";
 import { initEventListeners } from "./events.js";
 import normalizeIcons from "./utils/icon-utils.js";
+import { initTabNavigation, updatePlayerStats } from "./tab-navigation.js";
+import { initAchievementsPanel } from "./features/achievements-panel.js";
 
 // Import templates e configuração
 import { initializeTemplates } from "./templates/template-manager.js";
@@ -352,6 +354,12 @@ async function initApp() {
 
   // 6. Configurar event listeners dos cards/menus
   initEventListeners(DOM, state);
+
+  // 6.5 Inicializar navegação de abas (footer tabs em mobile)
+  initTabNavigation();
+
+  // 6.6 Inicializar painel de conquistas (desktop)
+  initAchievementsPanel();
 
   // 7. Inicializar funcionalidade de instalação PWA
   initPWAInstall();

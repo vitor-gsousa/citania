@@ -1,11 +1,10 @@
-/* Achievements panel (sliding from right on desktop, bottom on mobile) */
+/* Achievements panel (sliding from right on desktop, full-width on mobile) */
 .achievements-panel {
     position: fixed;
     right: 0;
     top: 0;
     height: 100vh;
-    width: 320px;
-    max-width: 90vw;
+    width: 100%;
     background: var(--main-bg-color);
     box-shadow: -8px 0 24px rgb(0 0 0 / 12%);
     transform: translateX(100%);
@@ -13,9 +12,41 @@
     z-index: 1200;
     padding: 1rem;
     overflow-y: auto;
-    box-sizing: border-box; /* garante que padding não provoca overflow horizontal */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
-.achievements-panel.open { transform: translateX(0%); }
+
+/* Desktop: painel lateral */
+@media (min-width: 768px) {
+    .achievements-panel {
+        width: 320px;
+        max-width: 90vw;
+    }
+}
+
+/* Estados de visibilidade */
+.achievements-panel.hidden {
+    display: none;
+    transform: translateX(100%);
+}
+
+.achievements-panel:not(.hidden) {
+    display: flex;
+}
+
+/* Para desktop: usar classe is-visible */
+@media (min-width: 768px) {
+    .achievements-panel.is-visible {
+        display: flex !important;
+        transform: translateX(0%);
+    }
+}
+
+.achievements-panel.open { 
+    transform: translateX(0%); 
+}
+
 .achievements-panel .ach-header {
     display: flex;
     align-items: center;
@@ -67,6 +98,35 @@
     border-radius: 8px;
 }
 
+/* Close button inside achievements panel */
+.close-panel-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10;
+    color: var(--text-color);
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .close-panel-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.close-panel-btn:hover {
+    opacity: 0.7;
+}
+
 /* Badges strip e lottie placeholder */
 .badges-strip {
     display: flex;
@@ -105,21 +165,21 @@
     flex-direction: column;
     gap: 0.75rem;
     align-items: stretch;
-    min-height: 48px; /* garante alguma presença visual mesmo sem badges */
+    min-height: 48px;
 }
 
 .panel.medals .ach-badges {
-    display: flex; /* reforçar layout flex */
+    display: flex;
     flex-wrap: wrap;
     gap: .5rem;
     align-items: center;
 }
 
 .panel.medals .ach-badge {
-    display: inline-flex; /* garantir alinhamento vertical consistente */
+    display: inline-flex;
     align-items: center;
     gap: .5rem;
-    padding: .35rem .5rem; /* ligeiramente menor para melhor encaixe */
+    padding: .35rem .5rem;
 }
 
 .panel.medals .ach-badge .label,
@@ -129,7 +189,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 12rem; /* evita que textos longos parti el layout */
+    max-width: 12rem;
 }
 
 /* Lottie placeholder (quando a animação é carregada) */
@@ -153,4 +213,9 @@
 /* Utility hidden for elements moved from navbar */
 .visually-hidden {
     display: none !important;
+}
+
+/* Panel open state for body (prevent scrolling) */
+body.panel-open {
+    overflow: hidden;
 }

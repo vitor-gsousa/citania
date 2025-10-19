@@ -8,7 +8,6 @@ import { exitExercise } from "./ui.js";
 import { startExercise, checkAnswer, nextExercise, startNewRound, exercises } from "./exercise.js";
 import { safeFocus } from "./utils/mobile-utils.js";
 import {
-  showAchievementsPanel,
   generateNewMathFact,
   stopAutoFactRotation,
   startAutoFactRotation,
@@ -93,7 +92,8 @@ export function initEventListeners(DOM, state) {
   DOM.nextLevelButton?.addEventListener("click", () => startNewRound(DOM, state));
 
   // Gamification and User Profile
-  DOM.achievementsButton?.addEventListener("click", () => showAchievementsPanel(DOM, state));
+  // Achievements handled via new tab-navigation system (not modal)
+  // DOM.achievementsButton?.addEventListener("click", () => showAchievementsPanel(DOM, state));
   DOM.userButton?.addEventListener("click", () => {
     const name = (prompt("Escolhe o teu nome:", gamification.userName) || "").trim();
     if (name) {

@@ -110,13 +110,85 @@
       </div>
     </header>
 
+    <!-- Player panel (footer tab) -->
+    <aside
+      id="player-panel"
+      class="player-panel hidden"
+      aria-hidden="true"
+      role="region"
+      aria-label="Informações do Jogador"
+    >
+      <div class="panel-header">
+        <h2>Jogador</h2>
+      </div>
+      <div class="panel-body">
+        <div class="player-info">
+          <div class="player-name-section">
+            <label for="player-name-input">Nome:</label>
+            <input 
+              type="text" 
+              id="player-name-input" 
+              placeholder="Digite seu nome" 
+              maxlength="30"
+              aria-label="Nome do jogador"
+            />
+            <button id="save-player-name" class="save-btn" aria-label="Guardar nome">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Settings panel (footer tab) -->
+    <aside
+      id="settings-panel"
+      class="settings-panel hidden"
+      aria-hidden="true"
+      role="region"
+      aria-label="Configurações"
+    >
+      <div class="panel-header">
+        <h2>Configurações</h2>
+      </div>
+      <div class="panel-body">
+        <div class="settings-options">
+          <div class="settings-group">
+            <label for="theme-toggle-setting" class="setting-label">Tema:</label>
+            <button id="theme-toggle-setting" class="theme-toggle-btn" aria-label="Alternar Tema Claro/Escuro">
+              <span class="theme-icon">🌙</span>
+              <span class="theme-label">Escuro</span>
+            </button>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-group">
+            <p class="settings-info">Mais opções em breve...</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
     <!-- Achievements sliding panel -->
     <aside
       id="achievements-panel"
-      class="achievements-panel"
+      class="achievements-panel hidden"
       aria-hidden="true"
       role="dialog"
-    ></aside>
+    >
+      <div class="panel-header">
+        <h2>Conquistas</h2>
+      </div>
+      <div class="panel-body">
+        <div class="player-stats">
+          <p><strong>Pontos Total:</strong> <span id="player-total-points">0</span></p>
+          <p><strong>Nível:</strong> <span id="player-level">1</span></p>
+        </div>
+        <div id="achievements-container" class="achievements-grid">
+          <div class="no-achievements">
+            <div class="emoji">🚀</div>
+            <div class="message">Carregando...</div>
+          </div>
+        </div>
+      </div>
+    </aside>
 
     <!-- Mantemos o score-container escondido para não partir o JS existente -->
     <div id="score-container" class="hidden" aria-hidden="true"></div>
@@ -539,6 +611,53 @@
         </div>
       </div>
     </div>
+
+    <!-- Bottom Navigation Tab Bar (Mobile Only) -->
+    <nav class="app-footer" role="navigation" aria-label="Navegação principal">
+      <button 
+        class="tab-btn tab-btn-active" 
+        data-tab="game"
+        title="Jogo"
+        aria-label="Jogo"
+        aria-selected="true"
+      >
+        <span class="material-symbols-outlined">games</span>
+        <span class="tab-label">Jogo</span>
+      </button>
+      
+      <button 
+        class="tab-btn" 
+        data-tab="player"
+        title="Jogador"
+        aria-label="Jogador"
+        aria-selected="false"
+      >
+        <span class="material-symbols-outlined">person</span>
+        <span class="tab-label">Jogador</span>
+      </button>
+      
+      <button 
+        class="tab-btn" 
+        data-tab="achievements"
+        title="Conquistas"
+        aria-label="Conquistas"
+        aria-selected="false"
+      >
+        <span class="material-symbols-outlined">emoji_events</span>
+        <span class="tab-label">Conquistas</span>
+      </button>
+      
+      <button 
+        class="tab-btn" 
+        data-tab="settings"
+        title="Configurações"
+        aria-label="Configurações"
+        aria-selected="false"
+      >
+        <span class="material-symbols-outlined">settings</span>
+        <span class="tab-label">Configurações</span>
+      </button>
+    </nav>
 
     <!-- Carrega lottie localmente (preferível para PWA); fallback é feito no JS -->
     <script src="./js/vendor/lottie.min.js" defer></script>

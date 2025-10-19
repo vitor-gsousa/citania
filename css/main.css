@@ -1,7 +1,8 @@
 /* main.css is a production bundle that concatenates the modules in this order:
     variables.css, base.css, layout.css, components/cards.css, components/buttons.css,
     components/progress-score.css, components/keyboard.css, components/achievements.css,
-    components/fractions.css, components/curiosidade.css, components/narrative.css */
+    components/fractions.css, components/curiosidade.css, components/narrative.css,
+    components/footer-nav.css, components/panels.css */
 
 /* CONCAT START: variables.css */
 :root {
@@ -1654,3 +1655,647 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
     border-color: rgb(255 255 255 / 20%);
 }
 /* CONCAT END: narrative.css */
+
+/* CONCAT START: footer-nav.css */
+/* Bottom Navigation Tab Bar (Mobile Only) */
+
+.app-footer {
+    display: none;  /* Hidden on desktop */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--main-bg-color);
+    border-top: 1px solid var(--border-color);
+    z-index: 999;
+    box-shadow: 0 -2px 8px rgb(0 0 0 / 8%);
+    align-items: stretch;
+    justify-content: space-around;
+    padding: 0;
+    margin: 0;
+}
+
+/* Show footer on mobile only */
+@media (max-width: 768px) {
+    .app-footer {
+        display: flex;
+    }
+    
+    /* Add padding to body to accommodate footer (60px) */
+    body {
+        padding-bottom: 60px;
+    }
+    
+    /* Adjust main to not have bottom margin in mobile */
+    main {
+        margin-bottom: 0;
+    }
+    
+    /* Hide header on mobile */
+    .app-header {
+        display: none;
+    }
+}
+
+/* Ultra-compact para mini phones (320px) - Footer 56px */
+@media (max-width: 480px) {
+    .app-footer {
+        height: 56px;
+    }
+    
+    body {
+        padding-bottom: 56px;  /* Ajustar para 56px */
+    }
+}
+
+/* Tab Button */
+.tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: color 200ms, background-color 200ms, border-color 200ms;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    text-align: center;
+}
+
+.tab-btn:hover {
+    background-color: var(--primary-color) / 10%;
+}
+
+.tab-btn:active {
+    background-color: var(--primary-color) / 15%;
+}
+
+/* Active Tab */
+.tab-btn.tab-btn-active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+/* Material Symbols Icon */
+.tab-btn .material-symbols-outlined {
+    font-size: 24px;
+    line-height: 1;
+}
+
+/* Tab Label */
+.tab-label {
+    font-size: 0.65rem;
+    line-height: 1;
+    font-weight: 500;
+}
+
+/* Ultra-compact for mini phones (320px) */
+@media (max-width: 480px) {
+    .app-footer {
+        height: 56px;
+    }
+    
+    body {
+        padding-bottom: 56px;
+    }
+    
+    .tab-btn {
+        padding: 0.35rem 0;
+    }
+    
+    .tab-label {
+        display: none;  /* Hide labels on very small screens */
+    }
+    
+    .tab-btn .material-symbols-outlined {
+        font-size: 22px;
+    }
+}
+
+/* Placeholder panels for different tabs */
+/* Note: #menu-container is shown by default as the game content */
+
+/* ===== MAIN CONTENT VISIBILITY ===== */
+/* Main element visibility is controlled by JavaScript (tab-navigation.js) */
+main {
+    display: block;  /* Visible by default */
+}
+
+main.hidden {
+    display: none !important;
+}
+
+/* ===== PANELS VISIBILITY ===== */
+#player-panel {
+    display: none;
+}
+
+#achievements-panel {
+    display: none;
+}
+
+#settings-panel {
+    display: none;
+}
+
+/* Show/hide panels based on active tab */
+#menu-container.hidden,
+#player-panel.hidden,
+#achievements-panel.hidden,
+#settings-panel.hidden {
+    display: none !important;
+}
+
+#menu-container:not(.hidden),
+#player-panel:not(.hidden),
+#achievements-panel:not(.hidden),
+#settings-panel:not(.hidden) {
+    display: block;
+}
+
+/* Smooth transitions between panels */
+@media (max-width: 768px) {
+    main,
+    #menu-container,
+    #player-panel,
+    #achievements-panel,
+    #settings-panel {
+        transition: opacity 200ms;
+    }
+}
+
+/* CONCAT END: footer-nav.css */
+
+/* CONCAT START: panels.css */
+/* Estilos para painéis do footer (player, settings) */
+
+/* Base para todos os painéis */
+.player-panel,
+.settings-panel,
+.achievements-panel {
+    display: none;
+    /* Posicionamento e espaçamento */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 60px;  /* Altura do footer (60px em mobile) */
+    padding: 1rem;
+    padding-top: calc(var(--header-height, 3rem) + 1rem);  /* Após header */
+    overflow-y: auto;  /* Permitir scroll se conteúdo exceder */
+    /* Estilos visuais */
+    background: var(--main-bg-color);
+    color: var(--main-text-color);
+    z-index: 100;  /* Acima do conteúdo principal */
+}
+
+.player-panel:not(.hidden),
+.settings-panel:not(.hidden),
+.achievements-panel:not(.hidden) {
+    display: block;
+}
+
+.player-panel.hidden,
+.settings-panel.hidden,
+.achievements-panel.hidden {
+    display: none !important;
+}
+
+/* Cabeçalho dos painéis */
+.panel-header {
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.panel-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* Corpo do painel */
+.panel-body {
+    margin-top: 1rem;
+}
+
+/* ===== PAINEL DO JOGADOR ===== */
+
+.player-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Secção do nome do jogador */
+.player-name-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.player-name-section label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--main-text-color);
+}
+
+.player-name-section input {
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    /* Melhor contraste: fundo mais claro/escuro que o texto */
+    background: var(--card-bg-color, #f8f9fa);  /* Branco/cinza claro */
+    color: var(--main-text-color);
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 240ms ease, background-color 240ms ease;
+}
+
+.player-name-section input::placeholder {
+    color: var(--secondary-text-color, #999);
+    opacity: 0.7;
+}
+
+.player-name-section input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    background: #ffffff;  /* Fundo branco ao focar */
+}
+
+/* Botão guardar */
+.save-btn {
+    align-self: flex-start;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 240ms ease, transform 240ms ease;
+}
+
+.save-btn:hover {
+    background: var(--primary-color-hover, var(--primary-color));
+    transform: translateY(-2px);
+}
+
+.save-btn:active {
+    transform: translateY(0);
+}
+
+/* Estatísticas do jogador */
+.player-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: var(--card-bg-color, rgba(99, 102, 241, 0.05));
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.player-stats p {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--main-text-color);
+}
+
+.player-stats strong {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+/* ===== PAINEL DE CONQUISTAS ===== */
+
+#achievements-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* ===== PAINEL DE CONFIGURAÇÕES ===== */
+
+.settings-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Grupos de configurações */
+.settings-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.setting-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--main-text-color);
+}
+
+/* Divisor entre grupos */
+.settings-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 0.5rem 0;
+}
+
+/* Botão de toggle de tema */
+.theme-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--card-bg-color, rgba(99, 102, 241, 0.05));
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--main-text-color);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 240ms ease;
+    max-width: fit-content;
+}
+
+.theme-toggle-btn:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-color-hover, rgba(99, 102, 241, 0.1));
+}
+
+.theme-toggle-btn:active {
+    transform: scale(0.98);
+}
+
+.theme-icon {
+    font-size: 1.5rem;
+}
+
+.theme-label {
+    font-weight: 600;
+}
+
+.theme-toggle-btn.theme-dark .theme-icon::before {
+    content: "☀️";
+}
+
+.theme-toggle-btn.theme-light .theme-icon::before {
+    content: "🌙";
+}
+
+/* Informações de configurações */
+.settings-info {
+    margin: 0;
+    padding: 1rem;
+    background: var(--info-bg-color, rgba(99, 102, 241, 0.05));
+    border-radius: 6px;
+    color: var(--secondary-text-color, var(--main-text-color));
+    font-size: 0.95rem;
+    text-align: center;
+    font-style: italic;
+}
+
+/* ===== RESPONSIVE ===== */
+
+/* Ultra-compact para mini phones (320px) - Footer 56px */
+@media (max-width: 480px) {
+    .player-panel,
+    .settings-panel,
+    .achievements-panel {
+        bottom: 56px;  /* Footer height em 320px */
+        padding: 0.75rem;
+        padding-top: calc(var(--header-height, 2.5rem) + 0.75rem);
+    }
+
+    .panel-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .panel-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .player-name-section input,
+    .save-btn,
+    .theme-toggle-btn {
+        font-size: 0.9rem;
+    }
+
+    .player-stats {
+        padding: 0.75rem;
+    }
+
+    .player-stats p {
+        font-size: 0.95rem;
+    }
+
+    #achievements-container {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 0.75rem;
+    }
+}
+
+/* Tablets e acima - Footer 60px (padrão) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .player-panel,
+    .settings-panel,
+    .achievements-panel {
+        bottom: 60px;  /* Footer height normal */
+        padding: 1rem;
+        padding-top: calc(var(--header-height, 2.75rem) + 1rem);
+    }
+}
+
+/* Desktop - Sem footer (desaparece) */
+@media (min-width: 769px) {
+    .player-panel,
+    .settings-panel,
+    .achievements-panel {
+        position: static;  /* Volta ao flow normal */
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        overflow-y: visible;
+        padding: 1rem;
+        padding-top: 1rem;
+    }
+}
+
+/* ===== ACHIEVEMENTS PANEL CONTENT ===== */
+
+#achievements-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+    min-height: 100px;
+    align-content: start;
+}
+
+.ach-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    padding: 1rem 0.75rem;
+    background: var(--card-bg-color);
+    border-radius: 8px;
+    border: 2px solid var(--border-color);
+    transition: all 240ms ease;
+    text-align: center;
+    min-height: 120px;
+}
+
+.ach-badge:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.ach-badge .emoji {
+    font-size: 2.5rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+}
+
+.ach-badge .label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--main-text-color);
+    line-height: 1.2;
+}
+
+.no-achievements {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+    min-height: 150px;
+    color: var(--secondary-text-color);
+    font-size: 1.1rem;
+    text-align: center;
+    padding: 2rem 1rem;
+    background: var(--card-bg-color, rgba(99, 102, 241, 0.05));
+    border-radius: 8px;
+    border: 2px dashed var(--border-color);
+}
+
+.no-achievements .emoji {
+    font-size: 3rem;
+}
+
+.no-achievements .message {
+    font-size: 0.95rem;
+    max-width: 200px;
+}
+
+/* ===== ACHIEVEMENTS RESPONSIVE ===== */
+
+@media (max-width: 480px) {
+    #achievements-container {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .ach-badge {
+        padding: 0.75rem 0.5rem;
+        min-height: 100px;
+    }
+
+    .ach-badge .emoji {
+        font-size: 2rem;
+        min-height: 40px;
+    }
+
+    .ach-badge .label {
+        font-size: 0.75rem;
+    }
+
+    .no-achievements {
+        min-height: 120px;
+        padding: 1.5rem 1rem;
+    }
+
+    .no-achievements .emoji {
+        font-size: 2rem;
+    }
+}
+
+@media (min-width: 769px) {
+    #achievements-container {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+}
+
+/* ===== TEMA ESCURO ===== */
+
+@media (prefers-color-scheme: dark) {
+    .player-name-section input {
+        background: #1a202c;  /* Fundo escuro para contraste */
+        border-color: #4a5568;
+        color: #e2e8f0;  /* Texto mais claro */
+    }
+
+    .player-name-section input::placeholder {
+        color: #a0aec0;  /* Placeholder em cor intermediária */
+        opacity: 0.8;
+    }
+
+    .player-name-section input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        background: #2d3748;  /* Fundo ainda mais claro ao focar */
+    }
+
+    .player-stats {
+        background: rgba(99, 102, 241, 0.1);
+    }
+
+    .theme-toggle-btn {
+        background: rgba(99, 102, 241, 0.08);
+        border-color: #4a5568;
+    }
+
+    .theme-toggle-btn:hover {
+        background: rgba(99, 102, 241, 0.15);
+    }
+
+    .ach-badge {
+        background: rgba(99, 102, 241, 0.08);
+        border-color: #4a5568;
+    }
+
+    .ach-badge:hover {
+        background: rgba(99, 102, 241, 0.12);
+        border-color: var(--primary-color);
+    }
+
+    .no-achievements {
+        background: rgba(99, 102, 241, 0.05);
+        border-color: #4a5568;
+    }
+}
+
+/* CONCAT END: panels.css */

@@ -124,6 +124,10 @@ export function renderGamificationBar(DOM) {
   }
 }
 
+// COMENTADO - Funções legadas do modal de achievements (remover após validação)
+// Nova implementação está em js/templates/tab-navigation.js com renderAchievementsBadges()
+
+/*
 // Renderiza o painel de conquistas (Achievements)
 export function renderAchievementsPanel(DOM, state) {
   const panel = DOM.achievementsPanel;
@@ -186,6 +190,7 @@ export function showAchievementsPanel(DOM, state) {
     console.warn("showAchievementsPanel error", e);
   }
 }
+*/
 
 // Gera e mostra uma nova curiosidade matemática
 export function generateNewMathFact(level = null) {

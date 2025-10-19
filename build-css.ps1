@@ -12,11 +12,13 @@ $cssFiles = @(
     "css/components/buttons.css",
     "css/components/progress-score.css",
     "css/components/keyboard.css",
-    "css/components/achievements.css",
     "css/components/fractions.css",
     "css/components/curiosidade.css",
-    "css/components/narrative.css"
+    "css/components/narrative.css",
+    "css/components/footer-nav.css",
+    "css/components/panels.css"
     # responsive.css será carregado separadamente para evitar duplicação
+    # achievements.css removido - usar apenas panels.css para nova aba
 )
 
 # Verificar se todos os arquivos existem
@@ -38,7 +40,8 @@ $bundleContent = @"
 /* main.css is a production bundle that concatenates the modules in this order:
     variables.css, base.css, layout.css, components/cards.css, components/buttons.css,
     components/progress-score.css, components/keyboard.css, components/achievements.css,
-    components/fractions.css, components/curiosidade.css, components/narrative.css */
+    components/fractions.css, components/curiosidade.css, components/narrative.css,
+    components/footer-nav.css, components/panels.css */
 "@
 
 foreach ($file in $cssFiles) {

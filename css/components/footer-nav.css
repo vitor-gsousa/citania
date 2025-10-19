@@ -1,0 +1,173 @@
+/* Bottom Navigation Tab Bar (Mobile Only) */
+
+.app-footer {
+    display: none;  /* Hidden on desktop */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--main-bg-color);
+    border-top: 1px solid var(--border-color);
+    z-index: 999;
+    box-shadow: 0 -2px 8px rgb(0 0 0 / 8%);
+    align-items: stretch;
+    justify-content: space-around;
+    padding: 0;
+    margin: 0;
+}
+
+/* Show footer on mobile only */
+@media (max-width: 768px) {
+    .app-footer {
+        display: flex;
+    }
+    
+    /* Add padding to body to accommodate footer (60px) */
+    body {
+        padding-bottom: 60px;
+    }
+    
+    /* Adjust main to not have bottom margin in mobile */
+    main {
+        margin-bottom: 0;
+    }
+    
+    /* Hide header on mobile */
+    .app-header {
+        display: none;
+    }
+}
+
+/* Ultra-compact para mini phones (320px) - Footer 56px */
+@media (max-width: 480px) {
+    .app-footer {
+        height: 56px;
+    }
+    
+    body {
+        padding-bottom: 56px;  /* Ajustar para 56px */
+    }
+}
+
+/* Tab Button */
+.tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: color 200ms, background-color 200ms, border-color 200ms;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    text-align: center;
+}
+
+.tab-btn:hover {
+    background-color: var(--primary-color) / 10%;
+}
+
+.tab-btn:active {
+    background-color: var(--primary-color) / 15%;
+}
+
+/* Active Tab */
+.tab-btn.tab-btn-active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+/* Material Symbols Icon */
+.tab-btn .material-symbols-outlined {
+    font-size: 24px;
+    line-height: 1;
+}
+
+/* Tab Label */
+.tab-label {
+    font-size: 0.65rem;
+    line-height: 1;
+    font-weight: 500;
+}
+
+/* Ultra-compact for mini phones (320px) */
+@media (max-width: 480px) {
+    .app-footer {
+        height: 56px;
+    }
+    
+    body {
+        padding-bottom: 56px;
+    }
+    
+    .tab-btn {
+        padding: 0.35rem 0;
+    }
+    
+    .tab-label {
+        display: none;  /* Hide labels on very small screens */
+    }
+    
+    .tab-btn .material-symbols-outlined {
+        font-size: 22px;
+    }
+}
+
+/* Placeholder panels for different tabs */
+/* Note: #menu-container is shown by default as the game content */
+
+/* ===== MAIN CONTENT VISIBILITY ===== */
+/* Main element visibility is controlled by JavaScript (tab-navigation.js) */
+main {
+    display: block;  /* Visible by default */
+}
+
+main.hidden {
+    display: none !important;
+}
+
+/* ===== PANELS VISIBILITY ===== */
+#player-panel {
+    display: none;
+}
+
+#achievements-panel {
+    display: none;
+}
+
+#settings-panel {
+    display: none;
+}
+
+/* Show/hide panels based on active tab */
+#menu-container.hidden,
+#player-panel.hidden,
+#achievements-panel.hidden,
+#settings-panel.hidden {
+    display: none !important;
+}
+
+#menu-container:not(.hidden),
+#player-panel:not(.hidden),
+#achievements-panel:not(.hidden),
+#settings-panel:not(.hidden) {
+    display: block;
+}
+
+/* Smooth transitions between panels */
+@media (max-width: 768px) {
+    main,
+    #menu-container,
+    #player-panel,
+    #achievements-panel,
+    #settings-panel {
+        transition: opacity 200ms;
+    }
+}
