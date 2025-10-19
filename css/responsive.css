@@ -261,18 +261,6 @@
         padding: 1rem 0;
     }
 
-    /* Painel de conquistas */
-    .achievements-panel { 
-        inset: auto 0 0; 
-        height: 50vh; 
-        width: 100vw; 
-        max-width: none; 
-        transform: translateY(100%); 
-        padding-left: max(0.75rem, env(safe-area-inset-left)); 
-        padding-right: max(0.75rem, env(safe-area-inset-right)); 
-    }
-    .achievements-panel.open { transform: translateY(0%); }
-
     /* No mobile, deixar o botão voltar no fluxo normal (sem fixed) */
     #back-to-menu {
         position: static;
@@ -470,17 +458,6 @@
     #summary-area {
         padding: 1rem 0;
     }
-
-    .achievements-panel { 
-        inset: auto 0 0; 
-        height: 50vh; 
-        width: 100vw; 
-        max-width: none; 
-        transform: translateY(100%); 
-        padding-left: max(0.75rem, env(safe-area-inset-left)); 
-        padding-right: max(0.75rem, env(safe-area-inset-right)); 
-    }
-    .achievements-panel.open { transform: translateY(0%); }
 
     #back-to-menu {
         position: static;

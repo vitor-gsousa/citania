@@ -1,50 +1,38 @@
-/* Achievements panel (sliding from right on desktop, full-width on mobile) */
+/* Achievements panel - specific overrides (base panel layout is defined in components/panels.css) */
 .achievements-panel {
-    position: fixed;
-    right: 0;
-    top: 0;
-    height: 100vh;
-    width: 100%;
-    background: var(--main-bg-color);
+    /* keep only panel-specific overrides here to avoid duplicating base panel layout */
     box-shadow: -8px 0 24px rgb(0 0 0 / 12%);
-    transform: translateX(100%);
     transition: transform 320ms cubic-bezier(.2,.9,.2,1);
-    z-index: 1200;
-    padding: 1rem;
-    overflow-y: auto;
+    z-index: 1200; /* higher than other panels */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
 }
 
-/* Desktop: painel lateral */
+/* Desktop: painel lateral (slide in/out) */
 @media (min-width: 768px) {
     .achievements-panel {
         width: 320px;
         max-width: 90vw;
+        transform: translateX(100%);
     }
 }
 
 /* Estados de visibilidade */
 .achievements-panel.hidden {
-    display: none;
-    transform: translateX(100%);
-}
-
-.achievements-panel:not(.hidden) {
-    display: flex;
+    display: none !important;
 }
 
 /* Para desktop: usar classe is-visible */
 @media (min-width: 768px) {
+    .achievements-panel.hidden {
+        transform: translateX(100%);
+    }
+    
     .achievements-panel.is-visible {
         display: flex !important;
         transform: translateX(0%);
     }
-}
-
-.achievements-panel.open { 
-    transform: translateX(0%); 
 }
 
 .achievements-panel .ach-header {

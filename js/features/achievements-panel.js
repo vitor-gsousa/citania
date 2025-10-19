@@ -59,18 +59,5 @@ export function initAchievementsPanel() {
     e.stopPropagation();
   });
 
-  // Add a close button inside the panel for better accessibility
-  const closeButton = document.createElement('button');
-  closeButton.innerHTML = '&times;';
-  closeButton.className = 'close-panel-btn';
-  closeButton.setAttribute('aria-label', 'Fechar painel de conquistas');
-  closeButton.addEventListener('click', closePanel);
 
-  const panelHeader = achievementsPanel.querySelector('.panel-header');
-  if (panelHeader) {
-    // Avoid adding multiple close buttons
-    if (!panelHeader.querySelector('.close-panel-btn')) {
-      panelHeader.appendChild(closeButton);
-    }
-  }
 }

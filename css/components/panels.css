@@ -49,6 +49,10 @@
 /* Corpo do painel */
 .panel-body {
     margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;  /* Expande para preencher o espaço disponível */
+    min-height: 0;  /* Reset para permitir que flexbox funcione correctamente */
 }
 
 /* ===== PAINEL DO JOGADOR ===== */
@@ -307,8 +311,9 @@
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 1rem;
     margin-top: 1.5rem;
-    min-height: 100px;
+    flex: 1;  /* Ocupa espaço restante do painel */
     align-content: start;
+    min-height: 0;  /* Permite que o grid se adapte dentro do flexbox */
 }
 
 .ach-badge {

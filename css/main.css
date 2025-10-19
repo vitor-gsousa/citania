@@ -668,165 +668,6 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
 }
 /* CONCAT END: keyboard.css */
 
-/* CONCAT START: achievements.css */
-/* Achievements panel (sliding from right on desktop, bottom on mobile) */
-.achievements-panel {
-    position: fixed;
-    right: 0;
-    top: 0;
-    height: 100vh;
-    width: 320px;
-    max-width: 90vw;
-    background: var(--main-bg-color);
-    box-shadow: -8px 0 24px rgb(0 0 0 / 12%);
-    transform: translateX(100%);
-    transition: transform 320ms cubic-bezier(.2,.9,.2,1);
-    z-index: 1200;
-    padding: 1rem;
-    overflow-y: auto;
-    box-sizing: border-box; /* garante que padding não provoca overflow horizontal */
-}
-.achievements-panel.open { transform: translateX(0%); }
-.achievements-panel .ach-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: .5rem;
-}
-
-.achievements-panel h3 {
-    margin: 0 0 .5rem;
-}
-
-.achievements-panel .ach-body {
-    margin-top: .75rem;
-}
-
-.ach-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .5rem;
-    margin-top: .5rem;
-}
-
-.ach-badge {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    background: var(--score-bg-color);
-    padding: .4rem .5rem;
-    border-radius: 8px;
-}
-
-.ach-badge .badge {
-    width: 36px;
-    height: 36px;
-    font-size: 18px;
-}
-
-/* Compact buttons for achievements (prevenir width:100% em mobile) */
-.ach-btn,
-#close-achievements {
-    width: auto !important;
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    padding: 0.35rem 0.6rem !important;
-    min-width: var(--btn-theme-size);
-    height: auto;
-    font-size: 1.05rem;
-    border-radius: 8px;
-}
-
-/* Badges strip e lottie placeholder */
-.badges-strip {
-    display: flex;
-    gap: .35rem;
-    align-items: center;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: .15rem 0;
-    min-width: 0;
-}
-
-.badge {
-    display: inline-grid;
-    place-items: center;
-    min-width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    background: transparent;
-    border: 1px solid var(--border-color);
-    font-size: 14px;
-    padding: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.badge.big {
-    padding: .25rem .5rem;
-    border-radius: 8px;
-    width: auto;
-    min-width: 0;
-}
-
-/* Correções específicas para a secção de Medalhas no resumo */
-.panel.medals {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    align-items: stretch;
-    min-height: 48px; /* garante alguma presença visual mesmo sem badges */
-}
-
-.panel.medals .ach-badges {
-    display: flex; /* reforçar layout flex */
-    flex-wrap: wrap;
-    gap: .5rem;
-    align-items: center;
-}
-
-.panel.medals .ach-badge {
-    display: inline-flex; /* garantir alinhamento vertical consistente */
-    align-items: center;
-    gap: .5rem;
-    padding: .35rem .5rem; /* ligeiramente menor para melhor encaixe */
-}
-
-.panel.medals .ach-badge .label,
-.panel.medals .ach-badge span {
-    font-size: 0.95rem;
-    line-height: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 12rem; /* evita que textos longos parti el layout */
-}
-
-/* Lottie placeholder (quando a animação é carregada) */
-.lottie-placeholder {
-    width: var(--btn-theme-size);
-    height: var(--btn-theme-size);
-    display: inline-block;
-}
-
-/* Animação CSS fallback para badge ganha */
-.badge-earned {
-    animation: badge-pulse 900ms ease;
-}
-
-@keyframes badge-pulse {
-    0% { transform: scale(.9); opacity: .9; }
-    50% { transform: scale(1.12); opacity: 1; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-/* Utility hidden for elements moved from navbar */
-.visually-hidden {
-    display: none !important;
-}
-/* CONCAT END: achievements.css */
-
 /* CONCAT START: fractions.css */
 /* ========================================
    SISTEMA DE FRAÇÕES - REPRESENTAÇÃO VISUAL
@@ -1793,35 +1634,12 @@ main.hidden {
 }
 
 /* ===== PANELS VISIBILITY ===== */
-#player-panel {
-    display: none;
-}
-
-#achievements-panel {
-    display: none;
-}
-
-#settings-panel {
-    display: none;
-}
-
-/* Show/hide panels based on active tab */
-#menu-container.hidden,
-#player-panel.hidden,
-#achievements-panel.hidden,
-#settings-panel.hidden {
-    display: none !important;
-}
-
-#menu-container:not(.hidden),
-#player-panel:not(.hidden),
-#achievements-panel:not(.hidden),
-#settings-panel:not(.hidden) {
-    display: block;
-}
-
-/* Smooth transitions between panels */
+/* Visibilidade dos painéis controlada em components/panels.css
+   para evitar duplicação com o bundle/main.css. Mantemos aqui
+   apenas a referência às transições para o caso mobile.
+*/
 @media (max-width: 768px) {
+    /* Smooth transitions between panels - panels.css define comportamento/visibilidade */
     main,
     #menu-container,
     #player-panel,
@@ -1885,6 +1703,10 @@ main.hidden {
 /* Corpo do painel */
 .panel-body {
     margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;  /* Expande para preencher o espaço disponível */
+    min-height: 0;  /* Reset para permitir que flexbox funcione correctamente */
 }
 
 /* ===== PAINEL DO JOGADOR ===== */
@@ -2143,8 +1965,9 @@ main.hidden {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 1rem;
     margin-top: 1.5rem;
-    min-height: 100px;
+    flex: 1;  /* Ocupa espaço restante do painel */
     align-content: start;
+    min-height: 0;  /* Permite que o grid se adapte dentro do flexbox */
 }
 
 .ach-badge {

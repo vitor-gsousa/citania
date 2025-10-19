@@ -134,35 +134,12 @@ main.hidden {
 }
 
 /* ===== PANELS VISIBILITY ===== */
-#player-panel {
-    display: none;
-}
-
-#achievements-panel {
-    display: none;
-}
-
-#settings-panel {
-    display: none;
-}
-
-/* Show/hide panels based on active tab */
-#menu-container.hidden,
-#player-panel.hidden,
-#achievements-panel.hidden,
-#settings-panel.hidden {
-    display: none !important;
-}
-
-#menu-container:not(.hidden),
-#player-panel:not(.hidden),
-#achievements-panel:not(.hidden),
-#settings-panel:not(.hidden) {
-    display: block;
-}
-
-/* Smooth transitions between panels */
+/* Visibilidade dos painéis controlada em components/panels.css
+   para evitar duplicação com o bundle/main.css. Mantemos aqui
+   apenas a referência às transições para o caso mobile.
+*/
 @media (max-width: 768px) {
+    /* Smooth transitions between panels - panels.css define comportamento/visibilidade */
     main,
     #menu-container,
     #player-panel,
