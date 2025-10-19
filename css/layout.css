@@ -33,7 +33,19 @@ main {
 }
 
 /* theme button dentro do header */
-.app-header #theme-toggle { position: static; width: var(--btn-theme-size); height: var(--btn-theme-size); border-radius: 50%; margin: 0; }
+.app-header #theme-toggle { 
+    position: static; 
+    width: var(--btn-theme-size); 
+    height: var(--btn-theme-size); 
+    border-radius: 50%; 
+    margin: 0; 
+    padding: var(--btn-theme-padding);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--btn-theme-font-size);
+    line-height: var(--btn-theme-line-height);
+}
 
 /* gamification bar (navbar group) */
 .app-header .gamification-bar {

@@ -26,6 +26,11 @@
     --header-height: 3rem;
     --btn-theme-size: 2.5rem;
     --btn-min-height: 44px;
+    
+    /* === BUTTON THEME-TOGGLE CENTRALIZATION === */
+    --btn-theme-padding: 0;
+    --btn-theme-font-size: 1.2rem;
+    --btn-theme-line-height: 1;
 }
 
 .dark-mode {
