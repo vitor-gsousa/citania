@@ -1,5 +1,5 @@
 #score-container {
-    position: absolute;
+    position: fixed;
     top: 1rem;
     right: 1rem;
     display: flex;
@@ -11,7 +11,7 @@
     font-size: 0.9rem;
     font-weight: 500;
     box-shadow: 0 2px 5px rgb(0 0 0 / 5%);
-    z-index: 5;
+    z-index: 999;
     max-width: calc(100% - 2rem);  /* Previne overflow fora do viewport */
     overflow: hidden;              /* Garante conteúdo contido */
     text-overflow: ellipsis;       /* Trunca com elipsis se necessário */

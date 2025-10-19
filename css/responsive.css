@@ -282,11 +282,6 @@
         right: auto;
     }
 
-    /* reduzir o padding-top agora que o botão não é fixed */
-    #exercise-area {
-        padding-top: 0;
-    }
-
     /* Ajustes para o teclado personalizado em mobile */
     .keyboard-row {
         gap: 0.3rem; /* Menos espaço entre teclas */

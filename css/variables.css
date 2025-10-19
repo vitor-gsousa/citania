@@ -1,4 +1,5 @@
 :root {
+    /* === COLORS === */
     --bg-color: #f0f4f8;
     --main-bg-color: white;
     --text-color: #1f2937;
@@ -14,10 +15,17 @@
     --card-bg: linear-gradient(135deg, #e6f0ff 0%, #cfe0ff 100%);
     --card-text: #0b3a66;
 
+    /* === ANIMATIONS === */
     --transition-fast: 180ms;
     --transition-medium: 320ms;
     --transition-slow: 480ms;
     --easing-standard: cubic-bezier(.2,.9,.2,1);
+
+    /* === DIMENSIONS - CENTRALIZED === */
+    --max-width-main: 60rem;
+    --header-height: 3rem;
+    --btn-theme-size: 2.5rem;
+    --btn-min-height: 44px;
 }
 
 .dark-mode {

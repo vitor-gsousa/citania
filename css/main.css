@@ -5,6 +5,7 @@
 
 /* CONCAT START: variables.css */
 :root {
+    /* === COLORS === */
     --bg-color: #f0f4f8;
     --main-bg-color: white;
     --text-color: #1f2937;
@@ -20,10 +21,17 @@
     --card-bg: linear-gradient(135deg, #e6f0ff 0%, #cfe0ff 100%);
     --card-text: #0b3a66;
 
+    /* === ANIMATIONS === */
     --transition-fast: 180ms;
     --transition-medium: 320ms;
     --transition-slow: 480ms;
     --easing-standard: cubic-bezier(.2,.9,.2,1);
+
+    /* === DIMENSIONS - CENTRALIZED === */
+    --max-width-main: 60rem;
+    --header-height: 3rem;
+    --btn-theme-size: 2.5rem;
+    --btn-min-height: 44px;
 }
 
 .dark-mode {
@@ -60,11 +68,19 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
+    word-wrap: break-word;           /* Quebra texto longo */
+    overflow-wrap: break-word;       /* Suporte moderno */
+    position: relative;              /* Contexto de posicionamento para elementos absolute */
 }
 
-/* Botão voltar das seções de área */
-.theme-section .close-section {
-    margin: 1rem 0 0 0;
+/* headings */
+h1,h2,h3,h4,h5,h6 {
+    color: var(--text-color);
+    font-weight: 700;
+    word-wrap: break-word;           /* Quebra texto longo */
+    overflow-wrap: break-word;       /* Suporte moderno */
+    word-break: break-word;          /* Fallback */
+    hyphens: auto;                   /* Hífenes se suportado */
 }
 
 /* Garante herança de cor */
@@ -191,10 +207,10 @@ main {
     padding: 2rem;
     margin: 1rem auto;
     width: 90%;
-    max-width: 960px;
+    max-width: var(--max-width-main);
     border-radius: 15px;
     box-shadow: 0 4px 15px rgb(0 0 0 / 10%);
-    min-height: 400px;
+    min-height: 25rem;
     transition: min-height var(--transition-medium) var(--easing-standard);
 }
 
@@ -209,7 +225,7 @@ main {
 }
 
 .header-inner {
-    max-width: 960px;
+    max-width: var(--max-width-main);
     margin: 0 auto;
     padding: .5rem 1rem;
     display: flex;
@@ -219,7 +235,7 @@ main {
 }
 
 /* theme button dentro do header */
-.app-header #theme-toggle { position: static; width: 40px; height: 40px; border-radius: 50%; margin: 0; }
+.app-header #theme-toggle { position: static; width: var(--btn-theme-size); height: var(--btn-theme-size); border-radius: 50%; margin: 0; }
 
 /* gamification bar (navbar group) */
 .app-header .gamification-bar {
@@ -236,7 +252,7 @@ main {
 }
 
 /* Ajustes responsivos do header */
-@media (width <= 768px) {
+@media (max-width: 768px) {
     .header-inner {
         max-width: 100% !important;
         width: 100%;
@@ -268,8 +284,8 @@ main {
     /* botão tema com largura fixa */
     #theme-toggle {
         flex-shrink: 0; /* não reduz */
-        width: 40px;
-        height: 40px;
+        width: var(--btn-theme-size);
+        height: var(--btn-theme-size);
     }
 
     /* botão utilizador com largura flexível mas com mínimo */
@@ -280,6 +296,7 @@ main {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        word-break: break-word;  /* Quebra como fallback */
     }
 
     /* pontos e badges ocupam espaço restante */
@@ -293,8 +310,22 @@ main {
     }
 }
 
+/* Tablets pequenos e phones grandes (481px a 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .header-inner {
+        padding: .5rem .75rem;
+        gap: .5rem;
+    }
+
+    .user-btn {
+        font-size: 0.9rem;
+        padding: .35rem .6rem;
+        max-width: 110px;
+    }
+}
+
 /* Para ecrãs muito pequenos */
-@media (width <= 480px) {
+@media (max-width: 480px) {
     .header-inner {
         padding: .4rem .5rem; /* menos padding */
         gap: .4rem;
@@ -311,9 +342,11 @@ main {
 /* CONCAT START: cards.css */
 .card-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(clamp(150px, 100%, 180px), 1fr));
     gap: 1rem;
     margin-top: 2rem;
+    overflow-x: auto;                /* Scroll horizontal em mobile se necessário */
+    -webkit-overflow-scrolling: touch;
 }
 
 .card {
@@ -329,7 +362,7 @@ main {
     font-weight: 600;
     transition: transform var(--transition-medium) var(--easing-standard), box-shadow var(--transition-medium) var(--easing-standard), filter var(--transition-medium) var(--easing-standard);
     text-align: center;
-    min-height: 150px;
+    min-height: 9.375rem;
     border: 2px solid transparent;
     box-shadow: 0 4px 12px rgb(67 56 202 / 15%);
 }
@@ -356,7 +389,7 @@ main {
     text-rendering: optimizelegibility;
 }
 
-@media (width <= 480px) {
+@media (max-width: 480px) {
     .material-symbols-outlined.card-icon {
         font-size: clamp(28px, 9vw, 40px); /* slightly smaller caps on very small screens */
     }
@@ -364,8 +397,8 @@ main {
 
 /* Imagens SVG externas usadas como ícones devem herdar a cor do texto e ter 75px */
 img.card-icon {
-    width: 75px;
-    height: 75px;
+    width: 4.6875rem;
+    height: 4.6875rem;
     vertical-align: middle;
     color: inherit; /* tenta garantir que currentColor no SVG resolve corretamente */
 }
@@ -408,7 +441,7 @@ button {
     cursor: pointer;
     transition: transform .04s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease;
     box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
-    min-height: 44px;
+    min-height: var(--btn-min-height);
 }
 
 button:hover { box-shadow: 0 4px 14px rgb(0 0 0 / 12%); border-color: var(--primary-color); transform: translateY(-1px); }
@@ -450,7 +483,7 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
 
 /* CONCAT START: progress-score.css */
 #score-container {
-    position: absolute;
+    position: fixed;
     top: 1rem;
     right: 1rem;
     display: flex;
@@ -462,7 +495,10 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
     font-size: 0.9rem;
     font-weight: 500;
     box-shadow: 0 2px 5px rgb(0 0 0 / 5%);
-    z-index: 5;
+    z-index: 999;
+    max-width: calc(100% - 2rem);  /* Previne overflow fora do viewport */
+    overflow: hidden;              /* Garante conteúdo contido */
+    text-overflow: ellipsis;       /* Trunca com elipsis se necessário */
 }
 #score-container span { white-space: nowrap; }
 #correct-count { color: var(--correct-color); font-weight: bold; text-shadow: 0 0 2px rgb(255 255 255 / 80%); }
@@ -500,14 +536,30 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
 /* CONCAT END: progress-score.css */
 
 /* CONCAT START: keyboard.css */
-.custom-keyboard { margin-top: 1rem; width: 100%; max-width: 300px; margin-left: auto; margin-right: auto; }
+.custom-keyboard { 
+    margin-top: 1rem; 
+    width: 100%; 
+    max-width: 18.75rem; 
+    margin-left: auto; 
+    margin-right: auto; 
+    overflow-x: auto;                /* Scroll se necessário em mobile */
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
 
-.keyboard-row { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+.keyboard-row { 
+    display: flex; 
+    justify-content: center; 
+    gap: 0.5rem; 
+    margin-bottom: 0.5rem; 
+    min-width: min-content;           /* Garante que não encolhe demais */
+}
 
 .key {
     flex: 1;
-    min-width: 50px;
-    height: 50px;
+    min-width: 3.125rem;
+    max-width: 4.5rem;                /* Evita que cresça demais */
+    height: 3.125rem;
     border: 1px solid var(--border-color);
     background: var(--main-bg-color);
     color: var(--text-color);
@@ -517,6 +569,8 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+    overflow: hidden;                 /* Evita que texto saia */
+    text-overflow: ellipsis;          /* Trunca se necessário */
 }
 
 /* Mobile-specific keyboard adjustments kept in responsive.css */
@@ -597,7 +651,7 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
     align-items: center;
     justify-content: center;
     padding: 0.35rem 0.6rem !important;
-    min-width: 40px;
+    min-width: var(--btn-theme-size);
     height: auto;
     font-size: 1.05rem;
     border-radius: 8px;
@@ -670,8 +724,8 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
 
 /* Lottie placeholder (quando a animação é carregada) */
 .lottie-placeholder {
-    width: 40px;
-    height: 40px;
+    width: var(--btn-theme-size);
+    height: var(--btn-theme-size);
     display: inline-block;
 }
 
@@ -757,8 +811,8 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
     display: flex;
     border: 2px solid var(--primary-color);
     border-radius: 4px;
-    height: 40px;
-    min-width: 200px;
+    height: 2.5rem;
+    min-width: 12.5rem;
     overflow: hidden;
 }
 
@@ -796,8 +850,8 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
 }
 
 .fraction-circle {
-    width: 120px;
-    height: 120px;
+    width: 7.5rem;
+    height: 7.5rem;
     border-radius: 50%;
     border: 3px solid var(--primary-color);
     position: relative;
@@ -1090,19 +1144,23 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
 }
 
 /* Adaptações responsivas para frações */
-@media (width <= 768px) {
+@media (max-width: 768px) {
     .fraction-notation {
         font-size: 1.2rem;
     }
 
     .fraction-bar {
-        min-width: 150px;
-        height: 30px;
+        min-width: 9.375rem;
+        height: 1.875rem;
+        max-width: 100%;              /* Garante fit em mobile */
+        overflow-x: auto;             /* Scroll se necessário */
+        -webkit-overflow-scrolling: touch;
     }
 
     .fraction-circle {
-        width: 80px;
-        height: 80px;
+        width: 5rem;
+        height: 5rem;
+        max-width: 100%;              /* Responsive */
     }
 
     .fraction-operation {
@@ -1143,17 +1201,17 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
     /* Teclado personalizado otimizado para frações em tablets */
     .custom-keyboard {
         margin-top: 0.8rem;
-        max-width: 300px;
+        max-width: 18.75rem;
     }
 
     .key {
-        min-width: 45px;
-        height: 45px;
+        min-width: 2.8125rem;
+        height: 2.8125rem;
         font-size: 1.1rem;
     }
 }
 
-@media (width <= 480px) {
+@media (max-width: 480px) {
     .fraction-container {
         gap: 0.8rem;
         padding: 0.4rem;
@@ -1178,13 +1236,17 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
     }
 
     .fraction-bar {
-        min-width: 100px;
-        height: 20px;
+        min-width: 6.25rem;
+        height: 1.25rem;
+        max-width: 100%;              /* Garante fit em mobile muito pequeno */
+        overflow-x: auto;             /* Scroll se necessário */
+        -webkit-overflow-scrolling: touch;
     }
 
     .fraction-circle {
-        width: 50px;
-        height: 50px;
+        width: 3.125rem;
+        height: 3.125rem;
+        max-width: 100%;              /* Responsive em extra-small */
     }
 
     .fraction-legend {
@@ -1235,7 +1297,7 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
     /* Teclado personalizado otimizado para frações em móveis pequenos */
     .custom-keyboard {
         margin-top: 0.5rem;
-        max-width: 260px;
+        max-width: 16.25rem;
         padding: 0 0.3rem;
     }
 
@@ -1245,8 +1307,8 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
     }
 
     .key {
-        min-width: 40px;
-        height: 40px;
+        min-width: 2.5rem;
+        height: 2.5rem;
         font-size: 1rem;
         border-radius: 6px;
     }
@@ -1276,6 +1338,9 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
     min-height: 5.6rem; /* Altura fixa para ~2 linhas (padding + 2 * line-height) para evitar layout shift */
     max-height: 8rem;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;  /* Smooth scroll iOS */
+    word-wrap: break-word;              /* Quebra texto longo */
+    overflow-wrap: break-word;          /* Suporte moderno */
 
     /* Smooth scrollbar styling */
     scrollbar-width: thin;
@@ -1380,7 +1445,7 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
 }
 
 /* Responsividade móvel para curiosidade */
-@media (width <= 768px) {
+@media (max-width: 768px) {
     .curiosidade-matematica {
         margin: 1rem 0;
         padding: 1rem;
@@ -1404,7 +1469,7 @@ button:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 
     }
 }
 
-@media (width <= 480px) {
+@media (max-width: 480px) {
     .curiosidade-matematica {
         padding: 0.8rem;
         padding-right: 3rem;

@@ -492,11 +492,26 @@ function setHeaderHeight() {
   }
 }
 
+// ResizeObserver para monitorar mudanças do header em tempo real
+function initHeaderHeightObserver() {
+  const header = document.querySelector('.app-header');
+  if (header && 'ResizeObserver' in window) {
+    const observer = new ResizeObserver(() => {
+      setHeaderHeight();
+    });
+    observer.observe(header);
+    return observer;
+  }
+}
+
 // Atualizar altura do header em resize e orientação change
 window.addEventListener('resize', setHeaderHeight);
 window.addEventListener('orientationchange', () => {
   setTimeout(setHeaderHeight, 100); // Pequeno delay para garantir que o layout atualizou
 });
+
+// Inicializar monitoramento do header
+initHeaderHeightObserver();
 
 // Ponto de entrada único da aplicação
 document.addEventListener("DOMContentLoaded", initApp);

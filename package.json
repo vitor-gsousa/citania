@@ -5,9 +5,9 @@
   "main": "index.html",
   "scripts": {
     "build:css": "pwsh ./build-css.ps1",
-    "dev": "npx http-server -p 8000 -c-1 --cors",
-    "start": "npx http-server -p 8080 -c-1 --cors",
-    "serve": "npx http-server -p 3000",
+    "dev": "npm run build:css && npx http-server -p 8000 -c-1 --cors",
+    "start": "npm run build:css && npx http-server -p 8080 -c-1 --cors",
+    "serve": "npm run build:css && npx http-server -p 3000",
     "test:pwa": "npx lighthouse http://localhost:8000 --view",
     "update-version": "node update-version.js",
     "validate": "npm run validate:manifest",
