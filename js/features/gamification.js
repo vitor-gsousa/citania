@@ -80,7 +80,9 @@ export async function loadGamification() {
         : gamification.medalhas;
       gamification.curiosidade = data.curiosidade ?? gamification.curiosidade;
       gamification.userName = data.userName ?? gamification.userName;
-    } catch {}
+    } catch (e) {
+      console.warn("Erro ao parsear dados guardados de gamificação:", e);
+    }
   }
   gamification.leaderboard = JSON.parse(safeGetItem(LEADERBOARD_KEY) || "[]");
   

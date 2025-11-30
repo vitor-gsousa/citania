@@ -14,7 +14,7 @@
     <script>
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
-    <script defer src="/_vercel/insights/script.js"></script>
+    <!-- Analytics fallback (/_vercel/insights/script.js only works on Vercel deployment) -->
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -35,9 +35,10 @@
     <meta property="twitter:image" content="https://citania.vercel.app/images/ogcitania.jpg" />
     
     <!-- Meta description para SEO -->
-    <meta name="description" content="Aplicação gamificada para aprender matemática de forma divertida. Explore conceitos matemáticos numa missão arqueológica pela antiga Citânia de Sanfins!" />
-    <meta name="keywords" content="matemática, educação, gamificação, PWA, Citânia de Sanfins, aprendizagem, exercícios matemáticos" />
+    <meta name="description" content="Citânia: Aplicação gamificada de matemática com 9 tipos de exercícios, badges, leaderboard e modo offline. PWA para iOS/Android. Aprenda através de uma aventura arqueológica em Citânia de Sanfins." />
+    <meta name="keywords" content="matemática, educação, gamificação, PWA, Citânia de Sanfins, aprendizagem, exercícios matemáticos, aritmética, álgebra, geometria" />
     <meta name="author" content="Citânia Team" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     
     <title>Citânia - Matemática Divertida</title>
     <link rel="icon" type="image/x-icon" href="./images/icons/favicon.ico" />
@@ -46,6 +47,7 @@
     <link rel="stylesheet" href="./css/components/sw-update.css" />
 
     <!-- Material Symbols (Google) para ícones modernos (carrega a família completa para permitir vários ícones) -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="manifest" href="manifest.json" />
   </head>
@@ -665,8 +667,6 @@
       </button>
     </nav>
 
-    <!-- Carrega lottie localmente (preferível para PWA); fallback é feito no JS -->
-    <script src="./js/vendor/lottie.min.js" defer></script>
     <!-- Carrega app.js como módulo (ESM) para permitir imports diretos -->
     <script type="module" src="./js/app.js"></script>
   </body>

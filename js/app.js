@@ -159,7 +159,9 @@ export async function showSection(sectionId) {
   // optional: scroll to top of main exercise area
   try {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  } catch (e) {}
+  } catch (e) {
+    // Scroll falhou - não é crítico
+  }
 }
 
 // Regressa ao menu de temas
@@ -199,7 +201,6 @@ export async function showThemes() {
   );
   
   if (themesList) {
-    console.debug("showThemes: showing themesList", themesList); // NOSONAR
     themesList.classList.remove("hidden");
     themesList.inert = false; // Reativar a lista de temas
     await animateShow(themesList);
@@ -207,7 +208,7 @@ export async function showThemes() {
   
   // 4. Remover preservação de altura após transição
   if (mainElement) {
-    setTimeout(() => { // NOSONAR
+    setTimeout(() => {
       mainElement.classList.remove('transitioning');
       mainElement.style.removeProperty('--preserved-height');
     }, ANIMATION_DURATION_MS);
@@ -215,18 +216,20 @@ export async function showThemes() {
   
   try {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  } catch (e) {}
+  } catch (e) {
+    // Scroll falhou - não é crítico
+  }
 }
 
 // A função `waitForLayout` foi removida, pois para animações de opacidade e transformação,
-// o browser geralmente lida bem com o layout sem a necessidade de forçar um cálculo explícito. // NOSONAR
+// o browser geralmente lida bem com o layout sem a necessidade de forçar um cálculo explícito.
 
 // Helpers de animação: aplicam classes temporárias para forçar transições
 function animateShow(el, setFocus = false) {
   return new Promise((resolve) => {
     if (!el) { return resolve(); }
     // Respeitar preferências do utilizador
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { // NOSONAR
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       el.classList.remove("hidden");
       return resolve();
     }
@@ -241,7 +244,7 @@ function animateShow(el, setFocus = false) {
 
     // 4. No próximo frame, remover a classe 'animating-in' para que o elemento transite para o seu estado final (visível)
     requestAnimationFrame(() => {
-      el.classList.remove("animating-in"); // NOSONAR
+      el.classList.remove("animating-in");
       if (setFocus) el.focus({ preventScroll: true });
     });
 
@@ -255,7 +258,7 @@ function animateShow(el, setFocus = false) {
 function animateHide(el, ensureNoFocus = false) {
   return new Promise((resolve) => {
     if (!el) { return resolve(); }
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { // NOSONAR
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       // Mesmo com movimento reduzido, garantir que o foco é removido
       if (ensureNoFocus) ensureFocusNotInside(el);
       el.classList.add("hidden");
@@ -271,7 +274,7 @@ function animateHide(el, ensureNoFocus = false) {
     // 2. Concluir: Após a animação, escondemos o elemento com display:none e limpamos a classe.
     setTimeout(() => {
       el.classList.add("hidden");
-      el.classList.remove("animating-out"); // NOSONAR
+      el.classList.remove("animating-out");
       resolve();
     }, ANIMATION_DURATION_MS);
   });
@@ -295,7 +298,9 @@ function ensureFocusNotInside(el) {
         // blur actual element
         try {
           active.blur();
-        } catch (e) {}
+        } catch (e) {
+          // Blur falhou - não é crítico
+        }
       }
     }
   } catch (e) {
@@ -380,8 +385,12 @@ async function initApp() {
           // Solicita imediatamente ao navegador uma verificação por uma nova versão do sw.js
           // Isto ajuda a detetar atualizações sem a necessidade de um hard refresh
           try {
-            reg.update().catch(() => {});
-          } catch (e) {}
+            reg.update().catch(() => {
+              // Erro ao atualizar SW - não é crítico
+            });
+          } catch (e) {
+            // Erro inesperado - não é crítico
+          }
 
           // Quando um novo SW for instalado (statechange para 'installed')
           reg.addEventListener('updatefound', () => {
@@ -398,7 +407,9 @@ async function initApp() {
 
           // Opcional: escuta mensagens vindas do SW
           navigator.serviceWorker.addEventListener('message', (event) => {
-            console.log('Mensagem do SW:', event.data);
+            if (event.data) {
+              console.log('Mensagem do SW:', event.data);
+            }
           });
         })
         .catch((err) =>
@@ -418,9 +429,15 @@ async function initApp() {
           return;
         }
         // Caso contrário, pede ao browser para verificar nova versão do script
-        r.update().catch(() => {});
-      }).catch(() => {});
-    } catch (e) {}
+        r.update().catch(() => {
+          // Erro ao atualizar SW - não é crítico
+        });
+      }).catch(() => {
+        // Erro ao obter registro do SW - não é crítico
+      });
+    } catch (e) {
+      // Erro inesperado - não é crítico
+    }
   }
 
   // Verifica quando a página fica visível (útil em mobile quando o utilizador abre a app)
@@ -432,7 +449,7 @@ async function initApp() {
   window.addEventListener('focus', () => checkForSWUpdate());
 
   // Verificação periódica (cada 30 minutos) - opcional mas útil para sessões longas
-  setInterval(() => checkForSWUpdate(), 30 * 60 * 1000);
+  const swCheckInterval = setInterval(() => checkForSWUpdate(), 30 * 60 * 1000);
 
   // Checagem inicial ao iniciar a app
   checkForSWUpdate();
@@ -469,7 +486,7 @@ async function initApp() {
           try {
             if (container && container.parentNode) container.parentNode.removeChild(container);
           } catch (e) {
-            /* ignore */
+            // Falha ao remover container - não é crítico
           }
         });
 

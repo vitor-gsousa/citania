@@ -4,6 +4,7 @@ dist/
 build/
 .vscode/
 scripts/
+.github/
 
 # Logs
 logs

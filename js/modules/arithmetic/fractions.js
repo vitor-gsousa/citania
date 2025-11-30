@@ -432,10 +432,10 @@ function checkFractionEquivalence(userFraction, correctFraction) {
       return false;
     }
     
-    const userNum = parseInt(userParts[0]);
-    const userDen = parseInt(userParts[1]);
-    const correctNum = parseInt(correctParts[0]);
-    const correctDen = parseInt(correctParts[1]);
+    const userNum = parseInt(userParts[0], 10);
+    const userDen = parseInt(userParts[1], 10);
+    const correctNum = parseInt(correctParts[0], 10);
+    const correctDen = parseInt(correctParts[1], 10);
     
     if (isNaN(userNum) || isNaN(userDen) || isNaN(correctNum) || isNaN(correctDen)) {
       return false;

@@ -40,5 +40,10 @@
 }
 
 @media (max-width: 600px) {
-    .sw-update-notice { right: 12px; left: 12px; bottom: 12px; }
+    .sw-update-notice { 
+        right: 12px; 
+        left: 12px; 
+        bottom: 76px;  /* Deixar espaço para footer tabs (60px + 16px margin) */
+        max-width: calc(100% - 24px);
+    }
 }

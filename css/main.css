@@ -1671,7 +1671,7 @@ main.hidden {
     /* Estilos visuais */
     background: var(--main-bg-color);
     color: var(--main-text-color);
-    z-index: 100;  /* Acima do conteúdo principal */
+    z-index: 1001;  /* Acima do header (1000) para cobrir completamente */
 }
 
 .player-panel:not(.hidden),

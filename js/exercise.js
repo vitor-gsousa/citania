@@ -67,17 +67,17 @@ export const exercises = {
   },
   gcd: {
     generate: generateGcd,
-    check: (userAnswer, correctAnswer) => parseInt(userAnswer.trim()) === correctAnswer,
+    check: (userAnswer, correctAnswer) => parseInt(userAnswer.trim(), 10) === correctAnswer,
   },
   lcm: {
     generate: generateLcm,
-    check: (userAnswer, correctAnswer) => parseInt(userAnswer.trim()) === correctAnswer,
+    check: (userAnswer, correctAnswer) => parseInt(userAnswer.trim(), 10) === correctAnswer,
   },
   powerMultiplication: {
     generate: generatePowerMultiplication,
     check: (userAnswer, correctAnswer, checkType) => {
       if (checkType === "number") {
-        return parseInt(userAnswer.trim()) === correctAnswer;
+        return parseInt(userAnswer.trim(), 10) === correctAnswer;
       }
       return userAnswer.replace(/\s/g, "") === correctAnswer;
     },
@@ -96,9 +96,15 @@ export let currentExercise = {};
  * @param {HTMLElement} exerciseArea - Container da área de exercícios
  */
 function clearExerciseVisuals(exerciseArea) {
+  if (!exerciseArea) return;
+  
   // Remover containers de frações
   const fractionContainers = exerciseArea.querySelectorAll('.fraction-container, .fraction-equivalent-with-input, .fraction-operation');
-  fractionContainers.forEach(container => container.remove());
+  fractionContainers.forEach(container => {
+    if (container && container.parentNode) {
+      container.remove();
+    }
+  });
   
   // Remover apenas inputs inline que NÃO estão dentro da pergunta
   const questionEl = exerciseArea.querySelector('.question');
@@ -106,13 +112,19 @@ function clearExerciseVisuals(exerciseArea) {
   inlineInputs.forEach(input => {
     // Só remover se não estiver dentro da pergunta
     if (!questionEl || !questionEl.contains(input)) {
-      input.remove();
+      if (input && input.parentNode) {
+        input.remove();
+      }
     }
   });
   
   // Limpar atributos data-active de inputs de frações remanescentes
   const fractionInputs = exerciseArea.querySelectorAll('.fraction-missing-input');
-  fractionInputs.forEach(input => input.removeAttribute('data-active'));
+  fractionInputs.forEach(input => {
+    if (input) {
+      input.removeAttribute('data-active');
+    }
+  });
 }
 
 export function startExercise(type, DOM, state) {
