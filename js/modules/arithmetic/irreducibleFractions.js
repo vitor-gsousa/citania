@@ -83,16 +83,16 @@ function generateIdentifyIrreducible(level) {
   const shuffled = fractions.sort(() => Math.random() - 0.5);
   correctIndex = shuffled.findIndex(f => f.irreducible);
 
-  const letters = ['A', 'B', 'C', 'D'];
-  const questionText = `Qual das seguintes frações é irredutível?`;
+  const numbers = ['1', '2', '3', '4'];
+  const questionText = `Qual das seguintes frações é irredutível? (Responde com 1, 2, 3 ou 4)`;
   
   const options = shuffled
-    .map((f, idx) => `${letters[idx]}) ${f.num}/${f.den}`)
-    .join('  |  ');
+    .map((f, idx) => `${numbers[idx]}) ${f.num}/${f.den}`)
+    .join('\n');
 
   return {
-    question: `${questionText}\n${options}`,
-    answer: letters[correctIndex],
+    question: `${questionText}\n\n${options}`,
+    answer: numbers[correctIndex],
     explanation: `A fração ${shuffled[correctIndex].num}/${shuffled[correctIndex].den} é irredutível porque MDC(${shuffled[correctIndex].num}, ${shuffled[correctIndex].den}) = 1.\n\n` +
                  `As outras frações podem ser simplificadas:\n` +
                  shuffled
@@ -103,11 +103,12 @@ function generateIdentifyIrreducible(level) {
                    })
                    .join('\n'),
     checkType: 'exact',
+    usesKeyboard: true, // Usa teclado numérico
     visualData: {
       type: 'irreducible-identify',
       fractions: shuffled,
       correctIndex: correctIndex,
-      options: letters.slice(0, numberOfFractions)
+      options: numbers.slice(0, numberOfFractions)
     }
   };
 }
@@ -163,6 +164,7 @@ function generateSimplifyToIrreducible(level) {
                  `${denominator} ÷ ${divisor} = ${simplifiedDen}\n\n` +
                  `A fração ${simplifiedNum}/${simplifiedDen} é irredutível porque MDC(${simplifiedNum}, ${simplifiedDen}) = 1`,
     checkType: 'fraction',
+    usesKeyboard: true, // Usa teclado numérico com suporte a "/"
     visualData: {
       type: 'irreducible-simplify',
       original: { num: numerator, den: denominator },
@@ -198,23 +200,24 @@ function generateCompareIrreducible(level) {
   let comparison, answer;
   if (value1 > value2) {
     comparison = '>';
-    answer = '>';
+    answer = '1'; // Resposta por número: 1 para >
   } else if (value1 < value2) {
     comparison = '<';
-    answer = '<';
+    answer = '2'; // Resposta por número: 2 para <
   } else {
     comparison = '=';
-    answer = '=';
+    answer = '3'; // Resposta por número: 3 para =
   }
 
   return {
-    question: `Compara as frações irredutíveis:\n${num1}/${den1} ___ ${num2}/${den2}`,
+    question: `Compara as frações irredutíveis:\n${num1}/${den1} ___ ${num2}/${den2}\n\nResponde com:\n1) > (maior)\n2) < (menor)\n3) = (igual)`,
     answer: answer,
     explanation: `${num1}/${den1} = ${value1.toFixed(4)}\n` +
                  `${num2}/${den2} = ${value2.toFixed(4)}\n\n` +
                  `Portanto: ${num1}/${den1} ${comparison} ${num2}/${den2}\n\n` +
                  `Ambas são frações irredutíveis (MDC = 1)`,
     checkType: 'exact',
+    usesKeyboard: true, // Usa teclado numérico
     visualData: {
       type: 'irreducible-compare',
       fraction1: { num: num1, den: den1, value: value1 },

@@ -176,6 +176,7 @@ export function generateNewExercise(DOM, state) {
   currentExercise.checkType = problem.checkType;
   currentExercise.visualData = problem.visualData; // Guardar dados visuais para frações
   currentExercise.hasInlineInput = problem.hasInlineInput; // Nova propriedade para input inline
+  currentExercise.usesKeyboard = problem.usesKeyboard; // Nova propriedade para exercícios que usam teclado numérico
   const isMissingTerm = problem.isMissingTerm || currentExercise.type === 'addSub';
 
   // Limpar qualquer conteúdo visual anterior da área de exercícios ANTES de inserir o novo
@@ -202,6 +203,15 @@ export function generateNewExercise(DOM, state) {
   // Adicionar representação visual para exercícios de frações
   if (currentExercise.type === 'fractions' && currentExercise.visualData) {
     updateFractionVisual(DOM.exerciseArea, currentExercise.visualData);
+  }
+
+  // Lógica para exercícios que usam teclado numérico (irreducibleFractions)
+  if (currentExercise.usesKeyboard) {
+    DOM.answerInput.classList.remove("hidden");
+    preventMobileKeyboard(DOM.answerInput);
+    safeFocus(DOM.answerInput);
+    DOM.customKeyboard.classList.remove("hidden");
+    return;
   }
 
   // Lógica para exercícios com input inline (addSub e frações equivalentes)
