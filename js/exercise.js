@@ -10,6 +10,7 @@ import { generateAddSub } from "./modules/arithmetic/progression.js";
 import { generateMulDiv, checkMulDivAnswer } from "./modules/arithmetic/mulDiv.js";
 import { generateFractions, checkFractionAnswer } from "./modules/arithmetic/fractions.js";
 import { generateFractionToDecimal } from "./modules/arithmetic/fractionToDecimal.js";
+import { generateIrreducibleFractions, checkIrreducibleAnswer } from "./modules/arithmetic/irreducibleFractions.js";
 import { generateGcd } from "./modules/arithmetic/gcd.js";
 import { generateLcm } from "./modules/arithmetic/lcm.js";
 import { generatePowerDivision } from "./modules/arithmetic/powerDivision.js";
@@ -57,6 +58,10 @@ export const exercises = {
       const userValue = parseFloat(userAnswer.replace(",", ".").trim());
       return Math.abs(userValue - correctAnswer) < 0.0001; // Tolerância para precisão de floating point
     },
+  },
+  irreducibleFractions: {
+    generate: generateIrreducibleFractions,
+    check: checkIrreducibleAnswer,
   },
   primeFactorization: {
     generate: generatePrimeFactorization,

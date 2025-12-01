@@ -75,6 +75,12 @@ export const EXERCISE_TYPES = {
         ariaLabel: "Frações para Decimais"
       },
       {
+        type: "irreducibleFractions",
+        icon: "done_all",
+        text: "Frações Irredutíveis",
+        ariaLabel: "Frações Irredutíveis"
+      },
+      {
         type: "primeFactorization",
         icon: "settings", 
         text: "Decomposição em Fatores Primos",

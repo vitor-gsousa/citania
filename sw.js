@@ -16,6 +16,7 @@ const urlsToCache = [
   "/js/modules/arithmetic/mulDiv.js",
   "/js/modules/arithmetic/fractions.js",
   "/js/modules/arithmetic/fractionToDecimal.js",
+  "/js/modules/arithmetic/irreducibleFractions.js",
   "/js/modules/arithmetic/gcd.js",
   "/js/modules/arithmetic/lcm.js",
   "/js/modules/arithmetic/powerDivision.js",
