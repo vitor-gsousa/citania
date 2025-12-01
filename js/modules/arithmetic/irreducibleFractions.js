@@ -84,14 +84,26 @@ function generateIdentifyIrreducible(level) {
   correctIndex = shuffled.findIndex(f => f.irreducible);
 
   const numbers = ['1', '2', '3', '4'];
-  const questionText = `Qual das seguintes frações é irredutível? (Responde com 1, 2, 3 ou 4)`;
+  const questionText = `Qual das seguintes frações é irredutível?`;
   
-  const options = shuffled
-    .map((f, idx) => `${numbers[idx]}) ${f.num}/${f.den}`)
-    .join('\n');
+  const optionsHtml = shuffled
+    .map((f, idx) => {
+      return `<button class="option-button" data-option="${numbers[idx]}" aria-label="Opção ${numbers[idx]}: ${f.num}/${f.den}">
+                <span class="option-number">${numbers[idx]}</span>
+                <span class="option-content"><sup>${f.num}</sup>/<sub>${f.den}</sub></span>
+              </button>`;
+    })
+    .join('');
+
+  const questionHtml = `<div class="exercise-container">
+    <p class="question-text">${questionText}</p>
+    <div class="options-grid">
+      ${optionsHtml}
+    </div>
+  </div>`;
 
   return {
-    question: `${questionText}\n\n${options}`,
+    question: questionHtml,
     answer: numbers[correctIndex],
     explanation: `A fração ${shuffled[correctIndex].num}/${shuffled[correctIndex].den} é irredutível porque MDC(${shuffled[correctIndex].num}, ${shuffled[correctIndex].den}) = 1.\n\n` +
                  `As outras frações podem ser simplificadas:\n` +
@@ -210,7 +222,29 @@ function generateCompareIrreducible(level) {
   }
 
   return {
-    question: `Compara as frações irredutíveis:\n${num1}/${den1} ___ ${num2}/${den2}\n\nResponde com:\n1) > (maior)\n2) < (menor)\n3) = (igual)`,
+    question: `<div class="exercise-container">
+      <p class="question-text">Compara as frações irredutíveis:</p>
+      <div class="fraction-comparison">
+        <span class="fraction"><sup>${num1}</sup>/<sub>${den1}</sub></span>
+        <span class="comparison-symbol">___</span>
+        <span class="fraction"><sup>${num2}</sup>/<sub>${den2}</sub></span>
+      </div>
+      <p class="instructions">Responde com:</p>
+      <div class="options-grid">
+        <button class="option-button" data-option="1" aria-label="Opção 1: Maior">
+          <span class="option-number">1</span>
+          <span class="option-content">&gt;</span>
+        </button>
+        <button class="option-button" data-option="2" aria-label="Opção 2: Menor">
+          <span class="option-number">2</span>
+          <span class="option-content">&lt;</span>
+        </button>
+        <button class="option-button" data-option="3" aria-label="Opção 3: Igual">
+          <span class="option-number">3</span>
+          <span class="option-content">=</span>
+        </button>
+      </div>
+    </div>`,
     answer: answer,
     explanation: `${num1}/${den1} = ${value1.toFixed(4)}\n` +
                  `${num2}/${den2} = ${value2.toFixed(4)}\n\n` +

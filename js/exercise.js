@@ -211,11 +211,9 @@ export function generateNewExercise(DOM, state) {
     preventMobileKeyboard(DOM.answerInput);
     safeFocus(DOM.answerInput);
     DOM.customKeyboard.classList.remove("hidden");
-    return;
-  }
-
-  // Lógica para exercícios com input inline (addSub e frações equivalentes)
-  if (isMissingTerm || currentExercise.hasInlineInput) {
+    // Não fazer return aqui para permitir que o checkButton/nextButton sejam inicializados corretamente
+  } else if (isMissingTerm || currentExercise.hasInlineInput) {
+    // Lógica para exercícios com input inline (addSub e frações equivalentes)
     DOM.answerInput.classList.add("hidden"); // Esconde o input principal
     
     // Para frações equivalentes, o input já está integrado na visualização
@@ -266,6 +264,21 @@ export function generateNewExercise(DOM, state) {
     preventMobileKeyboard(DOM.answerInput);
     safeFocus(DOM.answerInput);
     DOM.customKeyboard.classList.add("hidden");
+  }
+
+  // Adicionar listeners para option-buttons (múltipla escolha)
+  const optionButtons = DOM.exerciseArea.querySelectorAll('.option-button');
+  if (optionButtons.length > 0) {
+    optionButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const optionValue = btn.getAttribute('data-option');
+        if (optionValue) {
+          DOM.answerInput.value = optionValue;
+          // Quando clica numa opção, verifica automaticamente
+          checkAnswer(DOM, state);
+        }
+      });
+    });
   }
 
   DOM.checkButton.style.display = "block";
