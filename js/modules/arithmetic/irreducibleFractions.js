@@ -64,7 +64,8 @@ function generateIdentifyIrreducible(level) {
   fractions.push({ num: num1, den: den1, irreducible: true });
 
   // Gerar frações que NÃO são irredutíveis (simplificáveis)
-  const numberOfFractions = level <= 3 ? 2 : 3;
+  // Mínimo 2 opções, máximo 4 (ou 3 em níveis baixos)
+  let numberOfFractions = level <= 3 ? 2 : (level <= 6 ? 3 : 4);
 
   for (let i = 1; i < numberOfFractions; i++) {
     let denominator = getRandomInt(4, 15 + level);
@@ -79,25 +80,42 @@ function generateIdentifyIrreducible(level) {
     }
   }
 
+  // Garantir mínimo de 2 opções
+  while (fractions.length < 2) {
+    numberOfFractions++;
+    let denominator = getRandomInt(4, 15 + level);
+    let divisor = getRandomInt(2, Math.min(5, Math.floor(denominator / 2)));
+    let numerator = getRandomInt(1, denominator / divisor - 1) * divisor;
+    denominator = denominator / divisor * divisor;
+    if (gcd(numerator, denominator) !== 1) {
+      fractions.push({ num: numerator, den: denominator, irreducible: false });
+    }
+  }
+
   // Embaralhar e encontrar a posição da resposta correta
   const shuffled = fractions.sort(() => Math.random() - 0.5);
   correctIndex = shuffled.findIndex(f => f.irreducible);
 
-  const numbers = ['1', '2', '3', '4'];
+  const numbers = ['1', '2', '3', '4', '5'];
   const questionText = `Qual das seguintes frações é irredutível?`;
+  
+  // Número efetivo de opções (pode ser 2, 3, 4)
+  const actualNumberOfOptions = shuffled.length;
   
   const optionsHtml = shuffled
     .map((f, idx) => {
-      return `<button class="option-button" data-option="${numbers[idx]}" aria-label="Opção ${numbers[idx]}: ${f.num}/${f.den}">
-                <span class="option-number">${numbers[idx]}</span>
-                <span class="option-content"><sup>${f.num}</sup>/<sub>${f.den}</sub></span>
-              </button>`;
+      return `<div class="option-wrapper">
+                <span class="option-label">${numbers[idx]}</span>
+                <button class="option-button" data-option="${numbers[idx]}" aria-label="Opção ${numbers[idx]}: ${f.num}/${f.den}">
+                  <span class="option-content"><sup>${f.num}</sup>/<sub>${f.den}</sub></span>
+                </button>
+              </div>`;
     })
     .join('');
 
   const questionHtml = `<div class="exercise-container">
     <p class="question-text">${questionText}</p>
-    <div class="options-grid">
+    <div class="options-grid options-grid-${actualNumberOfOptions}">
       ${optionsHtml}
     </div>
   </div>`;
@@ -120,7 +138,7 @@ function generateIdentifyIrreducible(level) {
       type: 'irreducible-identify',
       fractions: shuffled,
       correctIndex: correctIndex,
-      options: numbers.slice(0, numberOfFractions)
+      options: numbers.slice(0, actualNumberOfOptions)
     }
   };
 }
@@ -230,19 +248,25 @@ function generateCompareIrreducible(level) {
         <span class="fraction"><sup>${num2}</sup>/<sub>${den2}</sub></span>
       </div>
       <p class="instructions">Responde com:</p>
-      <div class="options-grid">
-        <button class="option-button" data-option="1" aria-label="Opção 1: Maior">
-          <span class="option-number">1</span>
-          <span class="option-content">&gt;</span>
-        </button>
-        <button class="option-button" data-option="2" aria-label="Opção 2: Menor">
-          <span class="option-number">2</span>
-          <span class="option-content">&lt;</span>
-        </button>
-        <button class="option-button" data-option="3" aria-label="Opção 3: Igual">
-          <span class="option-number">3</span>
-          <span class="option-content">=</span>
-        </button>
+      <div class="options-grid options-grid-3">
+        <div class="option-wrapper">
+          <span class="option-label">1</span>
+          <button class="option-button" data-option="1" aria-label="Opção 1: Maior">
+            <span class="option-content">&gt;</span>
+          </button>
+        </div>
+        <div class="option-wrapper">
+          <span class="option-label">2</span>
+          <button class="option-button" data-option="2" aria-label="Opção 2: Menor">
+            <span class="option-content">&lt;</span>
+          </button>
+        </div>
+        <div class="option-wrapper">
+          <span class="option-label">3</span>
+          <button class="option-button" data-option="3" aria-label="Opção 3: Igual">
+            <span class="option-content">=</span>
+          </button>
+        </div>
       </div>
     </div>`,
     answer: answer,

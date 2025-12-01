@@ -390,6 +390,44 @@
     justify-items: center;
 }
 
+/* Variações da grid baseadas no número de opções */
+.options-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 350px;
+}
+
+.options-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 500px;
+}
+
+.options-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 500px;
+}
+
+.options-grid-5 {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 500px;
+}
+
+/* Wrapper para opção com número ao lado */
+.option-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.option-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-align: center;
+    min-width: 1.5rem;
+}
+
 .option-button {
     display: flex;
     flex-direction: column;
@@ -404,16 +442,13 @@
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transition-medium) var(--easing-standard);
-    min-height: 100px;
+    min-height: 80px;
     width: 100%;
-    max-width: 150px;
+    max-width: 120px;
 }
 
 .option-number {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    display: block;
+    display: none; /* Número agora fica em option-label fora do botão */
 }
 
 .option-content {
@@ -530,18 +565,33 @@
         max-width: 100%;
     }
 
-    .option-button {
-        padding: 0.8rem;
-        min-height: 90px;
-        max-width: 120px;
+    .options-grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 100%;
     }
 
-    .option-number {
-        font-size: 1.3rem;
+    .options-grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 100%;
+    }
+
+    .options-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 100%;
+    }
+
+    .option-button {
+        padding: 0.8rem;
+        min-height: 70px;
+        max-width: 110px;
     }
 
     .option-content {
         font-size: 1.1rem;
+    }
+
+    .option-label {
+        font-size: 0.8rem;
     }
 
     .fraction-comparison {
@@ -564,19 +614,38 @@
     }
 
     .options-grid {
-        grid-template-columns: repeat(auto-fit, minmax(clamp(70px, 45vw, 100px), 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 0.6rem;
         max-width: 100%;
     }
 
+    .options-grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 100%;
+    }
+
+    .options-grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 100%;
+    }
+
+    .options-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 100%;
+    }
+
+    .option-wrapper {
+        gap: 0.4rem;
+    }
+
     .option-button {
         padding: 0.6rem;
-        min-height: 80px;
+        min-height: 60px;
         max-width: 100px;
     }
 
-    .option-number {
-        font-size: 1.1rem;
+    .option-label {
+        font-size: 0.75rem;
     }
 
     .option-content {
