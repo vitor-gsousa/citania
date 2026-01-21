@@ -23,7 +23,10 @@ export function generatePowerMultiplication(level) {
   } else {
     let base1 = getRandomInt(baseMin, baseMax);
     let base2 = getRandomInt(baseMin, baseMax);
-    if (base1 === base2) base2++;
+    // Garantir que as bases são diferentes sem ultrapassar o limite configurado
+    while (base2 === base1) {
+      base2 = getRandomInt(baseMin, baseMax);
+    }
     const exp1 = getRandomInt(expMin, expMax);
     const exp2 = getRandomInt(expMin, expMax);
     const result = Math.pow(base1, exp1) * Math.pow(base2, exp2);
