@@ -1,37 +1,41 @@
 /* Achievements panel - specific overrides (base panel layout is defined in components/panels.css) */
-.achievements-panel {
-    /* keep only panel-specific overrides here to avoid duplicating base panel layout */
-    box-shadow: -8px 0 24px rgb(0 0 0 / 12%);
-    transition: transform 320ms cubic-bezier(.2,.9,.2,1);
-    z-index: 1200; /* higher than other panels */
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Desktop: painel lateral (slide in/out) */
 @media (min-width: 768px) {
     .achievements-panel {
-        width: 320px;
-        max-width: 90vw;
+        /* Drawer-style panel overrides (desktop only) */
+        box-shadow: -12px 0 32px rgb(0 0 0 / 18%);
+        transition: transform 260ms cubic-bezier(.2,.9,.2,1), opacity 180ms ease;
+        z-index: 1200; /* higher than other panels */
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: auto;
+        width: min(400px, 92vw);
+        max-width: 92vw;
+        padding: 1.5rem;
+        padding-top: calc(var(--header-height, 3rem) + 1.75rem);
+        background: var(--main-bg-color);
+        color: var(--main-text-color);
         transform: translateX(100%);
+        opacity: 0;
     }
 }
 
 /* Estados de visibilidade */
-.achievements-panel.hidden {
-    display: none !important;
-}
-
-/* Para desktop: usar classe is-visible */
 @media (min-width: 768px) {
     .achievements-panel.hidden {
+        display: none !important;
         transform: translateX(100%);
+        opacity: 0;
     }
-    
+
     .achievements-panel.is-visible {
         display: flex !important;
         transform: translateX(0%);
+        opacity: 1;
     }
 }
 
@@ -48,6 +52,8 @@
 
 .achievements-panel .ach-body {
     margin-top: .75rem;
+    overflow: auto;
+    padding-right: .25rem;
 }
 
 .ach-badges {
@@ -87,27 +93,29 @@
 }
 
 /* Close button inside achievements panel */
-.close-panel-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    border: none;
-    background: transparent;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 10;
-    color: var(--text-color);
-    display: none;
-}
-
 @media (min-width: 768px) {
     .close-panel-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: none;
+        background: transparent;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 10;
+        color: var(--text-color);
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+}
+
+@media (max-width: 767px) {
+    .close-panel-btn {
+        display: none !important;
     }
 }
 
@@ -206,4 +214,33 @@
 /* Panel open state for body (prevent scrolling) */
 body.panel-open {
     overflow: hidden;
+}
+
+/* Backdrop for drawer */
+@media (min-width: 768px) {
+    .achievements-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.35);
+        backdrop-filter: blur(2px);
+        z-index: 1199;
+        opacity: 0;
+        transition: opacity 180ms ease;
+    }
+
+    .achievements-backdrop.hidden {
+        display: none;
+        opacity: 0;
+    }
+
+    .achievements-backdrop.is-visible {
+        display: block;
+        opacity: 1;
+    }
+}
+
+@media (max-width: 767px) {
+    .achievements-backdrop {
+        display: none !important;
+    }
 }
