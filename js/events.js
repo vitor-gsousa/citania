@@ -43,9 +43,7 @@ function bindCardActions(DOM, state) {
     }
     if (!type) return;
 
-    if (type === "achievements") {
-      showAchievementsPanel(DOM, state);
-    } else if (exercises[type]) {
+    if (exercises[type]) {
       startExercise(type, DOM, state);
     }
   };
