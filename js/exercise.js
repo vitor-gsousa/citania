@@ -67,7 +67,10 @@ export const exercises = {
     generate: generatePrimeFactorization,
     check: (userAnswer, correctAnswerArray) => {
       const userFactors = userAnswer.match(/\d+/g)?.map(Number).sort((a, b) => a - b) || [];
-      return JSON.stringify(userFactors) === JSON.stringify(correctAnswerArray.sort((a, b) => a - b));
+      const expectedFactors = Array.isArray(correctAnswerArray)
+        ? [...correctAnswerArray].sort((a, b) => a - b)
+        : [];
+      return JSON.stringify(userFactors) === JSON.stringify(expectedFactors);
     },
   },
   gcd: {
