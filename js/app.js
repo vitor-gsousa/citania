@@ -78,6 +78,7 @@ const state = {
 // Define a constante para a duração da animação, correspondente a var(--transition-medium)
 // REDUZIDO para melhor responsividade - transições rápidas não prejudicam a UX
 const ANIMATION_DURATION_MS = 240;
+let swCheckIntervalId = null;
 
 // --- Funções de atualização de título ---
 
@@ -315,9 +316,42 @@ function ensureFocusNotInside(el) {
  * Necessário porque os elements são criados dinamicamente
  */
 function updateDOMReferences() {
-  // Atualizar referência dos cards que agora foram criados dinamicamente
+  DOM.menuContainer = document.getElementById("menu-container");
+  DOM.exerciseArea = document.getElementById("exercise-area");
+  DOM.summaryArea = document.getElementById("summary-area");
+  DOM.questionEl = document.getElementById("question");
+  DOM.answerInput = document.getElementById("answer-input");
+  DOM.checkButton = document.getElementById("check-button");
+  DOM.feedbackEl = document.getElementById("feedback");
+  DOM.nextButton = document.getElementById("next-button");
+  DOM.backButton = document.getElementById("back-to-menu");
+  DOM.nextLevelButton = document.getElementById("next-level-button");
+  DOM.currentLevelEl = document.getElementById("current-level");
+  DOM.progressBar = document.getElementById("progress-bar");
+  DOM.summaryCorrect = document.getElementById("summary-correct");
+  DOM.summaryTotal = document.getElementById("summary-total");
+  DOM.themeToggleButton = document.getElementById("theme-toggle");
+  DOM.summaryRecordMessage = document.getElementById("summary-record-message");
   DOM.exerciseCards = document.querySelectorAll(".card");
-  
+  DOM.gamificationBar = document.getElementById("gamification-bar");
+  DOM.pointsCountEl = document.getElementById("points-count");
+  DOM.badgesStripEl = document.getElementById("badges-strip");
+  DOM.userButton = document.getElementById("user-button");
+  DOM.userNameEl = document.getElementById("user-name");
+  DOM.medalhasList = document.getElementById("medalhas-list") || document.getElementById("medalhas");
+  DOM.narrativa = document.getElementById("narrativa");
+  DOM.achievementsPanel = document.getElementById("achievements-panel");
+  DOM.achievementsButton = document.getElementById("achievements-button");
+  DOM.leaderboard = document.getElementById("leaderboard");
+  DOM.medalhasEl = document.getElementById("medalhas");
+  DOM.customKeyboard = document.getElementById("custom-keyboard");
+  DOM.levelBadgeEl = document.getElementById("level-badge");
+  DOM.novaCuriosidadeBtn = document.getElementById("nova-curiosidade");
+  DOM.toggleRotacaoBtn = document.getElementById("toggle-rotacao");
+  DOM.narrativePopup = document.getElementById("narrative-popup");
+  DOM.narrativePopupText = document.getElementById("narrative-popup-text");
+  DOM.closeNarrativePopup = document.getElementById("close-narrative-popup");
+
   console.log(`Referências DOM atualizadas: ${DOM.exerciseCards.length} cards encontrados`);
 }
 
@@ -449,7 +483,9 @@ async function initApp() {
   window.addEventListener('focus', () => checkForSWUpdate());
 
   // Verificação periódica (cada 30 minutos) - opcional mas útil para sessões longas
-  const swCheckInterval = setInterval(() => checkForSWUpdate(), 30 * 60 * 1000);
+  if (!swCheckIntervalId) {
+    swCheckIntervalId = setInterval(() => checkForSWUpdate(), 30 * 60 * 1000);
+  }
 
   // Checagem inicial ao iniciar a app
   checkForSWUpdate();
