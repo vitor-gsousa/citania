@@ -46,6 +46,22 @@ function getIrreducibleExerciseTypes(level) {
 }
 
 /**
+ * Gera uma fração que NÃO é irredutível de forma determinista.
+ * Escolhe um fator comum k >= 2 e constrói numerador e denominador como
+ * múltiplos desse fator, garantindo gcd > 1 sem depender de tentativa/erro.
+ * @param {number} level - Nível de dificuldade (controla o intervalo dos valores).
+ * @returns {{num: number, den: number, irreducible: false}}
+ */
+function generateReducibleFraction(level) {
+  const maxBase = 5 + level;
+  const k = getRandomInt(2, Math.min(6, maxBase));
+  const a = getRandomInt(1, maxBase);
+  // Garantir que b != a para evitar fração imprópria com numerador == denominador
+  let b = getRandomInt(a + 1, maxBase + a);
+  return { num: a * k, den: b * k, irreducible: false };
+}
+
+/**
  * Gera exercício: Identificar qual fração é irredutível
  * @param {number} level - Nível de dificuldade
  * @returns {Object} Exercício de identificação
@@ -65,31 +81,10 @@ function generateIdentifyIrreducible(level) {
 
   // Gerar frações que NÃO são irredutíveis (simplificáveis)
   // Mínimo 2 opções, máximo 4 (ou 3 em níveis baixos)
-  let numberOfFractions = level <= 3 ? 2 : (level <= 6 ? 3 : 4);
+  const numberOfFractions = level <= 3 ? 2 : (level <= 6 ? 3 : 4);
 
   for (let i = 1; i < numberOfFractions; i++) {
-    let denominator = getRandomInt(4, 15 + level);
-    let divisor = getRandomInt(2, Math.min(5, Math.floor(denominator / 2)));
-    
-    // Criar fração não-irredutível multiplicando por um fator
-    let numerator = getRandomInt(1, denominator / divisor - 1) * divisor;
-    denominator = denominator / divisor * divisor;
-    
-    if (gcd(numerator, denominator) !== 1) {
-      fractions.push({ num: numerator, den: denominator, irreducible: false });
-    }
-  }
-
-  // Garantir mínimo de 2 opções
-  while (fractions.length < 2) {
-    numberOfFractions++;
-    let denominator = getRandomInt(4, 15 + level);
-    let divisor = getRandomInt(2, Math.min(5, Math.floor(denominator / 2)));
-    let numerator = getRandomInt(1, denominator / divisor - 1) * divisor;
-    denominator = denominator / divisor * divisor;
-    if (gcd(numerator, denominator) !== 1) {
-      fractions.push({ num: numerator, den: denominator, irreducible: false });
-    }
+    fractions.push(generateReducibleFraction(level));
   }
 
   // Embaralhar e encontrar a posição da resposta correta
