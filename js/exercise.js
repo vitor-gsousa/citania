@@ -38,6 +38,21 @@ import {
 } from "./ui.js";
 import { updatePageTitle } from "./app.js";
 
+/**
+ * Escapa caracteres especiais HTML para prevenir XSS ao interpolar
+ * conteúdo dinâmico em innerHTML.
+ * @param {*} value - Valor a escapar (será convertido para string).
+ * @returns {string} String com caracteres HTML escapados.
+ */
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // Mapa de exercícios disponíveis
 export const exercises = {
   addSub: {
@@ -344,7 +359,7 @@ export function checkAnswer(DOM, state) {
 
   } else {
     sounds.incorrect.play();
-    DOM.feedbackEl.innerHTML = `❌ Quase! A resposta certa é <strong>${correctAnswerFormatted}</strong>.`;
+    DOM.feedbackEl.innerHTML = `❌ Quase! A resposta certa é <strong>${escapeHtml(correctAnswerFormatted)}</strong>.`;
     DOM.feedbackEl.className = "incorrect";
     state.score.incorrect++;
     state.streak = 0;
@@ -370,7 +385,7 @@ export function checkAnswer(DOM, state) {
   }
 
   if (state.roundProgress <= state.explanationLimit) {
-    DOM.feedbackEl.innerHTML += `<br><small style="font-weight: normal; opacity: 0.9;">${currentExercise.explanation}</small>`;
+    DOM.feedbackEl.innerHTML += `<br><small style="font-weight: normal; opacity: 0.9;">${escapeHtml(currentExercise.explanation)}</small>`;
   }
 
   state.answered = true;
