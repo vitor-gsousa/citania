@@ -3,7 +3,9 @@
   "version": "1.1.1",
   "description": "Citânia - Uma aplicação PWA gamificada para aprendizagem de matemática, inspirada no Castro de Citânia de Sanfins",
   "main": "index.html",
+  "type": "module",
   "scripts": {
+    "test": "node --test",
     "build:css": "pwsh ./build-css.ps1",
     "dev": "npm run build:css && npx http-server -p 8000 -c-1 --cors",
     "start": "npm run build:css && npx http-server -p 8080 -c-1 --cors",
@@ -11,7 +13,7 @@
     "test:pwa": "npx lighthouse http://localhost:8000 --view",
     "update-version": "node update-version.js",
     "validate": "npm run validate:manifest",
-    "validate:manifest": "node -e \"const fs = require('fs'); const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8')); console.log('✓ Manifest válido:', manifest.name);\"",
+    "validate:manifest": "node -e \"import fs from 'node:fs'; const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8')); console.log('✓ Manifest válido:', manifest.name);\"",
     "lint:css": "stylelint 'css/**/*.css' --allow-empty-input"
   },
   "repository": {
