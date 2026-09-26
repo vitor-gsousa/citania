@@ -1,5 +1,5 @@
-// js/features/gamification.js
 import { safeGetItem, safeSetItem } from "../utils/storage.js";
+import { getPlayerName, setPlayerName } from "../services/user-profile.js";
 
 // Curiosidades de fallback embutidas
 const FALLBACK_FACTS = [
@@ -61,7 +61,7 @@ export const gamification = {
   curiosidade:
     "Bem-vindo à Citânia! Prepare-se para descobrir curiosidades matemáticas fascinantes!",
   leaderboard: [],
-  userName: localStorage.getItem("citaniaUserName") || "Jogador",
+  userName: getPlayerName(),
 };
 
 export async function loadGamification() {
@@ -79,7 +79,7 @@ export async function loadGamification() {
         ? data.medalhas
         : gamification.medalhas;
       gamification.curiosidade = data.curiosidade ?? gamification.curiosidade;
-      gamification.userName = data.userName ?? gamification.userName;
+      gamification.userName = data.userName ? setPlayerName(data.userName) : getPlayerName();
     } catch (e) {
       console.warn("Erro ao parsear dados guardados de gamificação:", e);
     }

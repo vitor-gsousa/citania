@@ -142,7 +142,7 @@ function clearExerciseVisuals(exerciseArea) {
   });
   
   // Limpar atributos data-active de inputs de frações remanescentes
-  const fractionInputs = exerciseArea.querySelectorAll('.fraction-missing-input');
+  const fractionInputs = exerciseArea.querySelectorAll('.fraction-missing-input, .inline-missing-input');
   fractionInputs.forEach(input => {
     if (input) {
       input.removeAttribute('data-active');
@@ -166,11 +166,6 @@ export function startExercise(type, DOM, state) {
 
   // Limpar estado visual anterior
   clearExerciseVisuals(DOM.exerciseArea);
-  
-  // Resetar estado de frações se a função existir
-  if (typeof window.resetFractionState === 'function') {
-    window.resetFractionState();
-  }
 
   // Configurar prevenção de teclado móvel no input principal
   preventMobileKeyboard(DOM.answerInput);
@@ -199,11 +194,6 @@ export function generateNewExercise(DOM, state) {
 
   // Limpar qualquer conteúdo visual anterior da área de exercícios ANTES de inserir o novo
   clearExerciseVisuals(DOM.exerciseArea);
-  
-  // Resetar estado de frações se a função existir
-  if (typeof window.resetFractionState === 'function') {
-    window.resetFractionState();
-  }
 
   DOM.questionEl.innerHTML = problem.question;
   DOM.answerInput.value = "";

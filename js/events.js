@@ -16,6 +16,7 @@ import {
   saveGamification,
 } from "./features/gamification.js";
 import { safeSetItem } from "./utils/storage.js";
+import { getPlayerName, setPlayerName } from "./services/user-profile.js";
 import { showSection, showThemes } from "./app.js"; // Importar de app.js
 
 let keyboardPointerDown = false;
@@ -68,18 +69,6 @@ function bindCardActions(DOM, state) {
  * @param {object} state - O estado global da aplicação.
  */
 export function initEventListeners(DOM, state) {
-  // Variável para rastrear o input de fração ativo
-  let activeFractionInput = null;
-
-  /**
-   * Reset do estado de frações para quando se muda de exercício
-   */
-  window.resetFractionState = function() {
-    activeFractionInput = null;
-    // Limpar atributos data-active de qualquer input remanescente
-    const allInputs = document.querySelectorAll('.fraction-missing-input, .inline-missing-input');
-    allInputs.forEach(input => input.removeAttribute('data-active'));
-  };
   bindCardActions(DOM, state);
 
   DOM.themeToggleButton?.addEventListener("click", toggleTheme);
@@ -93,10 +82,11 @@ export function initEventListeners(DOM, state) {
   // Achievements handled via new tab-navigation system (not modal)
   // DOM.achievementsButton?.addEventListener("click", () => showAchievementsPanel(DOM, state));
   DOM.userButton?.addEventListener("click", () => {
-    const name = (prompt("Escolhe o teu nome:", gamification.userName) || "").trim();
+    const currentName = getPlayerName();
+    const name = (prompt("Escolhe o teu nome:", currentName) || "").trim();
     if (name) {
-      gamification.userName = name;
-      safeSetItem("citaniaUserName", name);
+      const finalName = setPlayerName(name);
+      gamification.userName = finalName;
       renderGamificationBar(DOM);
       saveGamification();
     }

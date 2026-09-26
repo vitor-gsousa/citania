@@ -1,5 +1,8 @@
 // js/tab-navigation.js
 // Módulo de navegação entre abas do footer em mobile
+import { getPlayerName, setPlayerName } from './services/user-profile.js';
+import { safeGetItem } from './utils/storage.js';
+import { GAMIFICATION_KEY } from './features/gamification.js';
 
 const TAB_CONFIG = {
   game: {
@@ -33,6 +36,9 @@ export function initTabNavigation() {
       switchToTab(tabName);
     });
   });
+
+  // Configurar listeners do formulário do jogador uma única vez
+  setupPlayerFormListeners();
 
   // Inicializa com a aba "game" ativa
   switchToTab('game');
@@ -138,48 +144,47 @@ function executeTabLogic(tabName) {
   }
 }
 
+let playerFormInitialized = false;
+
+/**
+ * Configura os event listeners do formulário do jogador uma única vez
+ * para evitar duplicação e fugas de memória ao alternar abas.
+ */
+function setupPlayerFormListeners() {
+  if (playerFormInitialized) return;
+
+  const playerNameInput = document.getElementById('player-name-input');
+  const saveButton = document.getElementById('save-player-name');
+  if (!saveButton || !playerNameInput) return;
+
+  playerFormInitialized = true;
+
+  saveButton.addEventListener('click', () => {
+    const newName = playerNameInput.value.trim();
+    if (newName.length > 0) {
+      setPlayerName(newName);
+      saveButton.textContent = '✓ Guardado';
+      setTimeout(() => {
+        saveButton.textContent = 'Guardar';
+      }, 2000);
+    }
+  });
+
+  playerNameInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      saveButton.click();
+    }
+  });
+}
+
 /**
  * Carrega dados do jogador no painel
  */
 function loadPlayerData() {
+  setupPlayerFormListeners();
   const playerNameInput = document.getElementById('player-name-input');
-  const saveButton = document.getElementById('save-player-name');
-
-  // Obter dados do localStorage
-  const playerName = localStorage.getItem('playerName') || 'Jogador';
-
-  // Atualizar valores na UI
   if (playerNameInput) {
-    playerNameInput.value = playerName;
-  }
-
-  // Configurar listener para guardar nome
-  if (saveButton && playerNameInput) {
-    saveButton.onclick = () => {
-      const newName = playerNameInput.value.trim();
-      if (newName.length > 0) {
-        localStorage.setItem('playerName', newName);
-        
-        // Atualizar nome no header também
-        const userNameEl = document.getElementById('user-name');
-        if (userNameEl) {
-          userNameEl.textContent = newName;
-        }
-        
-        // Feedback visual
-        saveButton.textContent = '✓ Guardado';
-        setTimeout(() => {
-          saveButton.textContent = 'Guardar';
-        }, 2000);
-      }
-    };
-
-    // Permitir guardar com Enter
-    playerNameInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        saveButton.click();
-      }
-    });
+    playerNameInput.value = getPlayerName();
   }
 }
 
@@ -191,7 +196,7 @@ function renderAchievementsBadges(container) {
   if (!container) return;
 
   // Obter medalhas do localStorage (gamification)
-  const gamificationData = localStorage.getItem('citaniaGamification');
+  const gamificationData = safeGetItem(GAMIFICATION_KEY);
   let medalhas = [];
   
   try {

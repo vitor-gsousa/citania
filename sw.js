@@ -27,6 +27,7 @@ const urlsToCache = [
   "/js/modules/utils/input-template.js",
   "/js/modules/utils/math-facts.js",
   "/js/services/sounds.js",
+  "/js/services/user-profile.js",
   "/js/utils/icon-utils.js",
   "/js/utils/storage.js",
   "/js/utils/mobile-utils.js",
