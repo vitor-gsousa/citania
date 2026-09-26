@@ -1,45 +1,10 @@
 import { safeGetItem, safeSetItem } from "../utils/storage.js";
 import { getPlayerName, setPlayerName } from "../services/user-profile.js";
-
-// Curiosidades de fallback embutidas
-const FALLBACK_FACTS = [
-  "🧠 A matemática é a linguagem universal do universo!",
-  "🧠 Os números estão em toda a parte - desde as pétalas das flores até às galáxias!",
-  "🧠 A soma de dois números ímpares é sempre par!",
-  "🧠 O número zero foi uma das maiores invenções da humanidade!",
-  "🧠 Pedro Nunes foi um grande matemático português do século XVI!",
-  "🧠 O número Pi tem infinitas casas decimais que nunca se repetem!",
-  "🧠 A sequência de Fibonacci aparece na natureza!",
-  "🧠 As abelhas fazem favos hexagonais porque usam menos cera!",
-  "🧠 Leonardo da Vinci usava a proporção áurea nas suas pinturas!",
-  "🧠 O teorema de Pitágoras era conhecido antes de Pitágoras!"
-];
-
-// Funções de fallback
-function getFallbackMathFact() {
-  const randomIndex = Math.floor(Math.random() * FALLBACK_FACTS.length);
-  return FALLBACK_FACTS[randomIndex];
-}
-
-// Variáveis para as funções importadas
-let getRandomMathFact = getFallbackMathFact;
-let getLevelBasedMathFact = getFallbackMathFact;
-let startFactRotation = null;
-
-// Tentar importar math-facts dinamicamente
-async function loadMathFactsModule() {
-  try {
-    const mathFactsModule = await import("../modules/utils/math-facts.js");
-    getRandomMathFact = mathFactsModule.getRandomMathFact;
-    getLevelBasedMathFact = mathFactsModule.getLevelBasedMathFact;
-    startFactRotation = mathFactsModule.startFactRotation;
-    console.log("Módulo math-facts carregado com sucesso");
-    return true;
-  } catch (error) {
-    console.warn("Usando funções de fallback para curiosidades:", error);
-    return false;
-  }
-}
+import {
+  getRandomMathFact,
+  getLevelBasedMathFact,
+  startFactRotation,
+} from "../modules/utils/math-facts.js";
 
 // Variável para controlar a rotação automática
 let factRotationController = null;
@@ -66,9 +31,6 @@ export const gamification = {
 
 export async function loadGamification() {
   console.log("Carregando gamificação...");
-  
-  // Tentar carregar o módulo de math-facts
-  await loadMathFactsModule();
   
   const saved = safeGetItem(GAMIFICATION_KEY);
   if (saved) {
@@ -145,8 +107,7 @@ export function generateNewMathFact(level = null) {
     saveGamification();
   } catch (error) {
     console.error("Erro ao gerar curiosidade:", error);
-    // Fallback para curiosidades estáticas usando a função de fallback
-    gamification.curiosidade = getFallbackMathFact();
+    gamification.curiosidade = "🧠 A matemática é a linguagem universal do universo!";
     updateMathFactDisplay();
     saveGamification();
   }
@@ -201,6 +162,8 @@ export function stopAutoFactRotation() {
 
 // Atualiza a exibição da curiosidade matemática no DOM
 function updateMathFactDisplay() {
+  if (typeof document === "undefined") return;
+
   const curiosidadeEl = document.getElementById("narrativa");
   const popupTextEl = document.getElementById("narrative-popup-text");
 

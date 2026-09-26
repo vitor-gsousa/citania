@@ -14,6 +14,7 @@ import { initEventListeners } from "./events.js";
 import normalizeIcons from "./utils/icon-utils.js";
 import { initTabNavigation, updatePlayerStats } from "./tab-navigation.js";
 import { initAchievementsPanel } from "./features/achievements-panel.js";
+import { initServiceWorker } from "./services/sw-manager.js";
 
 // Import templates e configuração
 import { initializeTemplates } from "./templates/template-manager.js";
@@ -78,7 +79,6 @@ const state = {
 // Define a constante para a duração da animação, correspondente a var(--transition-medium)
 // REDUZIDO para melhor responsividade - transições rápidas não prejudicam a UX
 const ANIMATION_DURATION_MS = 240;
-let swCheckIntervalId = null;
 
 // --- Funções de atualização de título ---
 
@@ -403,145 +403,8 @@ async function initApp() {
   // 7. Inicializar funcionalidade de instalação PWA
   initPWAInstall();
 
-  // 8. Registar Service Worker (após o load para não bloquear o render inicial)
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker
-        .register("/sw.js", { scope: "/" })
-        .then((reg) => {
-          console.log("Service Worker registado:", reg.scope);
-
-          // Se houver um service worker em espera, avisa o utilizador
-          if (reg.waiting) {
-            promptUserToRefresh(reg);
-          }
-
-          // Solicita imediatamente ao navegador uma verificação por uma nova versão do sw.js
-          // Isto ajuda a detetar atualizações sem a necessidade de um hard refresh
-          try {
-            reg.update().catch(() => {
-              // Erro ao atualizar SW - não é crítico
-            });
-          } catch (e) {
-            // Erro inesperado - não é crítico
-          }
-
-          // Quando um novo SW for instalado (statechange para 'installed')
-          reg.addEventListener('updatefound', () => {
-            const newWorker = reg.installing;
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed') {
-                if (navigator.serviceWorker.controller) {
-                  // Nova versão disponível
-                  promptUserToRefresh(reg);
-                }
-              }
-            });
-          });
-
-          // Opcional: escuta mensagens vindas do SW
-          navigator.serviceWorker.addEventListener('message', (event) => {
-            if (event.data) {
-              console.log('Mensagem do SW:', event.data);
-            }
-          });
-        })
-        .catch((err) =>
-          console.log("Falha ao registar o Service Worker:", err),
-        );
-    });
-  }
-
-  // Função utilitária para verificar e aplicar atualizações do Service Worker
-  function checkForSWUpdate() {
-    try {
-      navigator.serviceWorker.getRegistration().then((r) => {
-        if (!r) return;
-        // Se já houver um SW em waiting, mostra o prompt
-        if (r.waiting) {
-          promptUserToRefresh(r);
-          return;
-        }
-        // Caso contrário, pede ao browser para verificar nova versão do script
-        r.update().catch(() => {
-          // Erro ao atualizar SW - não é crítico
-        });
-      }).catch(() => {
-        // Erro ao obter registro do SW - não é crítico
-      });
-    } catch (e) {
-      // Erro inesperado - não é crítico
-    }
-  }
-
-  // Verifica quando a página fica visível (útil em mobile quando o utilizador abre a app)
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') checkForSWUpdate();
-  });
-
-  // Também verifica quando a janela ganha foco (fallback)
-  window.addEventListener('focus', () => checkForSWUpdate());
-
-  // Verificação periódica (cada 30 minutos) - opcional mas útil para sessões longas
-  if (!swCheckIntervalId) {
-    swCheckIntervalId = setInterval(() => checkForSWUpdate(), 30 * 60 * 1000);
-  }
-
-  // Checagem inicial ao iniciar a app
-  checkForSWUpdate();
-
-  // Mostra um prompt simples no canto inferior direito para o utilizador atualizar
-  function promptUserToRefresh(registration) {
-    try {
-      let container = document.getElementById('sw-update-notice');
-      if (!container) {
-        container = document.createElement('div');
-        container.id = 'sw-update-notice';
-        container.className = 'sw-update-notice';
-
-        const text = document.createElement('span');
-        text.className = 'sw-text';
-        text.textContent = 'Nova versão disponível';
-        container.appendChild(text);
-
-        const actions = document.createElement('div');
-        actions.className = 'sw-actions';
-
-        const btn = document.createElement('button');
-        btn.className = 'btn primary btn--small';
-        btn.textContent = 'Atualizar';
-        btn.addEventListener('click', () => {
-          if (!registration || !registration.waiting) return;
-          registration.waiting.postMessage('skip-waiting');
-        });
-
-        const dismiss = document.createElement('button');
-        dismiss.className = 'btn dismiss btn--small';
-        dismiss.textContent = 'Depois';
-        dismiss.addEventListener('click', () => {
-          try {
-            if (container && container.parentNode) container.parentNode.removeChild(container);
-          } catch (e) {
-            // Falha ao remover container - não é crítico
-          }
-        });
-
-        actions.appendChild(btn);
-        actions.appendChild(dismiss);
-        container.appendChild(actions);
-        document.body.appendChild(container);
-
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          if (container && container.parentNode) {
-            container.parentNode.removeChild(container);
-            window.location.reload();
-          }
-        });
-      }
-    } catch (e) {
-      console.error('Erro ao mostrar prompt de atualização', e);
-    }
-  }
+  // 8. Registar Service Worker e configurar ciclo de atualizações
+  initServiceWorker();
 
   console.log("App initialized successfully");
 }
