@@ -20,6 +20,7 @@ import { getPlayerName, setPlayerName } from "./services/user-profile.js";
 import { showSection, showThemes } from "./app.js"; // Importar de app.js
 
 let keyboardPointerDown = false;
+let activeFractionInput = null;
 
 /**
  * Associa as ações dos cartões do menu principal (iniciar exercício, abrir secção).
