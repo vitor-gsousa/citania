@@ -24,6 +24,7 @@ const urlsToCache = [
   "/js/modules/arithmetic/primeFactorization.js",
   "/js/modules/utils/math.js",
   "/js/modules/utils/rand.js",
+  "/js/modules/utils/input-template.js",
   "/js/modules/utils/math-facts.js",
   "/js/services/sounds.js",
   "/js/utils/icon-utils.js",

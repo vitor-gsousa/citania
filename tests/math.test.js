@@ -1,6 +1,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { gcd, lcm, isPrime, getPrimeFactors } from '../js/modules/utils/math.js';
+import { shuffle } from '../js/modules/utils/rand.js';
 
 describe('Math utilities (js/modules/utils/math.js)', () => {
   describe('gcd (Greatest Common Divisor)', () => {
@@ -82,6 +83,22 @@ describe('Math utilities (js/modules/utils/math.js)', () => {
           assert.equal(isPrime(factor), true, `Factor ${factor} must be prime`);
         }
       }
+    });
+  });
+
+  describe('shuffle (Fisher-Yates)', () => {
+    test('preserves all original elements without mutation', () => {
+      const original = [1, 2, 3, 4, 5];
+      const result = shuffle(original);
+      assert.notEqual(result, original, 'Must return a new array instance');
+      assert.deepEqual(original, [1, 2, 3, 4, 5], 'Original must not be mutated');
+      assert.deepEqual([...result].sort((a, b) => a - b), [1, 2, 3, 4, 5]);
+    });
+
+    test('handles empty or non-array inputs safely', () => {
+      assert.deepEqual(shuffle([]), []);
+      assert.deepEqual(shuffle(null), []);
+      assert.deepEqual(shuffle(undefined), []);
     });
   });
 });

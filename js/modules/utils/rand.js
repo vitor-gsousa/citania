@@ -19,4 +19,20 @@ export function choice(arr) {
   return arr[getRandomInt(0, arr.length - 1)];
 }
 
-export default { getRandomInt, choice };
+/**
+ * Retorna uma nova cópia do array baralhada usando o algoritmo Fisher-Yates (não enviesado)
+ * @template T
+ * @param {T[]} arr
+ * @returns {T[]} Novo array baralhado
+ */
+export function shuffle(arr) {
+  if (!Array.isArray(arr)) return [];
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+export default { getRandomInt, choice, shuffle };

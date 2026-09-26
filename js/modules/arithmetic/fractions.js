@@ -446,37 +446,4 @@ function checkFractionEquivalence(userFraction, correctFraction) {
   } catch (error) {
     return false;
   }
-}
-
-/**
- * Gera dica para ajudar o utilizador
- * @param {number} level - Nível atual
- * @param {string} question - Pergunta atual
- * @param {Object} visualData - Dados visuais do exercício
- * @returns {string} Dica para o utilizador
- */
-export function getFractionHint(level, question, visualData) {
-  if (!visualData) {
-    return "💡 Dica: Lê a pergunta com atenção e pensa nas propriedades das frações.";
-  }
-  
-  switch (visualData.type) {
-    case 'equivalent':
-      return "💡 Dica: Multiplica ou divide o numerador e denominador pelo mesmo número.";
-    case 'simplify':
-      return "💡 Dica: Encontra o maior divisor comum do numerador e denominador.";
-    case 'operation':
-      if (visualData.operation === 'add' || visualData.operation === 'subtract') {
-        return "💡 Dica: Para somar/subtrair frações, usa um denominador comum.";
-      } else if (visualData.operation === 'multiply') {
-        return "💡 Dica: Multiplica numerador com numerador e denominador com denominador.";
-      } else if (visualData.operation === 'divide') {
-        return "💡 Dica: Para dividir frações, multiplica pela fração inversa.";
-      }
-      break;
-    case 'compare':
-      return "💡 Dica: Converte para decimais ou usa denominador comum para comparar.";
-    default:
-      return "💡 Dica: Pensa nas propriedades básicas das frações.";
-  }
-}
+}

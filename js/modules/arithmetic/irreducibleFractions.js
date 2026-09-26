@@ -6,7 +6,7 @@
  * porque o numerador e denominador não têm fatores comuns além de 1 (MDC = 1)
  */
 
-import { getRandomInt } from '../utils/rand.js';
+import { getRandomInt, shuffle } from '../utils/rand.js';
 import { gcd } from '../utils/math.js';
 
 /**
@@ -88,7 +88,7 @@ function generateIdentifyIrreducible(level) {
   }
 
   // Embaralhar e encontrar a posição da resposta correta
-  const shuffled = fractions.sort(() => Math.random() - 0.5);
+  const shuffled = shuffle(fractions);
   correctIndex = shuffled.findIndex(f => f.irreducible);
 
   const numbers = ['1', '2', '3', '4', '5'];

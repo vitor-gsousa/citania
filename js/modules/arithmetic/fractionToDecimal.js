@@ -10,6 +10,7 @@
  * - Nível 5+: Frações mais complexas que ainda resultam em decimais finitos.
  */
 import { getRandomInt, choice as getRandomElement } from "../utils/rand.js";
+import { getInlineInputHtml } from "../utils/input-template.js";
 
 /**
  * Configuração de dificuldade por nível.
@@ -83,7 +84,7 @@ export function generateFractionToDecimal(level = 1) {
   // Formata a resposta para ter no máximo 4 casas decimais para evitar problemas de precisão
   const formattedAnswer = parseFloat(answer.toFixed(4));
 
-  const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
+  const inputHtml = getInlineInputHtml();
   const question = `<span class="fraction-display"><sup>${numerator}</sup>/<sub>${denominator}</sub></span> <span class="equals">=</span> ${inputHtml}`;
 
   const explanation = `Para converter a fração ${numerator}/${denominator} para decimal, divide-se o numerador (${numerator}) pelo denominador (${denominator}). O resultado é ${formattedAnswer}.`;

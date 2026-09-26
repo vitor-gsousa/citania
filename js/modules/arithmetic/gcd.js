@@ -1,6 +1,6 @@
-// js/modules/arithmetic/gcd.js
 import { getRandomInt } from "../utils/rand.js";
 import { gcd as calculateGcd } from "../utils/math.js";
+import { getInlineInputHtml } from "../utils/input-template.js";
 
 // Exportar a função gcd para uso em outros módulos
 export { calculateGcd as gcd };
@@ -18,7 +18,7 @@ export function generateGcd(level) {
   const num2 = factor * getRandomInt(min, max);
   const answer = calculateGcd(num1, num2);
 
-  const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
+  const inputHtml = getInlineInputHtml();
 
   return {
     question: `<span class="label">MDC(</span><span class="term-box">${num1}</span><span class="comma">, </span><span class="term-box">${num2}</span><span class="label">) = </span>${inputHtml}`,

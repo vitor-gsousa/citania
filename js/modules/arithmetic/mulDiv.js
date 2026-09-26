@@ -6,6 +6,7 @@
  */
 
 import { getRandomInt } from '../utils/rand.js';
+import { getInlineInputHtml } from '../utils/input-template.js';
 
 /**
  * Gera um exercício de multiplicação ou divisão baseado no nível
@@ -57,7 +58,7 @@ function generateMultiplication(level) {
   answer = num1 * num2;
   
   // Criar input inline para resposta
-  const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
+  const inputHtml = getInlineInputHtml();
   
   return {
     question: `<span class="term-box">${num1}</span> <span class="op op-multiply">×</span> <span class="term-box">${num2}</span> <span class="equals">=</span> ${inputHtml}`,
@@ -98,7 +99,7 @@ function generateDivision(level) {
     if (Math.random() < 0.3) {
       const remainder = getRandomInt(1, divisor - 1);
       dividend = quotient * divisor + remainder;
-      const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
+      const inputHtml = getInlineInputHtml();
       return {
         question: `<span class="term-box">${dividend}</span> <span class="op op-divide">÷</span> <span class="term-box">${divisor}</span> <span class="equals">=</span> ${inputHtml} <small>(parte inteira)</small>`,
         answer: quotient,
@@ -117,7 +118,7 @@ function generateDivision(level) {
   dividend = quotient * divisor;
   answer = quotient;
   
-  const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
+  const inputHtml = getInlineInputHtml();
   
   return {
     question: `<span class="term-box">${dividend}</span> <span class="op op-divide">÷</span> <span class="term-box">${divisor}</span> <span class="equals">=</span> ${inputHtml}`,
@@ -127,25 +128,6 @@ function generateDivision(level) {
     hasInlineInput: true
   };
 }
-
-/**
- * Gera exercício específico apenas de multiplicação
- * @param {number} level - Nível de dificuldade
- * @returns {Object} Exercício de multiplicação
- */
-export function generateMultiplicationOnly(level) {
-  return generateMultiplication(level);
-}
-
-/**
- * Gera exercício específico apenas de divisão
- * @param {number} level - Nível de dificuldade
- * @returns {Object} Exercício de divisão
- */
-export function generateDivisionOnly(level) {
-  return generateDivision(level);
-}
-
 /**
  * Verifica se a resposta do utilizador está correta
  * @param {string|number} userAnswer - Resposta do utilizador
@@ -167,28 +149,4 @@ export function checkMulDivAnswer(userAnswer, correctAnswer, checkType) {
   
   // Fallback para verificação exata
   return numericAnswer === correctAnswer;
-}
-
-/**
- * Gera dica para ajudar o utilizador
- * @param {number} level - Nível atual
- * @param {string} question - Pergunta atual
- * @returns {string} Dica para o utilizador
- */
-export function getMulDivHint(level, question) {
-  if (question.includes('×')) {
-    if (level <= 3) {
-      return "💡 Dica: Podes contar grupos iguais ou usar a tabuada!";
-    } else {
-      return "💡 Dica: Quebra a multiplicação em partes mais pequenas se for difícil.";
-    }
-  } else if (question.includes('÷')) {
-    if (level <= 3) {
-      return "💡 Dica: Quantas vezes o divisor cabe no dividendo?";
-    } else {
-      return "💡 Dica: Tenta dividir por partes ou usa a tabuada ao contrário.";
-    }
-  }
-  
-  return "💡 Dica: Lê a pergunta com atenção e pensa passo a passo.";
-}
+}

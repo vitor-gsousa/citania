@@ -7,7 +7,8 @@
 // 4. Variação controlada: evitar padrões repetitivos e incluir mistura tardia
 // 5. Suporte a dificuldades crescentes por "nível" (level vindo do estado global)
 
-import { getRandomInt } from "../../modules/utils/rand.js";
+import { getRandomInt } from "../utils/rand.js";
+import { getInlineInputHtml } from "../utils/input-template.js";
 
 /**
  * Configuração centralizada de dificuldade para adição/subtração.
@@ -113,7 +114,7 @@ export function generateAddSub(level = 1) {
   if (isMissingTerm) {
     // Escolher aleatoriamente qual termo ocultar: 0=a, 1=b, 2=result
     const missing = getRandomInt(0, 2);
-    const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
+    const inputHtml = getInlineInputHtml();
     if (missing === 0) {
       // [input] op b = result
       question = `${inputHtml} <span class="op op-${op === "+" ? "add" : "sub"}">${op}</span> <span class="term-box">${b}</span> <span class="equals">=</span> <span class="term-box">${result}</span>`;
@@ -130,7 +131,7 @@ export function generateAddSub(level = 1) {
     explanation = `Preenche o campo em falta para que a expressão fique correta.`;
   } else {
     // Exercício normal: sempre o resultado em falta
-    const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
+    const inputHtml = getInlineInputHtml();
     question = `<span class="term-box">${a}</span> <span class="op op-${op === "+" ? "add" : "sub"}">${op}</span> <span class="term-box">${b}</span> <span class="equals">=</span> ${inputHtml}`;
     answer = result;
     explanation = buildExplanation(a, b, op, result);

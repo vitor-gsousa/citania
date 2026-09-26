@@ -1,6 +1,6 @@
-// js/modules/arithmetic/lcm.js
 import { getRandomInt } from "../utils/rand.js";
 import { lcm as calculateLcm } from "../utils/math.js";
+import { getInlineInputHtml } from "../utils/input-template.js";
 
 // Exportar a função lcm para uso em outros módulos
 export { calculateLcm as lcm };
@@ -17,7 +17,7 @@ export function generateLcm(level) {
   const num2 = getRandomInt(min, max);
   const answer = calculateLcm(num1, num2);
 
-  const inputHtml = `<input type="text" class="fraction-missing-input inline-missing-input" autocomplete="off" inputmode="none" aria-label="Campo de resposta" />`;
+  const inputHtml = getInlineInputHtml();
 
   return {
     question: `<span class="label">MMC(</span><span class="term-box">${num1}</span><span class="comma">, </span><span class="term-box">${num2}</span><span class="label">) = </span>${inputHtml}`,
