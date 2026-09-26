@@ -44,13 +44,23 @@ import { updatePageTitle } from "./app.js";
  * @param {*} value - Valor a escapar (será convertido para string).
  * @returns {string} String com caracteres HTML escapados.
  */
-function escapeHtml(value) {
+export function escapeHtml(value) {
   return String(value)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+/**
+ * Formata a resposta esperada para exibição em caso de erro.
+ * @param {*} answer
+ * @returns {string} Resposta formatada
+ */
+export function formatCorrectAnswer(answer) {
+  if (Array.isArray(answer)) return answer.join(" x ");
+  return answer !== null && answer !== undefined ? String(answer) : "";
 }
 
 // Mapa de exercícios disponíveis
@@ -293,37 +303,91 @@ export function generateNewExercise(DOM, state) {
   DOM.nextButton.style.display = "none";
 }
 
+/**
+ * Extrai a resposta fornecida pelo utilizador a partir dos vários formatos de input.
+ * @param {object} DOM - Referências aos elementos do DOM
+ * @param {object} [exercise=currentExercise] - Estado do exercício corrente
+ * @returns {string} Resposta do utilizador
+ */
+export function extractUserAnswer(DOM, exercise = currentExercise) {
+  if (!DOM) return '';
+
+  if (exercise?.hasInlineInput && DOM.exerciseArea) {
+    const fractionInputs = DOM.exerciseArea.querySelectorAll('.fraction-missing-input');
+    if (fractionInputs.length === 1) {
+      return fractionInputs[0].value || '';
+    }
+    if (fractionInputs.length === 2) {
+      const numeratorInput = DOM.exerciseArea.querySelector('.fraction-missing-input[data-part="numerator"]');
+      const denominatorInput = DOM.exerciseArea.querySelector('.fraction-missing-input[data-part="denominator"]');
+      if (numeratorInput?.value && denominatorInput?.value) {
+        return `${numeratorInput.value}/${denominatorInput.value}`;
+      }
+    }
+  }
+
+  const inlineInput = typeof document !== 'undefined' ? document.querySelector('.inline-missing-input') : null;
+  if (inlineInput) {
+    return inlineInput.value || '';
+  }
+
+  return DOM.answerInput?.value || '';
+}
+
+/**
+ * Atualiza o sistema de gamificação, pontos e medalhas mediante resposta.
+ */
+function updateGamificationOnAnswer(isCorrect, attempts, streak, DOM) {
+  if (isCorrect) {
+    adicionarPontos(DOM, 10);
+    if (attempts === 1) awardBadge(DOM, BADGES.firstTry);
+    if (streak >= 5) awardBadge(DOM, BADGES.streak5);
+    if (gamification.pontos >= 50) awardBadge(DOM, BADGES.explorer);
+  } else {
+    adicionarPontos(DOM, 2);
+  }
+}
+
+/**
+ * Verifica e processa a subida de nível quando a ronda termina.
+ */
+function checkLevelProgression(state, DOM, exerciseType) {
+  if (state.roundProgress < state.exercisesPerRound) return;
+
+  state.level++;
+  saveProgressForType(exerciseType, state.level);
+  state.roundProgress = 0;
+
+  if (state.level >= 3) awardBadge(DOM, BADGES.scholar);
+
+  sounds.levelup.play();
+  triggerConfetti();
+  showLevelUpUI(DOM, state);
+}
+
+/**
+ * Renderiza o feedback visual e textual da resposta.
+ */
+function renderAnswerFeedback(DOM, isCorrect, formattedAnswer, explanation, showExplanation) {
+  if (isCorrect) {
+    DOM.feedbackEl.innerHTML = "✅ Muito bem! Resposta correta!";
+    DOM.feedbackEl.className = "correct";
+  } else {
+    DOM.feedbackEl.innerHTML = `❌ Quase! A resposta certa é <strong>${escapeHtml(formattedAnswer)}</strong>.`;
+    DOM.feedbackEl.className = "incorrect";
+  }
+
+  if (showExplanation && explanation) {
+    DOM.feedbackEl.innerHTML += `<br><small style="font-weight: normal; opacity: 0.9;">${escapeHtml(explanation)}</small>`;
+  }
+}
+
 export function checkAnswer(DOM, state) {
   if (state.answered) return;
 
   currentExercise.attempts = (currentExercise.attempts || 0) + 1;
-  
-  // Verificar se existe input inline (para exercícios como addSub ou frações equivalentes)
-  const inlineInput = document.querySelector(".inline-missing-input");
-  const fractionInputs = DOM.exerciseArea.querySelectorAll('.fraction-missing-input');
-  
-  let userAnswer = '';
-  if (currentExercise.hasInlineInput && fractionInputs.length > 0) {
-    if (fractionInputs.length === 1) {
-      // Para frações equivalentes, usar o input integrado na visualização
-      userAnswer = fractionInputs[0].value;
-    } else if (fractionInputs.length === 2) {
-      // Para exercícios de simplificação, concatenar numerador/denominador
-      const numeratorInput = DOM.exerciseArea.querySelector('.fraction-missing-input[data-part="numerator"]');
-      const denominatorInput = DOM.exerciseArea.querySelector('.fraction-missing-input[data-part="denominator"]');
-      
-      if (numeratorInput && denominatorInput && numeratorInput.value && denominatorInput.value) {
-        userAnswer = `${numeratorInput.value}/${denominatorInput.value}`;
-      }
-    }
-  } else if (inlineInput) {
-    // Para exercícios addSub, usar o input inline tradicional
-    userAnswer = inlineInput.value;
-  } else {
-    // Para outros exercícios, usar o input principal
-    userAnswer = DOM.answerInput.value;
-  }
-  
+  const userAnswer = extractUserAnswer(DOM, currentExercise);
+
   if (!userAnswer.trim()) {
     DOM.feedbackEl.innerHTML = "⚠️ Por favor, escreve uma resposta.";
     DOM.feedbackEl.className = "incorrect";
@@ -332,51 +396,28 @@ export function checkAnswer(DOM, state) {
 
   const exerciseLogic = exercises[currentExercise.type];
   const isCorrect = exerciseLogic.check(userAnswer, currentExercise.answer, currentExercise.checkType);
-  const correctAnswerFormatted = Array.isArray(currentExercise.answer) ? currentExercise.answer.join(" x ") : currentExercise.answer;
+  const formattedAnswer = formatCorrectAnswer(currentExercise.answer);
 
   if (isCorrect) {
     sounds.correct.play();
-    DOM.feedbackEl.innerHTML = "✅ Muito bem! Resposta correta!";
-    DOM.feedbackEl.className = "correct";
     state.score.correct++;
     state.streak++;
-    adicionarPontos(DOM, 10);
-
-    // Lógica para atribuir medalhas
-    if (currentExercise.attempts === 1) awardBadge(DOM, BADGES.firstTry);
-    if (state.streak >= 5) awardBadge(DOM, BADGES.streak5);
-    if (gamification.pontos >= 50) awardBadge(DOM, BADGES.explorer);
-
   } else {
     sounds.incorrect.play();
-    DOM.feedbackEl.innerHTML = `❌ Quase! A resposta certa é <strong>${escapeHtml(correctAnswerFormatted)}</strong>.`;
-    DOM.feedbackEl.className = "incorrect";
     state.score.incorrect++;
     state.streak = 0;
-    adicionarPontos(DOM, 2);
   }
+
+  updateGamificationOnAnswer(isCorrect, currentExercise.attempts, state.streak, DOM);
 
   state.roundProgress++;
   updateScoreDisplay(DOM, state);
   updateProgressBar(DOM, state);
 
-  if (state.roundProgress >= state.exercisesPerRound) {
-    state.level++;
-    saveProgressForType(currentExercise.type, state.level);
-    state.roundProgress = 0;
-    
-    // Atribuir medalha de estudioso ao subir de nível
-    if (state.level >= 3) awardBadge(DOM, BADGES.scholar);
+  checkLevelProgression(state, DOM, currentExercise.type);
 
-    // Level up completo: som + confetti + UI
-    sounds.levelup.play();
-    triggerConfetti();
-    showLevelUpUI(DOM, state);
-  }
-
-  if (state.roundProgress <= state.explanationLimit) {
-    DOM.feedbackEl.innerHTML += `<br><small style="font-weight: normal; opacity: 0.9;">${escapeHtml(currentExercise.explanation)}</small>`;
-  }
+  const shouldShowExplanation = state.roundProgress <= state.explanationLimit;
+  renderAnswerFeedback(DOM, isCorrect, formattedAnswer, currentExercise.explanation, shouldShowExplanation);
 
   state.answered = true;
   DOM.checkButton.style.display = "none";

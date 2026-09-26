@@ -22,7 +22,7 @@ import { getExercisesByArea, getExerciseInfo } from "./config/exercise-types.js"
 import { currentExercise } from "./exercise.js";
 
 // Elementos do DOM
-const DOM = {
+const DOM = typeof document !== 'undefined' ? {
   menuContainer: document.getElementById("menu-container"),
   exerciseArea: document.getElementById("exercise-area"),
   summaryArea: document.getElementById("summary-area"),
@@ -60,7 +60,7 @@ const DOM = {
   narrativePopup: document.getElementById("narrative-popup"),
   narrativePopupText: document.getElementById("narrative-popup-text"),
   closeNarrativePopup: document.getElementById("close-narrative-popup"),
-};
+} : {};
 
 // Estado global da aplicação
 const state = {
@@ -568,14 +568,16 @@ function initHeaderHeightObserver() {
 }
 
 // Atualizar altura do header em resize e orientação change
-window.addEventListener('resize', setHeaderHeight);
-window.addEventListener('orientationchange', () => {
-  setTimeout(setHeaderHeight, 100); // Pequeno delay para garantir que o layout atualizou
-});
-
-// Inicializar monitoramento do header
-initHeaderHeightObserver();
+if (typeof window !== 'undefined') {
+  window.addEventListener('resize', setHeaderHeight);
+  window.addEventListener('orientationchange', () => {
+    setTimeout(setHeaderHeight, 100); // Pequeno delay para garantir que o layout atualizou
+  });
+  initHeaderHeightObserver();
+}
 
 // Ponto de entrada único da aplicação
-document.addEventListener("DOMContentLoaded", initApp);
-document.addEventListener("DOMContentLoaded", normalizeIcons);
+if (typeof document !== 'undefined') {
+  document.addEventListener("DOMContentLoaded", initApp);
+  document.addEventListener("DOMContentLoaded", normalizeIcons);
+}
